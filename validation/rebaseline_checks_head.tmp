@@ -1,0 +1,330 @@
+"""
+rebaseline_checks.py
+====================
+The audit trail for the 2026-07-27 re-baseline. Four independent studies, none of which
+takes any previously reported number on trust:
+
+  A. DEFECT VERIFICATION. Reproduce, on a fixed seed and on matched snapshots, the claim
+     that applying the PHAT weight over the full 0-24 kHz band rather than over the
+     300-3400 Hz source band inflates the per-frame azimuth error. Measures the per-pair
+     TDOA error directly as well as the azimuth error, and counts how many full-weight
+     bins actually contain source.
+
+  B. ARTEFACT DECOMPOSITION. Part of the improvement is an artefact of the simulation's
+     noise model: the harness adds white Gaussian noise across the whole Nyquist band,
+     whereas a real acquisition chain has an anti-alias filter and a transducer with
+     finite bandwidth and therefore does not fill its out-of-band bins with noise. This
+     study crosses {full-band weight, band-limited weight} with a sweep of acquisition
+     bandwidths, on matched snapshots, so the paper can state how much of the gain is a
+     genuine estimator improvement and how much was a simulation artefact.
+
+  C. SNAPSHOT SCALING, full-band versus band-limited, paired. Tests the claim that the
+     anomalous N^-0.208 scaling in the archived log is entirely a consequence of the
+     full-band weight and that N^-1/2 is recovered by the fix.
+
+  D. COMPUTE. Per-stage timing that separates arithmetic from Python dispatch, a
+     vectorised SRP-PHAT that isolates the dispatch cost, an audit of the analytical FLOP
+     model, and a measurement of the cost and the accuracy price of replacing the
+     eightfold zero-padded inverse FFT with a native-length IFFT plus parabolic peak
+     refinement.
+
+Run:  py -3.14 rebaseline_checks.py
+"""
+
+import sys
+import time
+import os
+
+import numpy as np
+from numpy.fft import rfft, irfft
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+import doa_benchmark as d                     # noqa: E402
+import matplotlib.pyplot as plt               # noqa: E402
+
+FULL = None                                   # PHAT weight over the whole 0..fs/2 band
+BAND = d.SRC_BAND                             # PHAT weight over the source band (the fix)
+
+
+# ==================================================================================
+# A. DEFECT VERIFICATION
+# ==================================================================================
+def weight_occupancy(theta=37.0, snr_db=10.0, tag=101, trials=40):
+    """What fraction of the bins that PHAT promotes to (near) unit weight is source?
+
+    The regularized PHAT of gcc_phat leaves a bin at unit weight unless it is more than
+    60 dB below the strongest bin. Count the unit-weight bins that lie outside the source
+    band; those are the bins whose random phase is being given full authority.
+    """
+    d.reseed(tag)
+    n = 2 * d.SIG_LEN
+    f = np.fft.rfftfreq(n, 1.0 / d.FS)
+    inband = (f >= BAND[0]) & (f <= BAND[1])
+    fr_unit, fr_oob = [], []
+    for _ in range(trials):
+        X = d.simulate(theta, snr_db)
+        R = rfft(X[0], n=n) * np.conj(rfft(X[1], n=n))
+        mag = np.abs(R)
+        unit = mag >= 1e-3 * mag.max()               # not attenuated by the 60 dB floor
+        fr_unit.append(unit.mean())
+        fr_oob.append(np.sum(unit & ~inband) / max(np.sum(unit), 1))
+    return float(np.mean(fr_unit)), float(np.mean(fr_oob)), int(inband.sum()), int(f.size)
+
+
+def paired_weight_comparison(angles, snrs, trials, tag, acq_band=None,
+                             weight_bands=(FULL, BAND)):
+    """Evaluate several PHAT weight bands on the SAME snapshots.
+
+    Returns res[(weight_label, snr)] = dict(az_err=..., dtau=...).
+    Pairing matters: the whole point is to attribute a difference to the weight and to
+    nothing else, and matched snapshots remove the Monte-Carlo variance entirely.
+    """
+    labels = ["full-band" if b is None else f"{b[0]:.0f}-{b[1]:.0f} Hz"
+              for b in weight_bands]
+    res = {(lab, s): {"az": [], "dtau": []} for lab in labels for s in snrs}
+    d.reseed(tag)
+    for snr in snrs:
+        for th in angles:
+            t_true = d.true_pair_tdoas(th)
+            for _ in range(trials):
+                X = d.simulate(th, snr, acq_band=acq_band)
+                for lab, b in zip(labels, weight_bands):
+                    res[(lab, snr)]["az"].append(
+                        d.ang_err(d.est_gccphat_ls(X, band=b), th))
+                    res[(lab, snr)]["dtau"].append(d.pair_tdoas(X, band=b) - t_true)
+        print(f"    SNR {snr:>3} dB done", flush=True)
+    for k in res:
+        res[k]["az"] = np.array(res[k]["az"])
+        res[k]["dtau"] = np.array(res[k]["dtau"]).ravel()
+    return labels, res
+
+
+def report_paired(labels, res, snrs, indent="  "):
+    for snr in snrs:
+        print(f"{indent}--- nominal SNR {snr} dB ---")
+        for lab in labels:
+            e = np.abs(res[(lab, snr)]["az"])
+            dt = res[(lab, snr)]["dtau"]
+            s_tau = float(np.std(dt))
+            s_tau_r = float(np.median(np.abs(dt - np.median(dt))) / 0.6745)
+            r, r_se = d.rmse_se(e)
+            med, med_se = d.quantile_se(e, 0.5)
+            p90, p90_se = d.quantile_se(e, 0.9)
+            pred = np.rad2deg(d.C * s_tau / (np.sqrt(4.5) * d.R))
+            print(f"{indent}  {lab:<14} RMSE {r:8.3f} +-{r_se:6.3f}  "
+                  f"median {med:7.3f} +-{med_se:5.3f}  p90 {p90:8.3f} +-{p90_se:6.3f}  "
+                  f"sigma_tau {s_tau*1e6:9.3f} us (robust {s_tau_r*1e6:7.3f})  "
+                  f"M40 -> {pred:8.3f} deg")
+        if len(labels) == 2:
+            a = np.abs(res[(labels[0], snr)]["az"])
+            b = np.abs(res[(labels[1], snr)]["az"])
+            dv = a - b
+            print(f"{indent}  paired mean |error| reduction "
+                  f"({labels[0]} -> {labels[1]}): "
+                  f"{dv.mean():+8.3f} +-{dv.std(ddof=1)/np.sqrt(dv.size):6.3f} deg "
+                  f"({dv.mean()/(dv.std(ddof=1)/np.sqrt(dv.size)):+7.1f} sigma)")
+            ra = d.rmse_se(a)[0]; rb = d.rmse_se(b)[0]
+            print(f"{indent}  RMSE ratio full-band / band-limited: {ra/rb:8.2f}x")
+
+
+# ==================================================================================
+# C. SNAPSHOT SCALING, PAIRED
+# ==================================================================================
+def snapshot_scaling_paired(snaplens, angles, snr=10, trials=60, tag=140):
+    d.reseed(tag)
+    out = {("full-band", N): [] for N in snaplens}
+    out.update({("band-limited", N): [] for N in snaplens})
+    for N in snaplens:
+        for th in angles:
+            for _ in range(trials):
+                s = d.source_signal("speechlike", n=N)
+                s = s / np.sqrt(np.mean(s ** 2) + 1e-12)
+                taus = d.steering_delays(th)
+                clean = np.stack([d.frac_delay(s, t) for t in taus])
+                npow = np.mean(clean ** 2) / 10 ** (snr / 10)
+                X = clean + d.RNG.standard_normal(clean.shape) * np.sqrt(npow)
+                out[("full-band", N)].append(
+                    abs(d.ang_err(d.est_gccphat_ls(X, band=FULL), th)))
+                out[("band-limited", N)].append(
+                    abs(d.ang_err(d.est_gccphat_ls(X, band=BAND), th)))
+        print(f"    N = {N} done", flush=True)
+    return {k: np.array(v) for k, v in out.items()}
+
+
+# ==================================================================================
+# D. COMPUTE
+# ==================================================================================
+def tdoa_parabolic(x_i, x_j, fs=d.FS, band=BAND):
+    """Native-length IFFT plus parabolic peak refinement (math_model.md M20).
+
+    The candidate cheap replacement for the eightfold zero-padded inverse FFT that
+    dominates the front-end cost. Carries a systematic interpolation bias, because a
+    whitened correlation peak is a sinc and not a parabola; this function exists so that
+    the bias can be measured rather than assumed.
+    """
+    n = x_i.shape[0] + x_j.shape[0]
+    X = rfft(x_i, n=n)
+    Y = rfft(x_j, n=n)
+    R = X * np.conj(Y)
+    mag = np.abs(R)
+    R /= np.maximum(mag, 1e-3 * mag.max() + 1e-12)
+    if band is not None:
+        f = np.fft.rfftfreq(n, 1.0 / fs)
+        R[(f < band[0]) | (f > band[1])] = 0.0
+    cc = irfft(R, n=n)
+    half = n // 2
+    cc = np.concatenate((cc[-half:], cc[:half + 1]))
+    k = int(np.argmax(cc))
+    if 0 < k < cc.size - 1:
+        den = cc[k - 1] - 2 * cc[k] + cc[k + 1]
+        delta = 0.5 * (cc[k - 1] - cc[k + 1]) / den if den != 0 else 0.0
+        delta = float(np.clip(delta, -0.5, 0.5))
+    else:
+        delta = 0.0
+    return (k - half + delta) / fs
+
+def est_gccphat_ls_parabolic(X, mic_xy=d.MIC_XY, fs=d.FS, band=BAND):
+    M = X.shape[0]
+    A, b = [], []
+    for i in range(M):
+        for j in range(i + 1, M):
+            A.append(mic_xy[i] - mic_xy[j])
+            b.append(-d.C * tdoa_parabolic(X[i], X[j], fs, band))
+    u, *_ = np.linalg.lstsq(np.array(A), np.array(b), rcond=None)
+    return np.rad2deg(np.arctan2(u[1], u[0]))
+
+
+def srp_stage_timing(X, reps=60, grid_deg=1.0):
+    """Split est_srp_phat into (shared GCC front end) and (Python grid loop)."""
+    M = X.shape[0]
+    def front():
+        return {(i, j): d.gcc_phat(X[i], X[j])
+                for i in range(M) for j in range(i + 1, M)}
+    pair_cc = front()
+    grid = np.arange(-180, 180, grid_deg)
+    def loop():
+        power = np.zeros_like(grid, dtype=float)
+        for k, phi in enumerate(grid):
+            taus = d.steering_delays(phi)
+            p = 0.0
+            for (i, j), (lags, cc) in pair_cc.items():
+                p += np.interp(taus[i] - taus[j], lags, cc)
+            power[k] = p
+        return grid[np.argmax(power)]
+    t_front = d._time_ms(lambda _: front(), None, reps)
+    t_loop = d._time_ms(lambda _: loop(), None, reps)
+    n_calls = grid.size * (1 + M * (M - 1) // 2)          # steering + one interp per pair
+    return t_front, t_loop, n_calls
+
+
+def leakage_after_acq_filter(theta=37.0, snr_db=10.0, acq_band=(20.0, 8000.0),
+                             tag=160, trials=20):
+    """How much energy survives outside the acquisition band in the ZERO-PADDED transform?
+
+    Motivation: with the acquisition chain band-limited, the bins above its cut-off ought
+    to be empty and the 60 dB regularized-PHAT floor ought to suppress them by itself, so
+    band-limiting the weight ought to be unnecessary. Measurement (Study B) says
+    otherwise. The reason is that gcc_phat zero-pads from N to n = 2N before the forward
+    transform, and a brick-wall filter applied on the length-N grid is not a brick wall on
+    the length-n grid: spectral leakage from the retained band fills the stop band at a
+    level well above -60 dB, so those bins are still whitened to unit weight.
+    """
+    d.reseed(tag)
+    n = 2 * d.SIG_LEN
+    f = np.fft.rfftfreq(n, 1.0 / d.FS)
+    stop = f > acq_band[1]
+    lev, above = [], []
+    for _ in range(trials):
+        X = d.simulate(theta, snr_db, acq_band=acq_band)
+        R = rfft(X[0], n=n) * np.conj(rfft(X[1], n=n))
+        mag = np.abs(R)
+        lev.append(20 * np.log10(np.median(mag[stop]) / mag.max() + 1e-30))
+        above.append(np.mean(mag[stop] >= 1e-3 * mag.max()))
+    return float(np.mean(lev)), float(np.mean(above)), int(stop.sum())
+
+
+def parabolic_bias(snr_db=40.0, tag=161, n_off=25, trials=40):
+    """Systematic delay bias of parabolic refinement versus fractional sample offset.
+
+    math_model.md M20 warns of up to 0.119 samples of bias because a PHAT-whitened peak
+    is a sinc rather than a parabola. That warning was derived for a FULL-BAND whitened
+    peak, whose main lobe is one sample wide. With the weight restricted to 300-3400 Hz
+    the main lobe is about fs/(2*3400) = 7 samples wide and a parabola is a much better
+    local model, so the bias should be far smaller. Measured here rather than assumed.
+    """
+    d.reseed(tag)
+    fs = d.FS
+    offs = np.linspace(-0.5, 0.5, n_off)
+    bias_par, bias_i8 = [], []
+    for off in offs:
+        tau = off / fs
+        ep, e8 = [], []
+        for _ in range(trials):
+            s = d.source_signal("speechlike")
+            s = s / np.sqrt(np.mean(s ** 2) + 1e-12)
+            a = s
+            b = d.frac_delay(s, tau)
+            p = np.mean(a ** 2) / 10 ** (snr_db / 10)
+            a = a + d.RNG.standard_normal(a.shape) * np.sqrt(p)
+            b = b + d.RNG.standard_normal(b.shape) * np.sqrt(p)
+            ep.append(tdoa_parabolic(a, b) * fs + off)      # est is -tau in lag convention
+            e8.append(d.tdoa_phat(a, b) * fs + off)
+        bias_par.append(np.mean(ep)); bias_i8.append(np.mean(e8))
+    return offs, np.array(bias_par), np.array(bias_i8)
+
+
+def flop_model():
+    """Recompute the analytical FLOP table of math_model.md 7.2-7.5 from its own
+    formulas, so the numbers quoted there are audited rather than copied."""
+    N, M, P, I, G = d.SIG_LEN, 3, 3, 8, 360
+    n = 2 * N
+    K = n // 2 + 1
+    cfft = lambda L: 2.5 * L * np.log2(L)
+    tbl = {}
+    for lab, Ii in (("I=8", 8), ("I=1 + parabolic", 1)):
+        fwd = M * cfft(n)
+        cpsd = P * (6 * K + 4 * K + 2 * K)
+        inv = P * cfft(Ii * n)
+        amax = P * (Ii * n + 1)
+        tbl[lab] = dict(forward=fwd / 1e6, cpsd=cpsd / 1e6, inverse=inv / 1e6,
+                        argmax=amax / 1e6,
+                        total=(fwd + cpsd + inv + amax) / 1e6)
+    gcc = tbl["I=8"]["total"]
+    prop = gcc + 3 * P * I * n / 1e6
+    srp = gcc + (G * (2 * M + M + P * (np.log2(I * n) + 4)) + G) / 1e6
+    L, Ksn, Fb, cexp = 512, 7, 33, 50
+    music = (Ksn * M * (L + cfft(L))
+             + Fb * (8 * M ** 2 * Ksn + M ** 3 + cexp * G * M
+                     + 8 * G * M ** 2 + 8 * G * M)) / 1e6
+    return tbl, dict(gcc=gcc, proposed=prop, srp=srp, music=music)
+
+
+# ==================================================================================
+def fig_artefact(acq_labels, rmse_full, rmse_band, se_full, se_band, snr):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.8, 2.8))
+    x = np.arange(len(acq_labels))
+    ax1.errorbar(x, rmse_full, yerr=se_full, capsize=2,
+                 label="full-band PHAT weight (old)", **d._style(0))
+    ax1.errorbar(x, rmse_band, yerr=se_band, capsize=2,
+                 label=f"PHAT weight {BAND[0]:.0f}-{BAND[1]:.0f} Hz (fixed)",
+                 **d._style(1))
+    ax1.set_xticks(x); ax1.set_xticklabels(acq_labels, rotation=30, ha='right')
+    ax1.set_xlabel("Acquisition-chain bandwidth")
+    ax1.set_ylabel(f"Azimuth RMSE at {snr} dB SNR (deg)")
+    ax1.set_yscale('log'); ax1.legend(fontsize=6.5)
+    ax1.annotate("(a)", (0.02, 0.95), xycoords='axes fraction', fontsize=8, va='top')
+
+    ratio = np.array(rmse_full) / np.array(rmse_band)
+    ax2.plot(x, ratio, **d._style(2))
+    ax2.axhline(1.0, color='k', lw=0.8, ls='-', marker='')
+    ax2.set_xticks(x); ax2.set_xticklabels(acq_labels, rotation=30, ha='right')
+    ax2.set_xlabel("Acquisition-chain bandwidth")
+    ax2.set_ylabel("RMSE ratio, full-band / band-limited weight")
+    ax2.set_yscale('log')
+    ax2.annotate("(b)", (0.02, 0.95), xycoords='axes fraction', fontsize=8, va='top')
+    fig.tight_layout()
+    fig.savefig(f"{d.OUTDIR}/fig_phat_artefact_decomposition.png", dpi=d.DPI)
+    plt.close(fig)
+

@@ -1,0 +1,951 @@
+analyze_real.py -- forensics and analysis of the measured datasets
+python 3.14.5, numpy 2.4.6, seed 7
+repository root: C:\Users\anees\OneDrive\Desktop\embedded_sound_local
+figures -> C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs
+
+========================================================================================
+0. DATA INVENTORY AND INTEGRITY
+========================================================================================
+
+Excitation recordings on disk are stored THREE times under different folder
+hierarchies. MD5 comparison of every CSV:
+
+  Distance based sample_s          28 folders, 105 CSV
+  Waveform based Sample_s          105 CSV
+  Microphone feedback .../         105 CSV
+  distinct file contents           105
+  contents present in all 3 copies 105
+
+The 'Microphone calibration data' (239 files) and 'Microphone feedback with
+respect to Frequency and Distance' (126 files) folders therefore contain
+105 distinct recordings between them, not 365. Every analysis below counts
+each recording ONCE.
+
+  excitation set: 105 recordings = 7 distances x 3 waveforms x 5 frequencies
+    waveforms   : {'sine': 35, 'square': 35, 'triangle': 35}
+    freq (kHz)  : {1: 21, 5: 21, 10: 21, 15: 21, 20: 21}
+    distance(cm): {15: 15, 50: 15, 100: 15, 150: 15, 200: 15, 250: 15, 300: 15}
+    channels per recording: 1 (single 'Mic Value' column; the microphone identity is not recorded)
+
+Word length and scaling
+  stored 'Mic Value' greatest common divisor of differences : 2
+  odd stored values across all 105 recordings         : 0
+  stored value range over the whole excitation set           : 82 .. 5050
+  => stored value = 2 x (raw 12-bit ADC code); raw range     : 41 .. 2525
+
+Every stored value is even, so the logger emitted a 13-bit word whose least
+significant bit is always zero. That is exactly what the Arduino-ESP32 core does
+for `analogReadResolution(13)`: it left-shifts the native 12-bit conversion. The
+effective resolution is 12 bits (4096 codes), and the quantisation step in the
+stored files is 2 units = 1 raw LSB. All values below are RAW 12-BIT CODES.
+
+Quarantine check -- Triple Mic Samples/python.py
+  contains np.random.uniform(0.4, 0.76)      : True
+  rescales to a preset mean of 0.77          : True
+  opens any sample_*.xlsx recording          : False
+  VERDICT: the accuracy heatmap it produces is FABRICATED. It is excluded from
+  every result in this file and must not appear in the paper in any form.
+Triple Mic Samples/results.csv is 2 bytes (empty).
+
+Quarantine check -- idle mic data/data.xlsx
+  rows x cols                          : 24701 x 4
+  non-empty cells in column A          : 17186
+  of which parse as a number           : 16854
+  numeric range                        : 0 .. 2348890214960
+  fraction inside a plausible ADC band : 0.485
+  column A interleaves at least three streams (a monotonically increasing sample
+  counter near 12900-37600, plausible ADC codes near 1250, and small integers),
+  plus literal '_x0000_' cells and run-together values such as 6612938 and 112935.
+  VERDICT: unrecoverable. Not used.
+
+idle mic data/filtered_data.xlsx  (8171 rows, mean 1261.88, sd 9.80)
+  produced by process_excel.py, which KEEPS ONLY values in [1100, 1500]. That is a
+  value-range gate, not a filter: it discards 51.5 % of column A,
+  destroys the time base by non-uniform decimation, and truncates exactly the tails
+  that a noise-floor estimate depends on. Its standard deviation is biased low by
+  construction and must not be quoted as a noise floor.
+  The clean 60 s idle recordings in Microphone calibration data/Idle sample_s/
+  are used instead (section 3).
+
+========================================================================================
+1. CRITICAL QUESTION 1 -- WHAT IS THE ACQUISITION SAMPLE RATE?
+========================================================================================
+
+Statistics of the 'Time (ms)' column over all 105 excitation recordings:
+
+  samples per file            29999 .. 30002   (median 30001)
+  record duration             29.999 .. 30.002 s
+  MEAN sample interval        1.000003 ms  (sd across files 0.017 us)
+  MEDIAN sample interval      0.997305 ms
+  within-file sd of interval  279.2 us (median over files)
+  intervals equal to zero     2.41 % of samples
+  intervals > 1.5 ms          2.67 % of samples
+  largest single gap          77.1 ms
+
+  => nominal rate from the mean interval: 999.9965 Hz
+  => Nyquist frequency:                   500.00 Hz
+
+The excitation labels are 1, 5, 10, 15 and 20 kHz. Every one of them is between
+2x and 40x ABOVE this Nyquist frequency.
+
+THE ALIAS TEST.  A tone at f0 sampled at fs < 2*f0 does not vanish: it folds to
+f_alias = |f0 - k*fs| with k = round(f0/fs). Writing the true sample interval as
+T = (1 + d) / 1000 s and noting that every excitation frequency is an exact
+integer multiple of 1 kHz, the model collapses to a ONE-PARAMETER prediction
+
+      f_alias  =  d * f0            (Hz)
+
+so the observed low-frequency line must be strictly PROPORTIONAL to the excitation
+frequency, with the SAME constant d for every waveform and every distance. That is
+a very restrictive prediction: nothing except undersampling produces it.
+
+Global matched scan. For each candidate d, the normalised spectral amplitude that
+each recording shows at its own predicted alias frequency is summed over all
+84 recordings at 5 kHz and above:
+  best d over all waveforms      12.195 ppm   ->  fs = 999.98781 Hz
+  best d over the sine subset    12.016 ppm   ->  fs = 999.98798 Hz
+  scan peak / scan median        16.3   (a sharp, unambiguous maximum)
+  FFT resolution / interpolated grid  0.0333 Hz / 0.00381 Hz
+
+Per-recording line frequency, measured independently in each file within +/-45 %
+of the global prediction, for the sine excitations (a pure tone folds to a single
+clean line; square and triangle also fold their harmonics, which is treated below):
+
+  excitation   n resolved   median f_alias (Hz)   implied d (ppm)   range (ppm)
+          1 kHz          -             0.0122 predicted         -           alias below the 0.0333 Hz resolution
+          5 kHz          7            0.0534             10.68       9.16 - 12.97
+         10 kHz          7            0.1144             11.44       11.06 - 12.59
+         15 kHz          5            0.1717             11.44       10.68 - 12.46
+         20 kHz          2            0.2384             11.92       11.63 - 12.21
+
+  pooled over the sine set: d = 11.444 ppm, sd 0.890 ppm, n = 21
+  implied fs               = 999.98856 Hz
+
+The same constant, to within one part per million, reproduces the observed line at
+5, 10, 15 and 20 kHz and at every source distance. The square and triangle
+recordings at 15 and 20 kHz sit lower, near 7 ppm, because those waveforms carry
+strong odd harmonics that fold to their own lines (the third harmonic of a 15 kHz
+square folds to 3 x 15 x d = 0.549 Hz) and their fundamental is weak;
+they are excluded from the point estimate and reported here for completeness.
+
+Independent cross-check from the timestamps of the same files: the mean sample
+interval is 1.000003 ms, i.e. fs = 999.9965 Hz. The spectroscopic value is
+999.98781 Hz. Two entirely independent methods -- one from the logger's clock, one
+from the physics of the folded tone -- agree to 9 ppm.
+
+ANSWER TO CRITICAL QUESTION 1
+  fs = 999.988 Hz (nominal 1 kHz). Nyquist = 500.0 Hz.
+  The 1/5/10/15/20 kHz sweeps are ALIASED and cannot be read as a frequency
+  response at face value: a 5 kHz excitation is recorded as a 0.061 Hz
+  waveform, a 20 kHz excitation as a 0.244 Hz waveform. All FREQUENCY
+  information is destroyed. Folding preserves AMPLITUDE, so a level reading would
+  in principle survive; section 4 shows that in practice it does not, for the
+  separate reason that the drive level was not held constant between runs.
+
+COROLLARY -- the time column is a host artefact, not the sample clock.
+  The within-file scatter of the time column is 279 us RMS. If the ADC had
+  really been clocked that irregularly, a 5 kHz carrier (period 200 us) would
+  accumulate a phase error of 2*pi*5000*2.79e-04 = 8.8 rad between
+  consecutive samples and no coherent alias line could exist. The alias lines are
+  in fact extremely coherent (median peak-to-background ratio
+  177 over a 30 s record).
+  Therefore the conversion loop is uniformly clocked and the 'Time (ms)' column --
+  which also contains 2.4 % duplicate stamps and gaps up to 77 ms -- records when
+  the HOST received a line, not when the sample was taken. Use the sample index,
+  not the time column.
+
+CONSEQUENCE FOR TDOA.
+  Sampling period                        1 / fs = 1000.0 us
+  Array geometry as configured in doa_benchmark.py: equilateral triangle,
+  circum-radius R = 5.0 cm, so the microphone-to-microphone spacing is
+  R*sqrt(3) = 8.66 cm.  [Both figures must be replaced with measured
+  board values; 'aperture 5 cm' in the handover is ambiguous between the two.]
+  Largest inter-microphone delay, spacing 8.66 cm     252.5 us
+  Largest delay if the spacing is instead 5.00 cm  145.8 us
+  Ratio, 8.66 cm spacing                        0.2525 samples
+  Ratio, 5.00 cm spacing                        0.1458 samples
+  On either reading the ENTIRE 360 deg azimuth range maps inside ONE sampling
+  interval, a factor of 4.0 to 6.9 below the sampling grid.
+
+  Being sub-sample is not by itself fatal -- interpolated cross-correlation
+  routinely resolves a fraction of a sample -- so the argument has to be made
+  properly, and it turns on the aliasing rather than on the rate:
+
+    1. Sub-sample delay estimation is interpolation, and interpolation is only
+       valid for a signal that is band-limited below Nyquist. These recordings are
+       not: section 1 shows components at 5 to 20 kHz reaching the converter at
+       full amplitude with no anti-alias filter.
+    2. Aliasing corrupts DELAY specifically, and worse than it corrupts spectrum.
+       A component at f0 delayed by tau carries phase -2*pi*f0*tau. Folding moves
+       it to f_a but does NOT change its phase, so it appears in the cross-spectrum
+       as an in-band component at f_a carrying a phase that belongs to f0 -- an
+       apparent group delay inflated by f0/f_a. For the 20 kHz excitation and the
+       array's maximum delay, the true phase is 2*pi*20000*252.5e-6 = 31.7 rad, or
+       5.05 full wraps, whereas an honest in-band component at
+       0.244 Hz would carry 3.87e-04 rad. Every folded component therefore
+       injects a phase error of several whole cycles, and GCC-PHAT -- which fits a
+       linear phase ramp across the band and gives every bin unit weight -- has its
+       cross-spectrum phase randomised.
+    3. So the fix is not simply a faster converter. It is an anti-alias filter
+       ahead of the converter, plus a hardware-timed conversion clock. With those
+       in place, 1 kHz sampling of a genuinely band-limited source would give a
+       Cramer-Rao delay bound of tens of microseconds (section 2), which is
+       marginal but not absurd; without them, no sample rate helps.
+
+  For reference, a 1 deg azimuth resolution needs a delay resolution of about
+  4.41 us. At 48 kHz that is 0.212 of a sample, i.e. it
+  requires sub-sample interpolation even at the design rate -- which is precisely
+  why the anti-alias filter, not the rate, is the load-bearing requirement.
+
+[FIGURE] fig_real_timebase.png
+[CAPTION] Acquisition time base of the calibration rig. (a) Histogram of the logged inter-sample interval for
+one 30 s recording (sine_wave_5k_15.csv); the column clusters at the intended 1.000 ms but carries
+duplicate stamps and gaps to tens of milliseconds, showing that it timestamps host reception rather
+than conversion. (b) The low-frequency spectral line present in each excitation recording, plotted
+against the nominal excitation frequency for all three waveforms and all seven source distances
+(waveforms offset horizontally for legibility). The line is proportional to the excitation
+frequency, which is the signature of undersampling and of nothing else; a global one-parameter
+matched fit gives delta = 12.2 ppm and hence fs = 999.988 Hz, in agreement with the mean logged
+interval. The dotted line is the frequency resolution set by the 30 s record length, below which the
+1 kHz excitation's predicted alias falls.
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_timebase.png
+
+[FIGURE] fig_real_alias_demo.png
+[CAPTION] What a 5 kHz excitation actually looks like when sampled at 1 kHz. (a) The full 30 s record: a near-
+square oscillation of period about 16 s that spends long intervals pinned against the analogue
+front-end rails. No acoustic process exists at 0.06 Hz; this is the folded image of the 5 kHz tone,
+and the flat tops are amplifier clipping, not signal. (b) Its amplitude spectrum, with the alias
+frequency predicted from the fitted sample rate marked. The prediction comes from a global fit
+across all recordings at 5 kHz and above, not from this file.
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_alias_demo.png
+
+========================================================================================
+2. CRITICAL QUESTION 2 -- ARE THE 30-SAMPLE TRIPLE-MIC CLIPS USABLE FOR DoA?
+========================================================================================
+
+  2a. Position labels (header cell D1 of each workbook)
+
+      file               label       x (cm)   y (cm)
+      sample_1.xlsx      (0,15)           0       15
+      sample_2.xlsx      (0,-15)          0      -15
+      sample_3.xlsx      (-15,0)        -15        0
+      sample_4.xlsx      (15,0)          15        0
+      sample_5.xlsx      (0,30)           0       30
+      sample_6.xlsx      (0,-30)          0      -30
+      sample_7.xlsx      (30,0)          30        0
+      sample_8.xlsx      (-30,0)        -30        0
+      sample_9.xlsx      (15,15)         15       15
+      sample_10.xlsx     (-15,15)       -15       15
+      sample_11.xlsx     (30,-15)        30      -15
+      sample_12.xlsx     (30,-30)        30      -30
+      sample_13.xlsx     (-30,30)       -30       30
+      sample_14.xlsx     (-30,-15)      -30      -15
+      sample_15.xlsx     (-30,-30)      -30      -30
+      sample_16.xlsx     (-30,15)       -30       15
+      sample_17.xlsx     (-15,-15)      -15      -15
+      sample_18.xlsx     (-15,30)       -15       30
+      sample_19.xlsx     (-15,-30)      -15      -30
+      sample_20.xlsx     (0,0)            0        0
+      sample_21.xlsx     (15,-15)        15      -15
+      sample_22.xlsx     (15,-30)        15      -30
+      sample_23.xlsx     (15,30)         15       30
+      sample_24.xlsx     (30,15)         30       15
+      sample_25.xlsx     (30,30)         30       30
+
+      The 25 labels are exactly the 5 x 5 Cartesian product of x in [-30.0, -15.0, 0.0, 15.0, 30.0] and y in [-30.0, -15.0, 0.0, 15.0, 30.0] (centimetres); every grid node appears once, none is repeated. There is no azimuth label, no distance label, no room label and no repeat measurement.
+
+  2b. Per-clip channel statistics (raw 12-bit codes)
+
+      file   label        N   DC1     DC2     DC3     sd1    sd2    sd3   r12    r13    r23
+         1   (0,15)      30  1263.6  1265.2  1266.7   14.09  13.91  12.61  +0.951 +0.915 +0.866
+         2   (0,-15)     30  1267.3  1271.6  1267.4   17.13  23.93  22.06  +0.671 +0.454 +0.895
+         3   (-15,0)     30  1279.6  1241.9  1270.9  103.94 162.26  60.62  -0.291 +0.289 +0.229
+         4   (15,0)      30  1267.6  1268.4  1267.0   15.85  17.93  12.25  +0.842 +0.908 +0.813
+         5   (0,30)      30  1266.1  1262.0  1262.9   40.27  30.34  24.28  +0.336 +0.448 +0.894
+         6   (0,-30)     30  1269.4  1272.6  1272.4   35.03  69.63  50.44  +0.520 +0.284 +0.887
+         7   (30,0)      30  1272.8  1275.0  1272.2   46.08  61.23  40.80  +0.154 +0.774 -0.185
+         8   (-30,0)     30  1266.9  1267.7  1267.8   28.24  27.53  21.66  +0.768 +0.939 +0.677
+         9   (15,15)     30  1261.5  1268.8  1277.2   94.85  79.12 100.57  +0.714 +0.550 +0.182
+        10   (-15,15)    30  1328.9  1248.4  1355.9  254.19 199.65 265.13  +0.603 +0.502 -0.225
+        11   (30,-15)    30  1258.9  1259.3  1263.2   15.40  19.30  22.71  +0.703 +0.307 +0.328
+        12   (30,-30)    30  1256.5  1269.0  1278.2   41.88  41.64  42.34  +0.893 -0.269 -0.161
+        13   (-30,30)    30  1220.6  1227.3  1253.2   63.50  69.25  54.09  +0.918 +0.578 +0.535
+        14   (-30,-15)   30  1257.2  1257.9  1258.3   38.02  42.28  31.03  +0.894 +0.535 +0.428
+        15   (-30,-30)   30  1246.4  1260.6  1251.6   73.38  77.77  57.57  +0.188 +0.622 +0.566
+        16   (-30,15)    30  1265.1  1267.6  1267.8   14.82  15.43  13.81  +0.970 +0.946 +0.920
+        17   (-15,-15)   30  1275.8  1297.9  1271.5   74.07  90.66  47.01  -0.222 +0.341 +0.308
+        18   (-15,30)    30  1254.3  1260.0  1257.2  107.78  84.51  68.52  +0.828 +0.707 +0.931
+        19   (-15,-30)   30  1266.3  1263.6  1262.6   15.20  19.72  13.32  +0.867 +0.841 +0.913
+        20   (0,0)       30  1265.0  1267.0  1267.3   11.28  12.32   9.90  +0.942 +0.941 +0.853
+        21   (15,-15)    30  1280.5  1282.3  1282.5  114.12 119.82 140.09  +0.917 -0.174 +0.028
+        22   (15,-30)    30  1264.1  1260.0  1267.6   27.26  32.59  31.50  +0.789 +0.072 +0.445
+        23   (15,30)     30  1217.1  1238.1  1246.6   92.71  64.12  63.82  +0.494 +0.790 +0.741
+        24   (30,15)     30  1265.5  1267.6  1271.4   24.63  21.16  29.38  +0.570 +0.821 +0.569
+        25   (30,30)     30  1274.5  1284.6  1269.5   48.76  34.37  51.37  +0.674 +0.927 +0.603
+
+2c. What acquisition chain produced these clips, and at what rate?
+  samples per clip / channels               30 / 3
+  DC per channel, mean over 25 clips        1264.45, 1264.18, 1269.96 codes
+  DC of the 1 kHz idle recordings           1264.31 codes
+  odd-valued samples                        78.4 %  (so these are plain
+                                            12-bit codes, NOT the factor-two-scaled
+                                            words used by the calibration logger)
+
+The clips sit on the same DC operating point and the same 12-bit grid as the rest
+of the hardware, so they come from the same analogue chain. They carry no time
+column, so the rate must be inferred. The front-end noise is band-limited, so its
+autocorrelation is a clock: the 60 s idle recordings measure it directly at a known
+1000.0 Hz.
+
+  measured idle autocorrelation, mean of the three microphones
+    lag (samples)          0       1       2       3       4       5       6       7       8
+    rho                1.000   0.545   0.456   0.341   0.220   0.118   0.045  -0.006  -0.031
+
+  lag-1 autocorrelation of the 8 quietest clips (24 channel series):
+    raw mean                                -0.0358
+    small-sample bias for N = 30, -1/(N-1)   -0.0345
+    bias-corrected                          -0.0013 +/- 0.0320 (standard error)
+    the 1 kHz idle value                    +0.5448
+
+  The clips' noise is WHITE: the bias-corrected lag-1 autocorrelation is
+  indistinguishable from zero, while the same front end sampled at 1000 Hz gives
+  +0.545. Reading the measured idle autocorrelation backwards, an
+  autocorrelation as low as the clips' 95 % upper bound (+0.061) is first
+  reached at lag 6 samples of the idle record, i.e. an inter-sample interval of
+  about 6 ms. The clips are therefore sampled at roughly 167 Hz PER CHANNEL
+  or slower -- consistent with a loop that converts three multiplexed channels and
+  writes a spreadsheet row per set -- and certainly not faster than the 1000 Hz of
+  the calibration rig.
+  Caveat, stated plainly: this inference assumes the two datasets share an analogue
+  noise bandwidth, which their common DC operating point and common 12-bit grid make
+  likely but do not prove. It is also conservative in the direction that matters --
+  any residual source content in the 'quiet' clips would RAISE their autocorrelation,
+  so the true per-channel interval is if anything longer than 6 ms. Nothing in
+  these files supports a rate high enough for TDOA.
+
+  2d. Cross-channel correlation and delay resolvability
+
+      zero-lag Pearson r, median over 25 clips: r12 +0.714   r13 +0.578   r23 +0.569
+      fraction of pairs with r > 0.5          : 0.67  (the three channels see one common source)
+
+If fs = 167 Hz (the rate inferred in 2c for these clips):
+  sampling period                       6000.00 us
+  clip duration                         180.000 ms
+  max array delay 252.5 us              0.0421 samples
+  lags spanned by the whole 360 deg     +/-0.0421 of ONE sample
+  usable lag bins inside that span      1
+
+If fs = 1,000 Hz (the rate measured for the calibration rig):
+  sampling period                       1000.01 us
+  clip duration                         30.000 ms
+  max array delay 252.5 us              0.2525 samples
+  lags spanned by the whole 360 deg     +/-0.2525 of ONE sample
+  usable lag bins inside that span      1
+
+If fs = 48,000 Hz (the rate assumed by the simulation harness):
+  sampling period                       20.83 us
+  clip duration                         0.625 ms
+  max array delay 252.5 us              12.1193 samples
+  lags spanned by the whole 360 deg     +/-12.1193 of ONE sample
+  usable lag bins inside that span      25
+
+  Measured integer-lag cross-correlation peaks over all 75 channel pairs:
+    at lag 0                              73 %
+    |lag| >= 1 sample                     27 %
+    largest |lag| observed                18 samples
+  At the calibration rig's 1 kHz a one-sample lag is 1000 us, which is 4.0x
+  larger than any delay the array can physically produce, and at the 167 Hz
+  inferred for these clips it is 24x larger. Every non-zero peak is
+  therefore noise, not propagation. The 73 % of peaks that sit exactly at lag 0
+  say only that the true delay is somewhere inside the first sampling interval.
+
+A Cramer-Rao floor for the best case. For a broadband source occupying the whole
+band with root-mean-square bandwidth beta, N samples and per-channel SNR,
+sigma_tau >= 1 / (beta * sqrt(2 * N * SNR)).
+        fs      167 Hz, SNR   10 dB, N = 30: sigma_tau =   135.05 us  =    0.53 x the full array delay  -> azimuth sd 32.3 deg
+        fs      167 Hz, SNR   30 dB, N = 30: sigma_tau =    13.50 us  =    0.05 x the full array delay  -> azimuth sd 3.1 deg
+        fs    1,000 Hz, SNR   10 dB, N = 30: sigma_tau =    22.51 us  =    0.09 x the full array delay  -> azimuth sd 5.1 deg
+        fs    1,000 Hz, SNR   30 dB, N = 30: sigma_tau =     2.25 us  =    0.01 x the full array delay  -> azimuth sd 0.5 deg
+        fs   48,000 Hz, SNR   10 dB, N = 30: sigma_tau =     0.47 us  =    0.00 x the full array delay  -> azimuth sd 0.1 deg
+        fs   48,000 Hz, SNR   30 dB, N = 30: sigma_tau =     0.05 us  =    0.00 x the full array delay  -> azimuth sd 0.0 deg
+
+  These bounds assume the best possible case: a source that is genuinely
+  band-limited below Nyquist and fills the band with a flat spectrum, an unbiased
+  estimator, and the stated in-band SNR. Read them as optimism, not as achievement.
+  Two of the rows deserve comment rather than a slogan.
+    * At the clips' own inferred rate the bound is 0.53 times the array's
+      entire delay range at 10 dB SNR, i.e. an azimuth standard deviation of about
+      32 deg. That is not a measurement of direction.
+    * At the calibration rig's 1000 Hz the bound would be about 5 deg, which
+      LOOKS usable. It is not achievable here, for the reason set out in section 1:
+      there is no anti-alias filter, so out-of-band energy folds in carrying the
+      phase of its original frequency and randomises the cross-spectrum. The bound
+      describes a hypothetical properly band-limited 1 kHz system, not this one.
+
+ANSWER TO CRITICAL QUESTION 2
+  NO. A direction-of-arrival estimate cannot be extracted from these clips.
+  Four reasons, and the honest weighting matters:
+    (i)   ALIASING, the decisive one. There is no anti-alias filter anywhere in
+          this acquisition chain (section 1 measures 20 kHz content folding into
+          the band at full amplitude). Folded components carry the phase of their
+          original frequency, so they enter the cross-spectrum with a delay-phase
+          error of several whole cycles. GCC-PHAT's phase ramp is destroyed. No
+          sample rate and no estimator repairs this; it needs a hardware filter.
+    (ii)  RATE. The clips' own noise statistics put their per-channel rate at about
+          167 Hz, at which the whole 360 deg azimuth range occupies 0.084 of
+          one lag bin and the Cramer-Rao azimuth bound is about
+          32 deg at 10 dB SNR.
+    (iii) LENGTH. 30 samples is too few for the sub-sample interpolation the
+          geometry demands, even at 48 kHz, where the Cramer-Rao floor over 30
+          samples is still 0.00 times the array's full delay range at 10 dB.
+    (iv)  SCORABILITY. The clips carry no time base, no stated sample rate, no
+          azimuth ground truth, no room description and no repeat measurements, so
+          even a correct estimate could not be scored against anything.
+  What the clips DO establish is real and worth reporting: the three channels are
+  strongly correlated at lag 0 (median r = 0.67), the front end shares a
+  common 1266-code DC operating point, and the per-channel gains match to within
+  the figure quoted in section 5. They are a working three-channel capture, not a
+  localization dataset.
+  Section 6 of the paper must NOT claim hardware TDOA on this data.
+
+[FIGURE] fig_real_triplemic.png
+[CAPTION] The 25 three-channel hardware clips, and why they cannot yield a direction-of-arrival estimate. (a)
+One 30-sample clip; the channels track each other closely. (b) Normalised cross-correlation of the
+three channel pairs. The shaded bar is the complete range of delays the array can physically
+produce, +/-0.252 of one sampling interval at the 1 kHz rate measured for this hardware and +/-0.042
+at the 167 Hz per-channel rate inferred for the clips themselves: the quantity to be measured is
+several times smaller than the lag grid, so the whole azimuth range collapses into the single lag-
+zero bin. (c) The 25 position labels recovered from header cell D1, a complete 5x5 grid at 15 cm
+spacing; circle area is the mean per-channel RMS of the clip. (d) Distribution of the integer cross-
+correlation peak lag over all 75 channel pairs against the same physical bound; every non-zero peak
+lies outside the physically possible range and is therefore noise.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_triplemic.png
+
+========================================================================================
+3. MEASURED NOISE FLOOR / MICROPHONE SELF-NOISE (60 s idle recordings)
+========================================================================================
+
+      mic   N       duration  DC (code)   sd (code)  robust sd  outliers  p-p (code)  excess kurtosis
+        1   64051      60.0 s    1264.37      5.557      5.930        56        116            7.86
+        2   62042      60.0 s    1267.06      4.026      4.448        15         86            6.34
+        3   62045      60.0 s    1268.21      5.586      4.448        31         86            3.58
+
+Outliers are isolated single-sample dropouts (codes near 13 and 18, i.e. the
+converter reading almost zero) plus a handful of transients; they are 0.02-0.09 %
+of samples and are excluded from the RMS so that the figure reported is the
+stationary noise floor rather than a glitch rate. The glitch rate itself is a real
+hardware property and is reported above.
+
+DISTRIBUTION SHAPE. The noise is NOT Gaussian. Excess kurtosis after outlier
+removal is 7.9, 6.3 and 3.6, against 0 for a Gaussian: a sharp core
+with heavy tails, meaning the front end produces occasional excursions well beyond
+what its RMS would suggest. That matters for a threshold or a gate, and it should
+be stated rather than smoothed over with the word 'Gaussian'.
+The two scale estimates nevertheless agree closely -- RMS 5.56, 4.03, 5.59 LSB
+against a robust 1.4826 x MAD of 5.93, 4.45, 4.45 LSB, within about 10 % -- so
+the RMS is a sound figure for an SNR budget and is used as such below. (The robust
+scale is granular here because the median absolute deviation of integer-valued data
+is itself an integer, in steps of 1.48 LSB, so it should not be read to two
+decimal places.)
+
+Noise floor summary
+  self-noise RMS, three microphones      5.56, 4.03, 5.59 LSB   (mean 5.06 LSB)
+  robust scale (1.4826 x MAD)            5.93, 4.45, 4.45 LSB   (mean 4.94 LSB)
+  12-bit quantisation floor  1/sqrt(12)  0.289 LSB
+  measured floor / quantisation floor    17.5x  (24.9 dB)
+  => the converter is NOT the limiting noise source; the analogue front end is.
+     Adding ADC bits would buy nothing.
+
+Dynamic-range reference for the paper's SNR axis
+  DC operating point (mean of three)     1266.5 LSB of 4095
+  observed positive clipping rail        2523 LSB   (section 4)
+  observed negative clipping rail        42 LSB
+  largest undistorted peak swing         1256 LSB
+  peak SNR = 20 log10(peak / noise RMS)  47.9 dB
+  RMS SNR for a sine at full swing       44.9 dB
+  This is the ceiling of the measured signal chain. The simulation sweeps SNR from
+  0 to 40 dB; the hardware can in principle deliver the whole of that range, but
+  only for a source loud enough to approach clipping at the microphone.
+
+Consistency with a digital MEMS microphone (INMP441 or similar I2S part)
+  The INMP441 is a 24-bit I2S device: it emits signed two's-complement samples with
+  no DC pedestal and no analogue rail. The data here are unsigned integers on a
+  4096-code grid sitting on a 1267-code DC pedestal, with hard clipping at 42 and
+  2523 codes and a 1 kHz software-timed sample loop. That is an ANALOGUE capsule
+  and preamplifier feeding the ESP32-S3 internal 12-bit SAR converter. The data are
+  NOT consistent with an INMP441 anywhere in this acquisition path.
+  Two readings are possible and the author must resolve which: either the
+  calibration and triple-microphone rigs used an analogue capsule while the DoA
+  array uses an INMP441, in which case none of the measurements in this file
+  characterise the array's microphones; or the stated part is wrong. Until this is
+  settled the paper cannot cite an INMP441 datasheet noise figure alongside these
+  measurements. A datasheet equivalent-input-noise comparison is deliberately NOT
+  made here, because the measured floor is expressed in ADC codes of an unknown
+  analogue chain, with no measured sensitivity in mV/Pa and no acoustic reference
+  level; converting 5.06 LSB into dB(A) SPL would require a calibrator
+  measurement that does not exist in this repository.
+
+[FIGURE] fig_real_noise_floor.png
+[CAPTION] Measured microphone self-noise from three 60 s idle recordings (no source). (a) Two seconds of each
+channel, DC removed and vertically offset. (b) Amplitude histograms with a Gaussian of the pooled
+standard deviation for reference; the distributions are NOT Gaussian: on a logarithmic density axis
+the core is visibly sharper and the tails heavier than the Gaussian of the same RMS (dotted), with
+excess kurtosis of 4 to 8. Per-channel RMS is 4.0 to 5.6 LSB and the robust scale is 4.4 to 5.9 LSB.
+(c) Welch power spectra against the 12-bit quantisation floor. The measured floor sits 25 dB above
+quantisation, so the analogue front end, not the converter, sets the noise floor and adding
+converter bits would buy nothing; the narrowband features between 20 and 90 Hz are interference
+picked up by the analogue chain. Vertical axes are in ADC least-significant bits because no acoustic
+calibration of this rig exists.
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_noise_floor.png
+
+========================================================================================
+4. LEVEL VERSUS EXCITATION FREQUENCY, DISTANCE AND WAVEFORM
+========================================================================================
+
+Clipping census. A sample counts as clipped if it lies within 2 % of the observed
+dynamic range of either analogue rail (code >= 2475 or <= 92).
+
+        distance      1 kHz    5 kHz   10 kHz   15 kHz   20 kHz   (% samples clipped, mean over waveforms)
+          15 cm     40.64    48.00    20.65     0.21     8.78
+          50 cm      0.00     0.00     0.00     0.00     0.00
+         100 cm      0.00     0.00     0.00     0.00     0.00
+         150 cm      0.00     0.00     0.00     0.00     0.00
+         200 cm      0.00     0.00     0.00     0.00     0.00
+         250 cm      0.00     0.00     0.00     0.00     0.00
+         300 cm      0.00     0.00     0.00     0.00     0.00
+
+        recordings with > 0.5 % clipped samples: 11 of 105
+        Clipped recordings cannot report a level, because the front end, not the microphone,
+        is setting the amplitude. They are excluded from the level fits below.
+
+      Level in dB re 1 LSB RMS, unclipped recordings only (94 of 105)
+
+        waveform   f (kHz)        15      50     100     150     200     250     300     cm
+        sine           1        n/a   29.24   47.94   39.36   40.21   43.61   42.70
+        sine           5        n/a   35.66   44.95   46.73   51.31   48.71   52.29
+        sine          10        n/a   34.34   43.93   39.22   32.37   37.38   35.27
+        sine          15      33.24   25.62   23.05   27.19   21.76   20.85   25.05
+        sine          20      24.41   25.28   21.29   26.51   26.61   18.68   24.11
+        square         1        n/a   35.16   33.21   48.13   41.29   46.27   45.82
+        square         5        n/a   41.61   31.02   46.52   53.58   45.41   51.95
+        square        10        n/a   40.14   33.40   36.26   34.21   33.07   37.75
+        square        15        n/a   31.80   28.66   39.82   38.87   33.62   34.38
+        square        20        n/a   37.03   28.68   44.67   38.24   45.58   41.44
+        triangle       1        n/a   27.92   41.69   43.33   40.04   42.08   44.66
+        triangle       5        n/a   35.38   40.83   41.61   46.57   40.71   45.45
+        triangle      10        n/a   33.24   44.76   37.39   33.25   33.31   35.03
+        triangle      15      44.46   26.39   29.74   31.45   28.55   23.96   25.20
+        triangle      20      44.76   25.88   26.65   28.79   25.40   28.76   28.48
+
+Inverse-square-law check. A free-field point source gives sound pressure
+proportional to 1/r, i.e. -20 dB per decade of distance (-6.02 dB per doubling).
+Fitted slope of level against log10(distance), unclipped points only:
+
+        waveform   f (kHz)   n   slope (dB/decade)   residual sd (dB)   deviation from -20
+        sine           1    6            12.99              5.06            +32.99
+        sine           5    6            19.99              1.78            +39.99
+        sine          10    6            -2.33              4.06            +17.67
+        sine          15    7            -7.28              2.47            +12.72
+        sine          20    7            -1.20              2.84            +18.80
+        square         1    6            16.47              4.05            +36.47
+        square         5    6            17.71              6.35            +37.71
+        square        10    6            -4.50              2.46            +15.50
+        square        15    6             6.35              3.82            +26.35
+        square        20    6            11.73              5.19            +31.73
+        triangle       1    6            17.72              3.35            +37.72
+        triangle       5    6            11.31              2.30            +31.31
+        triangle      10    6            -3.52              4.40            +16.48
+        triangle      15    7           -12.37              3.92             +7.63
+        triangle      20    7           -10.79              4.56             +9.21
+
+  pooled slope        +4.82 dB/decade  (sd across conditions 11.30)
+  free-field ideal    -20.00 dB/decade
+  conditions with a POSITIVE fitted slope: 8 of 15
+  adjacent distance steps where the level RISES with distance: 43 of 79
+
+Interpretation. The measured level does not fall with distance at all; in
+54 % of adjacent distance steps it rises, and the pooled fitted slope is
+positive. No acoustic mechanism produces that. The dominant explanation must be
+that the excitation level was NOT held constant between runs: for example the sine
+1 kHz condition reads 29.2 dB at 50 cm and 47.9 dB at 100 cm, an
++18.7 dB change over one doubling of distance where the physics allows
+at most -6 dB. Contributing factors that cannot be separated with the data
+available:
+  (a) the loudspeaker drive level and the microphone preamplifier gain are not
+      recorded anywhere, and there is no reference microphone;
+  (b) the measurement was made in an ordinary room, so beyond the critical distance
+      the reverberant field dominates and the level stops falling with distance;
+  (c) at 15 cm the front end is clipping, which removes the near-field anchor
+      points that would constrain the fit.
+AN INVERSE-SQUARE-LAW VERIFICATION CANNOT BE CLAIMED FROM THIS DATASET, and neither
+can a distance response of any kind. The correct action is to state this and, if the
+result is wanted, to repeat the sweep with a documented and fixed drive level.
+
+Interpretation of the frequency axis. Because every excitation is aliased
+(section 1), the horizontal axis of any 'frequency response' drawn from these files
+is the frequency of the loudspeaker command, not of anything present in the
+recording. Aliasing preserves amplitude, so comparing LEVELS across excitation
+frequency is meaningful in principle; but with the drive level uncontrolled it is
+not meaningful in practice either. The one statement the data will bear is
+qualitative and is worth exactly that much: the transmit-plus-receive chain
+delivers noticeably more level at 1-10 kHz than at 15-20 kHz.
+        median level over all distances and waveforms,  1 kHz excitation:  42.70 dB re 1 LSB
+        median level over all distances and waveforms,  5 kHz excitation:  46.52 dB re 1 LSB
+        median level over all distances and waveforms, 10 kHz excitation:  36.26 dB re 1 LSB
+        median level over all distances and waveforms, 15 kHz excitation:  28.66 dB re 1 LSB
+        median level over all distances and waveforms, 20 kHz excitation:  28.48 dB re 1 LSB
+
+[FIGURE] fig_real_level_response.png
+[CAPTION] Recorded level against source distance, excitation frequency and waveform, from the 105 single-
+channel calibration recordings. (a) Sine excitation: measured RMS level versus distance on log axes,
+with the inverse-square-law slope shown for reference and clipped recordings crossed out. The
+measured decay is far shallower than 1/r, consistent with a reverberant room beyond the critical
+distance and with front-end clipping removing the near-field anchor points. (b) Median level against
+nominal excitation frequency for the three waveforms, with the measured idle noise floor marked;
+note that the frequency axis is the loudspeaker command frequency, since every excitation is aliased
+by the 1 kHz acquisition rate. (c) Percentage of clipped samples over the distance-frequency grid,
+showing that the loud low-frequency conditions are unusable for level work.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_level_response.png
+
+========================================================================================
+5. INTER-MICROPHONE MISMATCH AND ITS BOUND ON DoA ACCURACY
+========================================================================================
+
+What can and cannot be measured. The 105 calibration recordings each contain ONE
+microphone channel and do not record which microphone it was, so they cannot yield
+any inter-microphone comparison. Only two datasets carry simultaneous or
+comparable per-microphone information:
+  * the three 60 s idle recordings  -> DC offset and noise-floor mismatch;
+  * the 25 three-channel clips      -> relative broadband gain at a common source.
+PHASE mismatch cannot be measured from anything in this repository, because that
+requires a common excitation captured simultaneously on all three channels with a
+time base -- which no file provides.
+
+  5a. DC offset and noise-floor mismatch (idle recordings)
+
+        mic    DC (LSB)   self-noise RMS (LSB)
+          1     1264.37                5.557
+          2     1267.06                4.026
+          3     1268.21                5.586
+
+        DC spread (max - min)          3.85 LSB (0.30 % of the operating point)
+        noise-floor spread             1.39x  (2.84 dB)
+
+  5b. Relative broadband gain (three-channel clips, common source)
+
+
+Estimator note. Ordinary least squares of channel j on channel i is biased towards
+zero when the regressor is noisy, and the ratio of standard deviations is biased
+towards unity. Total least squares (the principal eigenvector of the 2x2 scatter
+matrix) is consistent when the two channels carry comparable noise, which the idle
+recordings show they roughly do, so TLS is used and OLS is printed beside it as a
+lower bracket.
+
+        pair    n clips (r>0.8)   TLS gain   TLS in dB   OLS in dB   IQR of TLS (dB)
+        1->2              10     1.0763       +0.64       -0.19              0.93
+        1->3               8     0.8779       -1.13       -1.70              1.27
+        2->3               9     0.7797       -2.16       -2.91              2.09
+
+        transitivity check  g12 x g23 = 0.8392  against  g13 = 0.8779   (closure error -0.39 dB)
+        A gain ratio must be transitive around the three channels. The closure error is a
+        direct estimate of the method's own uncertainty, and it is the same size as the
+        mismatch being measured -- so treat these gains as order-of-magnitude, not precision,
+        figures.
+
+  median absolute pairwise gain mismatch   1.21 dB
+  interquartile spread of the estimate     2.67 dB
+
+Why this matters, and why it matters less than it looks. GCC-PHAT normalises each
+cross-spectrum to unit magnitude, so a pure frequency-flat GAIN mismatch cancels
+exactly and contributes no delay bias. What does not cancel is (i) a mismatch that
+varies with frequency, which tilts the effective weighting and biases the peak, and
+(ii) any PHASE mismatch, which maps one-for-one into a delay error. A phase error
+of dphi radians at frequency f is a delay error dphi / (2*pi*f), and on this array a
+delay error dtau produces an azimuth error of up to dtau * c / d_max radians.
+
+        phase mismatch     delay error at 2 kHz    worst-case azimuth error
+                 1 deg                1.39 us                    0.32 deg
+                 2 deg                2.78 us                    0.63 deg
+                 5 deg                6.94 us                    1.58 deg
+                10 deg               13.89 us                    3.15 deg
+
+For scale, the array's entire delay budget is 252.5 us; 5 degrees of
+uncorrected phase mismatch at 2 kHz already consumes 2.8 % of it.
+This is a real and citable limitation of a low-cost three-microphone build, but
+this repository contains NO measurement of it. Obtaining one requires a single
+source captured simultaneously on all three channels, at a known sample rate, at
+one known azimuth -- roughly ten minutes of bench time, and it should be done.
+
+[FIGURE] fig_real_mic_mismatch.png
+[CAPTION] Measured channel-to-channel mismatch of the three-microphone front end. (a) DC operating point of
+each channel relative to the three-channel mean and (b) self-noise RMS, both from the 60 s idle
+recordings: the DC pedestals agree to within 3.8 LSB but the noise floors differ by 2.8 dB. (c)
+Relative broadband gain of each microphone pair by total least squares, one point per three-channel
+clip in which that pair is well correlated, with the median marked. The median absolute pairwise
+gain mismatch is 1.2 dB. No phase-mismatch measurement exists anywhere in this dataset; GCC-PHAT is
+insensitive to a frequency-flat gain mismatch but not to phase mismatch, which maps one-for-one into
+a delay error and must be measured separately.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_mic_mismatch.png
+
+========================================================================================
+6. THE FOUR CANDIDATE FILTERS, EVALUATED ON REAL RECORDINGS
+========================================================================================
+
+What the four scripts in 'Filter alogrithims test/' actually do. Every one of them
+builds a low-pass FIR, applies it to `np.random.randn(1000)` -- synthetic noise --
+and plots the result. None of them opens a recording, and none of them measures
+anything. They are design sketches, so the comparison below re-implements the four
+designs exactly as written and runs them on the real idle and calibration data.
+
+  A1  windowed sinc, 21 taps, Hamming window. The script writes fc = 0.1 into
+      np.sinc(2*fc*n), where fc is in CYCLES PER SAMPLE, so the cutoff is 0.1 fs
+      = 0.2 x Nyquist. Normalised to unity DC gain; linear phase.
+  A2  scipy.signal.firwin, 51 taps, Kaiser window beta = 8.6. firwin takes a
+      fraction of NYQUIST, so the same written 0.1 means 0.05 fs = 0.1 x Nyquist,
+      half of A1's cutoff. Linear phase, 25-sample group delay.
+  A3  'frequency sampling': a 51-point rectangular magnitude mask inverse-DFT'd
+      WITHOUT an fftshift. The resulting coefficient vector is the periodic sinc
+      wrapped around the buffer, so the filter is not a windowed low-pass at all.
+  A4  Gaussian window, 21 taps, sigma = 3 samples, area-normalised; linear phase,
+      10-sample group delay, but a very soft roll-off.
+
+A1 and A2 therefore do NOT have the same cutoff even though both scripts write 0.1.
+Every metric below is measured relative to each filter's own -3 dB point so that
+the four designs are compared fairly rather than at an arbitrary common frequency.
+
+  6a. Design-domain response, measured at the fitted fs = 1000.0 Hz
+
+        filter                              taps   -3 dB (Hz)  passband ripple  stopband att.  linear phase   group delay
+        A1 windowed-sinc (Hamming, 21 tap)     21        79.6           1.51 dB        51.1 dB           yes     10.00 smp (+/-0.00)
+        A2 Kaiser firwin (51 tap)              51        39.7           1.55 dB        87.2 dB           yes     25.00 smp (+/-0.00)
+        A3 frequency-sampling (51 tap)         51         5.2           1.84 dB        -2.3 dB            NO     19.76 smp (+/-1.23)
+        A4 Gaussian window (21 tap)            21        44.2           1.92 dB        70.5 dB           yes     10.00 smp (+/-0.00)
+
+  6b. Noise suppression measured on the three 60 s idle recordings
+
+        filter                              MIC1     MIC2     MIC3   mean (dB RMS reduction)
+        A1 windowed-sinc (Hamming, 21 tap)      4.03     2.95     1.59       2.85
+        A2 Kaiser firwin (51 tap)               7.10     5.52     3.05       5.22
+        A3 frequency-sampling (51 tap)          3.42     3.75     3.45       3.54
+        A4 Gaussian window (21 tap)             6.32     4.90     2.78       4.67
+
+  6c. Passband fidelity on a real recording (sine_wave_15k_15.csv, an unclipped
+      record whose aliased line at 0.19 Hz sits deep inside every passband)
+
+        filter                              in-band amplitude change (dB)  out-of-band residual (dB)
+        A1 windowed-sinc (Hamming, 21 tap)                      -0.000                      -18.32
+        A2 Kaiser firwin (51 tap)                               -0.000                      -89.81
+        A3 frequency-sampling (51 tap)                          -0.003                       -9.65
+        A4 Gaussian window (21 tap)                             -0.000                      -29.50
+
+6d. The metric that actually decides this: phase.
+A filter applied identically to all three channels contributes a COMMON delay,
+which cancels in every time-difference. What does not cancel is group delay that
+varies with frequency, because it moves different parts of the source spectrum by
+different amounts and smears the cross-correlation peak. Converting the passband
+group-delay variation of each candidate into the corresponding delay error and into
+the azimuth error it would cause on this array (8.66 cm microphone spacing,
+delay budget 252.5 us):
+        Group-delay variation is reported twice: over each filter's OWN passband (fair to
+        the design) and over a COMMON 0 - 100 Hz reference band, which is what a TDOA front end
+        would actually have to pass.
+
+        filter                              gd var, own pb   gd var, 0-100 Hz   at fs=48 kHz   azimuth error @48 kHz
+        A1 windowed-sinc (Hamming, 21 tap)        0.000 smp          0.000 smp        0.000 us                0.00 deg
+        A2 Kaiser firwin (51 tap)                 0.000 smp          0.000 smp        0.000 us                0.00 deg
+        A3 frequency-sampling (51 tap)            2.465 smp        285.249 smp     5942.684 us           unbounded    
+        A4 Gaussian window (21 tap)               0.000 smp          0.000 smp        0.000 us                0.00 deg
+
+RECOMMENDATION.
+  Use A2, the 51-tap Kaiser (beta = 8.6) firwin low-pass, applied identically to
+  all three channels.
+  Reasons, in order of weight:
+    1. It is exactly linear phase (coefficients symmetric to 1e-12), so its
+       25-sample group delay is a constant common to all channels and cancels
+       exactly in every time-difference. Its passband group-delay variation is
+       0.000 samples, i.e. 0.00 deg of azimuth error at 48 kHz -- negligible.
+    2. It has by far the deepest stopband of the four: 87 dB, against
+       51 dB for A1, 70 dB for A4 and -2 dB for A3, and the
+       flattest passband (1.55 dB ripple against 1.51, 1.84 and 1.92 dB).
+    3. It removes the most measured noise from the real idle recordings:
+       5.22 dB, against 2.85, 3.54 and 4.67 dB.
+    4. Its cost on the target is trivial: 51 multiply-accumulates per sample per
+       channel, 153 per three-channel frame, far under 1 % of one ESP32-S3 core
+       at 48 kHz.
+  REJECT A3 outright. Its coefficients are not symmetric, so it is not linear phase:
+  it is the un-shifted inverse DFT of a rectangular mask, which is a coding error
+  rather than a design choice. It has no usable stopband at all (-2.3 dB, i.e.
+  out-of-band energy is not attenuated), a -3 dB point at only 5.2 Hz, and over
+  the 0-100 Hz band a group-delay variation of 285.2 samples, which at 48 kHz is
+  5943 us -- 24 times the array's entire delay budget of
+  252 us, so the azimuth error it induces is unbounded. A non-linear-phase
+  filter in front of a TDOA estimator is the one thing a delay-based system must
+  not do.
+  A1 and A4 are usable and cheaper (21 taps, 10-sample group delay) and both
+  are linear phase, so neither corrupts the delay. They simply roll off too gently:
+  A1 reaches 51 dB and A4 70 dB of stopband attenuation, against A2's 87 dB.
+  Caveat on latency. A2's 25-sample group delay is 25 ms at the rig's
+  1000 Hz rate but only 0.52 ms at the array's 48 kHz design rate. At the
+  low rate, A1 or A4 is the better latency trade; at 48 kHz A2 costs nothing that
+  matters.
+  Caveat on scope. This recommendation is about which of the AUTHOR'S FOUR
+  CANDIDATES to prefer. None of them is a band-pass, and a TDOA front end for a
+  300-3400 Hz source wants a band-pass, not a low-pass; and no low-pass applied
+  after conversion can undo the aliasing documented in section 1. The filter that
+  this hardware actually needs is an ANTI-ALIAS filter ahead of the converter,
+  which is a hardware change, not a software one.
+
+[FIGURE] fig_real_filter_comparison.png
+[CAPTION] The four candidate low-pass filters, re-implemented exactly as written in 'Filter alogrithims test/'
+and evaluated on real data. (a) Magnitude responses at the measured 1 kHz sample rate; the design
+cutoff is dotted. (b) Group delay. A1, A2 and A4 have symmetric coefficients and hence flat group
+delay, so the delay they add is common to all channels and cancels in every time-difference; A3,
+which inverse-transforms a rectangular mask without an fftshift, is not linear phase and would smear
+the cross-correlation peak. (c) Welch spectrum of the measured MIC1 idle recording before and after
+each filter, with the measured RMS reduction in the legend. A2 is recommended: exactly linear phase,
+deepest stopband, flattest passband and the largest measured noise reduction.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_filter_comparison.png
+
+========================================================================================
+7. SIM-VERSUS-REAL: WHAT CAN AND CANNOT BE OVERLAID
+========================================================================================
+
+      simulated curve parsed from benchmark_run.log (last modified 2026-07-27 20:22:39), 5 SNR points
+        SNR (dB)            0        5       10       20       40
+        median (deg)    0.527    0.308    0.212    0.125    0.108
+
+There is NO measured direction-of-arrival result in this repository, so the
+simulated error-versus-SNR, error-versus-RT60 and temporal-accumulation curves
+cannot be overlaid with a measured counterpart. Saying so plainly is the honest
+position; inventing an overlay is what sank the previous submission.
+
+One quantitative bridge does exist and is worth drawing: the measured signal chain
+fixes where on the simulation's SNR axis this hardware actually operates.
+
+DEPENDENCY NOTE. The simulated curve quoted and plotted below is PARSED AT RUN TIME
+from benchmark_run.log, which another track owns and is re-baselining, so it is
+always current and is never hardcoded here. The source file and its modification
+time are printed with the parsed values. Every MEASURED quantity in the table below
+is independent of the simulation.
+
+  measured self-noise RMS                    5.06 LSB
+  largest undistorted peak swing             1256 LSB
+  chain ceiling, peak SNR                    47.9 dB
+  chain ceiling, sine RMS SNR                44.9 dB
+  measured per-recording SNR, unclipped set  median 21.4 dB,
+                                             10th pct 11.1 dB,
+                                             90th pct 32.4 dB
+                                             (n = 94 recordings)
+
+Read against the CURRENT simulation log (benchmark_run.log (last modified 2026-07-27 20:22:39), 5 SNR points), the measured operating
+band from 11 to 45 dB spans the region where the simulated
+per-frame median error falls from 0.20 deg to 0.11 deg. That is a
+statement about where the hardware sits on the simulation's x-axis, NOT a
+measurement of its accuracy.
+
+[FIGURE] fig_real_snr_operating_point.png
+[CAPTION] The only sim-to-real bridge this dataset supports. The curve is the simulated free-field median
+azimuth error of GCC-PHAT against SNR, parsed at run time from benchmark_run.log (last modified
+2026-07-27 20:22:39), 5 SNR points and therefore always current. The shaded band is the electrical
+signal-to-noise ratio actually measured on the hardware: the lower edge is the 10th percentile of
+the unclipped calibration recordings referred to the measured 5.1 LSB self-noise floor, and the
+upper edge is the chain's ceiling set by front-end clipping. The figure locates the hardware on the
+simulation's x-axis; it does NOT report a measured localization accuracy, because no clip in this
+repository permits one.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_snr_operating_point.png
+
+========================================================================================
+8. NEAR-FIELD QUADRANT TABLES  [APPENDIX SCOPE]
+========================================================================================
+
+      quadrant   rows   x range (m)      y range (m)      t range (us)   blank t
+             1   3600     0.05..3.00      0.05..3.00       2.43..145.75        0
+             2   3660     0.05..3.00     -3.00..-0.00      2.43..145.77        0
+             3   3660    -3.00..-0.00     0.05..3.00       0.00..145.75        5
+             4   3721    -3.00..-0.00    -3.00..-0.00      0.00..145.77        5
+
+What is the 't' column? The naive reading -- straight-line propagation time from
+the origin -- is wrong, and demonstrably so:
+
+  at (x, y) = (0.05, 0.05) m the table gives t = 99.82 us,
+  whereas r/c for r = 0.0707 m is 206.15 us.
+  correlation of t with r/c over all 14631 rows: +0.0542  (i.e. none)
+  t is also bounded: max |t| = 145.7726 us, and it saturates at that
+  value far from the origin rather than growing with r.
+
+Hypothesis tested and confirmed: t is the TWO-MICROPHONE TIME DIFFERENCE OF ARRIVAL
+for a near-field source at (x, y), for a pair separated by d on the x-axis and
+centred on the origin:
+
+      t(x, y) = | sqrt((x + d/2)^2 + y^2) - sqrt((x - d/2)^2 + y^2) | / c
+
+  with d = 0.05 m and c = 343 m/s:
+    residual RMS   2.886e-11 s
+    R^2            1.0000000000
+    max residual   2.000e-10 s
+  free fit of (d, c):
+    d = 0.050000000 m,  c = 343.000000 m/s,  residual RMS 2.886e-11 s
+  The residual is 2.9e-11 s, which is exactly the rounding of the ten-decimal
+  text format. The match is not approximate: it is exact.
+
+CONSEQUENCE, and it is important. These four files are a COMPUTED GEOMETRIC LOOKUP
+TABLE, not a measurement. They contain no microphone, no room, no noise and no
+acquisition; every value is reproducible in one line of arithmetic. Nothing derived
+from them may be described as experimental. They remain useful for exactly one
+purpose -- illustrating the geometry of the near-field inverse problem and the
+dilution of precision it implies -- which is why this section is scoped to an
+appendix.
+  The alternative hypothesis 'these are measured propagation delays' is rejected at
+R^2 = 1.000000 against an analytic model with two parameters and 14631 points.
+Note also that the tabulated pair separation, d = 5.00 cm, is the array's
+CIRCUM-RADIUS, whereas the actual microphone spacing on an equilateral triangle of
+that circum-radius is 8.66 cm. The table therefore does not describe the
+built array's geometry either.
+
+Near-field dilution of precision for the actual 3-microphone array.
+For a source at p and microphones at p_m, the two independent delay observables are
+tau_1m = (|p - p_1| - |p - p_m|)/c for m = 2, 3. Linearising, the position covariance
+is (J^T J)^-1 sigma_tau^2, with J the Jacobian of those observables (units s/m). The
+scalar dilution of precision is GDOP = sqrt(trace((J^T J)^-1)), which has units of
+metres per second, so the position error is simply GDOP x sigma_tau. Computed below
+on the same 3 m x 3 m plane as the quadrant tables, for the equilateral array with
+circum-radius 5 cm and microphone spacing 8.66 cm.
+
+        range from array centre    median GDOP (m/s)   position error for sigma_tau = 1 us
+        0.05 - 0.25 m                16747.0638                    0.017 m
+        0.25 - 0.50 m                84440.7760                    0.084 m
+        0.50 - 1.00 m               341508.1503                    0.342 m
+        1.00 - 1.50 m               874625.9317                    0.875 m
+
+A 1 us delay uncertainty -- optimistic even at 48 kHz, and 1000x below one
+sampling interval at the measured 1 kHz rate -- already yields metre-scale
+position error beyond about 0.5 m. Near-field two-dimensional positioning with a
+5 cm array is geometry-limited, not algorithm-limited, and the quadrant tables
+illustrate exactly that.
+
+[FIGURE] fig_real_quadrant_gdop.png
+[CAPTION] Appendix figure. (a) The four 'Quadrant Based Estimations' tables assembled into one field. Colour
+is the tabulated t. The pattern is a two-microphone time-difference-of-arrival surface, not a
+propagation time: it is reproduced exactly, to a residual of 3e-11 s and R-squared of 1.000000, by
+the analytic expression for a 5.0 cm pair centred at the origin with c = 343 m/s, so the files are a
+computed lookup table rather than a measurement. (b) The corresponding dilution of precision for the
+real three-microphone equilateral array of 5 cm circum-radius, computed from the Jacobian of the two
+independent delay observables and expressed directly as the position error that a 1 microsecond
+delay uncertainty would produce. White contours mark the 1 cm, 10 cm and 1 m error levels. Beyond
+about half a metre even a 1 microsecond delay uncertainty gives metre-scale position error, and the
+four radial lobes along the microphone baselines are directions in which the two delay observables
+become degenerate. Near-field two-dimensional positioning on this aperture is limited by geometry,
+not by the estimator.
+
+          written: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs\fig_real_quadrant_gdop.png
+
+========================================================================================
+DONE
+========================================================================================
+elapsed 59.6 s
+log -> C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\realdata_run.log

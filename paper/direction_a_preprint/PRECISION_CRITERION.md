@@ -1,0 +1,15 @@
+# Geometry-only arrival-precision criterion
+
+Let M contain the centered microphone coordinates as rows, B be the pair-incidence matrix, A = BM, and t the vector of microphone arrival times. The unnormalized planar least-squares direction is u = -c A⁺Bt. Perturbing each arrival by e changes it exactly by J e, with J = -c A⁺B. This formulation retains the dependence between pair errors sharing a microphone; three pair errors are not three independent perturbations.
+
+If each |e_i| ≤ h, the possible direction-vector changes form the image of a box. In this two-dimensional problem it is a convex polygon. If ρ = max over box vertices of ||J e|| is smaller than ||u||, that polygon translated by u cannot contain the origin. Its angular extremes occur at vertices. The largest wrapped angular difference of the eight vertices therefore gives an exact worst-case bound for the box. A simpler, looser disk bound is arcsin(ρ/||u||). If the disk condition fails, the implementation returns an uninformative 180° bound rather than using the formula outside its domain.
+
+For a centered equilateral array of circumradius R, J = -(2c/3R²) Mᵀ, so ρ = 4ch/(3R). For a plane wave ||u|| = 1. A sufficient condition for angular perturbation no greater than η is h ≤ (3R/4c) sin(η). At R = 0.05 m and c = 343 m/s, η = 0.5° gives h ≤ 0.9541 microseconds. This is a conservative sufficient bound on each arrival's absolute timing error, not a necessary sampling rate, hardware clock specification, or guarantee for GCC-PHAT. Fractional reconstruction is verified independently; its interpolation error is not assumed to be equivalent to a rounded-arrival box.
+
+For small perturbations, let q be the unit vector perpendicular to u. The first-order angular perturbation is qᵀJe/||u||, in radians, and its worst box magnitude is h||qᵀJ||₁/||u||. Unlike the exact vertex bound, this linear approximation can understate finite angular changes. It is plotted as an approximation and is not used to certify a result.
+
+Finite-distance curvature is already present in u computed from exact spherical arrivals. Bounds compare perturbed versus exact spherical estimates; they do not remove curvature error relative to source azimuth. Triangle coordinates and all units are explicit in the release.
+
+Verification retained 34,560 angle/radius/distance/rate conditions and checked every actual rounded-arrival angular shift against its vertex bound. An additional 12,000 random box perturbations used 600 independently drawn geometries/directions/distances/rates, including non-equilateral arrays and a separate scalar direction solver. No violation occurred. These tests verify the implementation and stated finite cases; the convex-geometry argument provides the bound, rather than a claim that a finite sweep proves universality.
+
+Noise, reflected paths, finite-window spectral leakage and selection of a different GCC peak are outside the criterion's domain. Consequently this is a useful numerical-resolution check for the analytical direction problem, not an additive acoustic error budget.

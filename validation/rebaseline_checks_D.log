@@ -1,0 +1,61 @@
+rebaseline_checks.py  --  audit of the 2026-07-27 PHAT band re-baseline
+  fs 48000 Hz, N 2048, R 5.0 cm, seed 7
+  source band (300.0, 3400.0) Hz, interpolation factor I = 8
+  studies run: ['D']
+
+
+================ D. COMPUTE ================
+  Wall-clock numbers; run this study on an otherwise idle machine.
+
+  D1. Per-stage timing (minimum over interleaved rounds; see
+      doa_benchmark.time_suite for why min-of-interleaved-rounds)
+    SRP shared GCC-PHAT front end       1.231 ms  (spread  1.296 ms)
+    SRP azimuth grid loop (Python)      2.471 ms  (spread  0.732 ms)
+    est_srp_phat (reference)            4.008 ms  (spread  1.721 ms)
+    est_srp_phat_vec                    0.886 ms  (spread  1.587 ms)
+    est_gccphat_ls                      0.940 ms  (spread  1.990 ms)
+    est_proposed                        1.020 ms  (spread  1.713 ms)
+    est_music                           2.927 ms  (spread  3.124 ms)
+    est_gccphat_ls (I=1+parabolic)      0.310 ms  (spread  0.448 ms)
+    grid loop cost per NumPy call    :  1.716 us over 1440 calls
+    front end + grid loop            :    3.701 ms vs whole est_srp_phat    4.008 ms
+    est_proposed                     / GCC-PHAT =  1.084x
+    est_srp_phat (reference)         / GCC-PHAT =  4.262x
+    est_srp_phat_vec                 / GCC-PHAT =  0.943x
+    est_music                        / GCC-PHAT =  3.112x
+    est_gccphat_ls (I=1+parabolic)   / GCC-PHAT =  0.330x
+    vectorised SRP output identical  : True (30.0 vs 30.0 deg)
+
+  D2. Analytical FLOP model, recomputed from math_model.md 7.2-7.5
+    I=8              forward   0.369 | CPSD+PHAT   0.074 | inverse   3.686 ( 87.2 %) | argmax  0.098 | total   4.227 MFLOP
+    I=1 + parabolic  forward   0.369 | CPSD+PHAT   0.074 | inverse   0.369 ( 44.8 %) | argmax  0.012 | total   0.823 MFLOP
+    I=8 -> I=1 + parabolic total speed-up :   5.13x (inverse-transform term alone  10.00x)
+    GCC-PHAT   4.227 | Proposed   4.522 (1.070x) | SRP   4.251 (1.006x) | MUSIC   3.193 (0.755x)
+
+  D3. Measured cost and accuracy price of I=1 + parabolic refinement
+    gcc_phat interp=8, one pair        0.3395 ms  (spread  0.2107 ms)
+    gcc_phat interp=1, one pair        0.1084 ms  (spread  0.0535 ms)
+    tdoa_parabolic, one pair           0.1080 ms  (spread  0.1113 ms)
+    interp=8 -> interp=1                        3.13x cheaper
+    interp=8 -> interp=1 + parabolic refinement  3.14x cheaper
+    whole estimator, I=8             :   0.9404 ms
+    whole estimator, I=1 + parabolic :   0.3100 ms  ( 3.03x cheaper; FLOP model predicts 5.13x)
+    accuracy price (paired, same snapshots, band-limited weight):
+      SNR  10 dB: I=8 RMSE   0.299 +-0.010 deg | I=1+parabolic RMSE   0.268 +-0.008 deg | paired mean penalty  +0.008 +-0.006 deg
+      SNR  20 dB: I=8 RMSE   0.169 +-0.007 deg | I=1+parabolic RMSE   0.103 +-0.004 deg | paired mean penalty  -0.003 +-0.006 deg
+      SNR  40 dB: I=8 RMSE   0.144 +-0.007 deg | I=1+parabolic RMSE   0.042 +-0.003 deg | paired mean penalty  -0.036 +-0.005 deg
+
+    systematic parabolic interpolation bias vs fractional sample offset
+    (M20 warns of up to 0.119 samples for a FULL-BAND whitened sinc peak;
+     with the band-limited weight the main lobe is ~7 samples wide)
+      offset (samples):  -0.50  -0.33  -0.17  +0.00  +0.17  +0.33  +0.50
+      bias, parabolic : -0.001 -0.003 -0.002 +0.000 +0.001 +0.002 -0.000
+      bias, I=8 argmax: +0.000 +0.042 -0.042 +0.000 +0.042 -0.042 +0.000
+      max |bias| parabolic 0.0026 samples = 0.055 us = 0.010 deg
+      max |bias| I=8 argmax 0.0417 samples
+
+  D4. Memory, from math_model.md 7.6 (analytical, not measured)
+    I=8   input   24.0 kB | correlation buffer   128.0 kB (per pair, reusable) | accumulator 8 B
+    I=1   input   24.0 kB | correlation buffer    16.0 kB (per pair, reusable) | accumulator 8 B
+
+Figures written to: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs

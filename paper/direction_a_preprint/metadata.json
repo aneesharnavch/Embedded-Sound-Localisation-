@@ -1,0 +1,34 @@
+{
+  "title": "Separating arrival rounding, source startup, and reverberation in three-microphone azimuth estimation",
+  "authors": [
+    {
+      "name": "Aneesh Arnav Chikkala",
+      "affiliations": []
+    }
+  ],
+  "date": "2026-09-08",
+  "manuscript_version": "1 for author review",
+  "publication_status": "unreviewed preprint draft",
+  "server": null,
+  "abstract": "Purpose. Small-array simulations can mix propagation discretization, source history, and acoustic effects. We quantify these contributions for a fixed three-microphone azimuth estimator. Methods. Independent analytical and image-source references verify a fractional-delay shoebox model. A frozen campaign contains 276,480 GCC-PHAT frame evaluations, paired rounding/startup/reflection controls, and independent records for averaging. Uncertainty resamples whole recordings within fixed scenes. Results. Final numerical refinements change checked estimates by less than 0.026°. At 10 dB direct-referenced SNR, direct-path RMSE increases from 0.923° to 2.300° after arrival rounding. In the high-reverberation subset, first-frame RMSE is 4.16° at source onset versus 42.51° with populated prehistory. Averaging 128 frames reduces held-out RMSE from 1.60° to 0.84° in the low subset and from 39.04° to 10.16° in the high subset. A geometry-only timing bound accounts for shared-microphone dependence. Conclusion. Source history can create a large apparent accuracy benefit; arrival rounding introduces a separate, measurable distortion. Residual errors depend on the chosen acoustic scenes and estimator. These computations establish neither a universal reverberation floor nor hardware performance.",
+  "keywords": [
+    "acoustic localization",
+    "GCC-PHAT",
+    "image-source method",
+    "numerical verification",
+    "source history",
+    "uncertainty"
+  ],
+  "funding": "Self-funded by Aneesh Arnav Chikkala",
+  "conflicts_of_interest": "Pending author confirmation",
+  "public_identifiers": [],
+  "licenses": {
+    "manuscript": null,
+    "data": null,
+    "code": null
+  },
+  "assistance": "Substantive OpenAI Codex assistance in planning, mathematics, implementation, numerical checks, literature synthesis, analysis, deterministic plotting and drafting; final author review and release approval pending.",
+  "scientific_protocol_version": "v2",
+  "scientific_protocol_sha256": "800c62aa3ee71fb962a186255d947775d968a348906a4e6a026c2e6902b1f969",
+  "upload_authorized": false
+}

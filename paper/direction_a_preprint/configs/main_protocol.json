@@ -1,0 +1,202 @@
+{
+  "name": "direction_a_main_v2",
+  "frozen_utc": "2026-09-07T19:38:10.220828+00:00",
+  "question": "How do arrival rounding, omitted source history and specular reflections alter azimuth error in a verified three-microphone simulation, and what persists under averaging?",
+  "core": {
+    "rooms_m": [
+      [
+        6,
+        5,
+        3
+      ],
+      [
+        5,
+        4,
+        2.8
+      ],
+      [
+        8,
+        6,
+        3.2
+      ]
+    ],
+    "placements_fraction": [
+      [
+        0.5,
+        0.5,
+        0.5
+      ],
+      [
+        0.6,
+        0.45,
+        0.5
+      ]
+    ],
+    "nominal_rt60_s": [
+      0.15,
+      0.3,
+      0.6
+    ],
+    "angles_deg": [
+      7.37,
+      37.37,
+      67.37,
+      97.37,
+      127.37,
+      157.37,
+      187.37,
+      217.37,
+      247.37,
+      277.37,
+      307.37,
+      337.37
+    ],
+    "snr_db": [
+      0,
+      10,
+      20
+    ],
+    "records": 5,
+    "frames_per_record": 32,
+    "rows": 103680
+  },
+  "attribution": {
+    "states": "each room: centered at nominal 0.15 s; offset at nominal 0.6 s",
+    "snr_db": 10,
+    "variants": "F/Q fractional/rounded x S/O steady/onset x D/R direct/reflected",
+    "records": 5,
+    "frames_per_record": 32,
+    "reuse": "F_S_R from core, same exact input identity",
+    "additional_rows": 80640
+  },
+  "long": {
+    "states": "same six states and 12 angles",
+    "snr_db": 10,
+    "records": 10,
+    "frames_per_record": 128,
+    "train_records": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "holdout_records": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "seed_namespace": "long_v2",
+    "rows": 92160,
+    "averages_frames": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ]
+  },
+  "total_primary_rows": 276480,
+  "signal": {
+    "fs_hz": 48000,
+    "frame_samples": 2048,
+    "frame_seconds": 0.042666666666666665,
+    "source": "FFT-bandlimited Gaussian source, 300\u20133400 Hz, RMS normalized",
+    "acquisition": "common causal fourth-order Butterworth 300\u20133400 Hz",
+    "noise": "independent Gaussian microphone noise through same acquisition filter; scaled to direct-only band power",
+    "snr_reference": "steady direct component, common across eight paired variants",
+    "prefix_samples": 59682,
+    "main_seed_namespace": "main_v2",
+    "pilot_seed_namespace": "pilot_v2"
+  },
+  "numerics": {
+    "image_extent": 76,
+    "path_duration_s": 1.2,
+    "oversample": 32,
+    "half_width": 32,
+    "gcc_interpolation": 8,
+    "angle_tolerance_deg": 0.05,
+    "minimum_interpreted_effect_deg": 0.5,
+    "pilot_refinements": {
+      "propagation64": {
+        "max_difference_deg": 0.0019396243328344553,
+        "frames_above_tolerance": 0
+      },
+      "extent84": {
+        "max_difference_deg": 0.0,
+        "frames_above_tolerance": 0
+      },
+      "correlation16": {
+        "max_difference_deg": 0.016775179871615364,
+        "frames_above_tolerance": 0
+      }
+    }
+  },
+  "analysis": {
+    "failure_threshold_abs_deg": 5,
+    "failure_threshold_status": "descriptive engineering threshold; not calibrated perceptual threshold",
+    "uncertainty": "2000 stratified whole-record bootstrap draws within each fixed scene; paired variants resampled together",
+    "room_inference": "three fixed geometries, no population-of-rooms confidence statement",
+    "attribution": "signed-error and squared-error paired contrasts and interactions; do not subtract RMSE",
+    "averaging": "circular mean; compare independent held-out records with stationary covariance prediction only for concentrated training errors; retain all scenes empirically",
+    "small_error_prediction_rule": "training circular resultant >=0.95 and training mean angle error <=15 deg in absolute value",
+    "covariance": "pooled record-centered autocovariance up to lag32, Bartlett-tapered with positive-part variance safeguard; compare IID approximation; predictions reported as models not confidence intervals"
+  },
+  "sensitivity": {
+    "states": "six-state subset",
+    "angle_indices": [
+      0,
+      3,
+      6,
+      9
+    ],
+    "records": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "frames": 32,
+    "snr_db": 10,
+    "variations": {
+      "rotation_deg": 17,
+      "non_equilateral": "first microphone y scaled by 0.65 then recentered",
+      "wall_absorption_multipliers": [
+        0.5,
+        1.5,
+        1,
+        1,
+        1,
+        1
+      ],
+      "source_band_hz": [
+        300,
+        1700
+      ]
+    },
+    "method_baseline": "SRP-PHAT, same preprocessing/band/regularization, 0.25 degree search and quadratic refinement, checked against 0.05 degree search",
+    "numerical_audit": "P64/K84/GCC16 on same fixed baseline subset; plus joint K76/T1.2/P32 vs K96/T1.5/P32 on six high-setting controls"
+  },
+  "minimum_wall_clearance_m": 0.31239230450918587,
+  "code_hashes": {
+    "common.py": "be4316a050f643bf23a280aaaf72a73a95fad25e95fe5be7557b261ebae4ea7a",
+    "estimator.py": "d266426ed1cdfa3811ea9da6dd8042e6d68c0b6836573504034e54f0b7ed1633",
+    "room.py": "e45f3243f8e62d2cc10ec4f802d1bd9a6dba86ad3dc22b5fb970ecb958208714",
+    "recording.py": "263f38acd689b30f72700eb60179cbcceed6351bff95f1300214c4b1dc10d51c",
+    "protocol.py": "664420010b38df1794f74e8f0ae425550da69f7cbc62af3a157cdf4d7b55562c",
+    "campaign.py": "8d026ea31beeb95f21d14cfdb426b8183c4585f70802d2d40f2fcaa72672733b"
+  },
+  "amendment": {
+    "supersedes_protocol_hash": "367d41d15d4ac2f95cdce332f67ffea689cb4b2132367d7651a2704754fdb21a",
+    "reason": "Post-campaign joint duration/image refinement exceeded 0.05 degree target in 10 of 960 frames (maximum 0.16551 degrees). Initial run preserved. Longer response, complete radial support and finer fractional grid verified before revised campaign.",
+    "changes_to_scientific_matrix": "None: geometry, SNR, counts, contrasts, concentration rule and uncertainty remain fixed.",
+    "new_inputs": "New v2 random namespaces and enough source history for 1.2-second responses."
+  },
+  "protocol_hash": "800c62aa3ee71fb962a186255d947775d968a348906a4e6a026c2e6902b1f969"
+}

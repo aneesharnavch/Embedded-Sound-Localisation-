@@ -1,0 +1,176 @@
+{
+  "completed": {
+    "A01": {
+      "completed_utc": "2026-09-07T18:14:46.754458+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/baseline/manifest.json",
+        "paper/direction_a_preprint/baseline/pre_execution_2026-09-07.tar.gz"
+      ],
+      "verification": "Archived 1,102 pre-existing files. Streamed every archived member and matched its SHA-256 to the original; archive SHA-256 recorded. Original research files remain intact."
+    },
+    "A03": {
+      "completed_utc": "2026-09-07T18:14:46.870956+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/RESULT_SCHEMA.md",
+        "paper/direction_a_preprint/AUTHOR_AND_PROVENANCE.md",
+        "paper/direction_a_preprint/environment/runtime.json"
+      ],
+      "verification": "Output schema and provenance register created. Numerically verified identity-derived streams reproduce after unrelated calls and use separate source/noise identities. Author facts recorded from the user; conflicts and release approval remain pending."
+    },
+    "A02": {
+      "completed_utc": "2026-09-07T18:18:40.120676+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/environment/runtime.json",
+        "paper/direction_a_preprint/environment/requirements-lock.txt",
+        "paper/direction_a_preprint/environment/toolchain_smoke.pdf"
+      ],
+      "verification": "Isolated Python 3.12.14 environment installed and recorded; numerical convolution and RNG smoke checks passed. Official Tectonic 0.17.0 downloaded with source URL and archive hash, and a text/equation LaTeX document compiled to PDF."
+    },
+    "A05": {
+      "completed_utc": "2026-09-07T18:20:34.360971+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/ESTIMATOR_SPECIFICATION.md",
+        "paper/direction_a_preprint/configs/estimator_v1.json",
+        "validation/direction_a/estimator.py"
+      ],
+      "verification": "Exact band-limited bounded GCC-PHAT specification matches the new implementation, with explicit preprocessing, regularization, quadratic interpolation and delay sign."
+    },
+    "A06": {
+      "completed_utc": "2026-09-07T18:20:34.362612+00:00",
+      "artifacts": [
+        "validation/direction_a/reference.py",
+        "paper/direction_a_preprint/environment/direct_tests.log",
+        "paper/direction_a_preprint/results/direct/verification_summary.json"
+      ],
+      "verification": "Independent standard-library plane/spherical controls agree with the production solve; cardinal and all six channel permutations pass. Maximum reference discrepancy 7.25e-12 degrees."
+    },
+    "A07": {
+      "completed_utc": "2026-09-07T18:20:34.364828+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/direct/analytic_trials.csv",
+        "paper/direction_a_preprint/results/direct/analytic_summary.csv",
+        "paper/direction_a_preprint/results/direct/audit_reproduction.json"
+      ],
+      "verification": "Saved 34,560 analytical angle/rate/radius/distance conditions. All earlier diagnostic scalars reproduced to within 2.85e-14 degrees."
+    },
+    "A08": {
+      "completed_utc": "2026-09-07T18:20:34.366687+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/direct/waveform_trials.csv",
+        "paper/direction_a_preprint/results/direct/interpolation_trials.csv",
+        "paper/direction_a_preprint/environment/direct_tests.log"
+      ],
+      "verification": "288 FIR/oracle cases and interpolation refinement checks passed. Analysis time and physical bandwidth matched across sampling rates. Maximum kernel-32 discrepancy 3.65e-5 degrees; maximum interpolation-8 versus 64 discrepancy 0.000495 degrees."
+    },
+    "A09": {
+      "completed_utc": "2026-09-07T18:20:34.367956+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/DIRECT_PATH_REPORT.md",
+        "paper/direction_a_preprint/results/direct/verification_summary.json",
+        "paper/direction_a_preprint/figures/direct_verification.svg"
+      ],
+      "verification": "G1 passed: numerical tolerances, independent reference, physical/sign/permutation tests, historical reproduction and declared limitations. Report and plots inspected; this is direct-path verification, not room or hardware validation."
+    },
+    "A04": {
+      "completed_utc": "2026-09-07T18:54:46.931583+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/literature/CLAIM_AND_SOURCE_AUDIT.md",
+        "paper/direction_a_preprint/literature/verified_metadata.json"
+      ],
+      "verification": "Focused nearest-work and exclusions audit completed with explicit reading levels. Foundational publisher metadata/abstracts and prior Acta full-text notes support only their stated claims; no first-of-its-kind claim is asserted."
+    },
+    "A10": {
+      "completed_utc": "2026-09-07T18:54:46.935152+00:00",
+      "artifacts": [
+        "validation/direction_a/room.py",
+        "paper/direction_a_preprint/results/room/verification_summary.json"
+      ],
+      "verification": "Explicit image geometry, wall counts, direct arrivals/amplitudes, fractional construction and reflection switch validated against direct and independent-room checks."
+    },
+    "A11": {
+      "completed_utc": "2026-09-07T18:54:46.936752+00:00",
+      "artifacts": [
+        "validation/direction_a/recording.py",
+        "validation/direction_a/pilot.py",
+        "paper/direction_a_preprint/results/pilot/frame_trials.csv"
+      ],
+      "verification": "Matched steady, one-time onset and legacy per-frame resets executed. Common source/noise samples and direct-band SNR checked by room tests; source prehistory is explicit."
+    },
+    "A12": {
+      "completed_utc": "2026-09-07T18:54:46.939407+00:00",
+      "artifacts": [
+        "validation/direction_a/reference_room.py",
+        "paper/direction_a_preprint/results/room/verification_summary.json"
+      ],
+      "verification": "Independent tile enumeration agrees on path counts and exact-phase frequency response. Full-extent reference discrepancy 3.195e-5 relative spectral and 0.00181 degrees angular."
+    },
+    "A13": {
+      "completed_utc": "2026-09-07T18:54:46.943898+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/room/refinement_trials.csv",
+        "paper/direction_a_preprint/results/pilot/summary.json"
+      ],
+      "verification": "Image extent, path duration and fractional interpolation refined. Realized decay and fit quality, direct/reflection energies with cross term and six first-order reflection descriptors saved."
+    },
+    "A14": {
+      "completed_utc": "2026-09-07T18:54:46.946660+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/ROOM_VERIFICATION_REPORT.md",
+        "paper/direction_a_preprint/NUMERICAL_NOTES.md"
+      ],
+      "verification": "G2 passed independent numerical checks and continuous-history diagnostics. Coarse-grid failure and initial insufficient extent are retained; verification is limited to the stated ideal model."
+    },
+    "A15": {
+      "completed_utc": "2026-09-07T18:54:46.949629+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/PILOT_AND_PROTOCOL_REPORT.md",
+        "paper/direction_a_preprint/results/pilot/summary.json"
+      ],
+      "verification": "12-condition pilot completed in 135.9 seconds using 459.5 MiB peak memory. Largest stochastic numerical change 0.0293 degrees, no checked frames exceed 0.05 degrees. Exploratory source-history effects motivate the frozen study."
+    },
+    "A16": {
+      "completed_utc": "2026-09-07T18:54:46.952720+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/configs/main_protocol.json",
+        "paper/direction_a_preprint/PILOT_AND_PROTOCOL_REPORT.md"
+      ],
+      "verification": "All 276,480 primary evaluations retained and protocol hashed before main data generation. Source/noise pairing, 72-scene train/holdout split, uncertainty rules, sensitivity subset and wall clearance recorded."
+    },
+    "A17": {
+      "completed_utc": "2026-09-07T19:08:54.180967+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/main/run_summary.json"
+      ],
+      "verification": "Core corrected study completed: 216 physical scenes, three SNRs, five records and 32 frames, 103,680 evaluations. Atomic scene results and input hashes retained."
+    },
+    "A18": {
+      "completed_utc": "2026-09-07T19:08:54.185194+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/main/run_summary.json"
+      ],
+      "verification": "Paired eight-condition study completed on 72 scenes, with exactly reused corrected core inputs and 80,640 additional frame estimates."
+    },
+    "A19": {
+      "completed_utc": "2026-09-07T19:08:54.190979+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/main/run_summary.json"
+      ],
+      "verification": "Independent long-record study completed: 72 scenes, ten 128-frame records split five training/five held out, 92,160 evaluations."
+    },
+    "A20": {
+      "completed_utc": "2026-09-07T19:08:54.194266+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/sensitivity/run_summary.json"
+      ],
+      "verification": "Four predeclared variations and matched SRP baseline completed on 24 scenes, five records each. 38,400 retained estimates including refinement checks; propagation max 0.02048 degrees, image max 0.00424, GCC max 0.01399, SRP-grid max 0.00305; no tested frame above 0.05 degrees."
+    },
+    "A25": {
+      "completed_utc": "2026-09-07T19:08:54.269517+00:00",
+      "artifacts": [
+        "paper/direction_a_preprint/results/precision/verification_summary.json"
+      ],
+      "verification": "Geometry-only vertex/disk precision criterion derived with shared-microphone dependence. All 34,560 rounded-arrival cases and 12,000 independent random perturbations satisfy the exact vertex bound. Domain and non-guarantees documented."
+    }
+  },
+  "active_stage": "G4"
+}

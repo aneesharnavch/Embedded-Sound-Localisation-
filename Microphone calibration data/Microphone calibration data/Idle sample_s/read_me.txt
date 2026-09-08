@@ -1,0 +1,1 @@
+This specific folder contains two sub folder ,  one of them contains the audio recording in an mp3 format of idle/white noise and the other contains the interpretations of our microphone in terms of magnitude and phase shift , each file is approximately one minute with data being captured once every milli second for the data collection part

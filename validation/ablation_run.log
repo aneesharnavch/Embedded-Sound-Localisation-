@@ -1,0 +1,275 @@
+ablation.py  --  RE-BASELINED ablation, scaling and accumulation study
+  PHAT weighting band : (300.0, 3400.0) Hz
+  seed 7; reseed tags: 30 ablation, 31 isotropy, 32 aperture,
+  33 snapshot, 34 free-field accumulation, 35/36/37 reverberant accumulation
+
+Ablation vs reverberation (image-source room model)...
+  RT60 0.05s done (540 frames per variant)
+  RT60 0.15s done (540 frames per variant)
+  RT60 0.30s done (540 frames per variant)
+  RT60 0.45s done (540 frames per variant)
+  RT60 0.60s done (540 frames per variant)
+  RT60 0.80s done (540 frames per variant)
+
+Isotropy of the azimuth variance (M39)...
+
+Resource scaling: aperture...
+  aperture R=2 cm done
+  aperture R=3 cm done
+  aperture R=5 cm done
+  aperture R=8 cm done
+  aperture R=12 cm done
+Resource scaling: snapshot length...
+  snapshot N=256 (5 ms) done
+  snapshot N=512 (11 ms) done
+  snapshot N=1024 (21 ms) done
+  snapshot N=2048 (43 ms) done
+  snapshot N=4096 (85 ms) done
+
+Temporal accumulation, free field (T up to 128, 30 records per azimuth)...
+    theta -150.45 deg: b = -0.004 deg, sigma_1 =  0.308 deg
+    theta -120.36 deg: b = +0.003 deg, sigma_1 =  0.305 deg
+    theta  -90.27 deg: b = +0.007 deg, sigma_1 =  0.314 deg
+    theta  -60.18 deg: b = -0.000 deg, sigma_1 =  0.310 deg
+    theta  -30.09 deg: b = +0.005 deg, sigma_1 =  0.300 deg
+    theta    0.00 deg: b = +0.003 deg, sigma_1 =  0.318 deg
+    theta   30.09 deg: b = +0.003 deg, sigma_1 =  0.302 deg
+    theta   60.18 deg: b = +0.005 deg, sigma_1 =  0.305 deg
+    theta   90.27 deg: b = -0.000 deg, sigma_1 =  0.315 deg
+    theta  120.36 deg: b = -0.002 deg, sigma_1 =  0.304 deg
+    theta  150.45 deg: b = -0.003 deg, sigma_1 =  0.304 deg
+
+Temporal accumulation, RT60 = 0.15 s...
+    theta -120.43 deg: b = +0.678 deg, sigma_1 =  0.565 deg
+    theta  -80.29 deg: b = +0.157 deg, sigma_1 =  0.473 deg
+    theta  -40.14 deg: b = +0.121 deg, sigma_1 =  0.560 deg
+    theta    0.00 deg: b = -0.050 deg, sigma_1 =  0.514 deg
+    theta   40.14 deg: b = +3.774 deg, sigma_1 =  0.501 deg
+    theta   80.29 deg: b = +0.465 deg, sigma_1 =  0.540 deg
+    theta  120.43 deg: b = -0.629 deg, sigma_1 =  0.523 deg
+
+Temporal accumulation, RT60 = 0.3 s...
+    theta -120.43 deg: b = +2.052 deg, sigma_1 =  1.333 deg
+    theta  -80.29 deg: b = +0.167 deg, sigma_1 =  1.144 deg
+    theta  -40.14 deg: b = -1.623 deg, sigma_1 =  1.401 deg
+    theta    0.00 deg: b = +0.405 deg, sigma_1 =  1.222 deg
+    theta   40.14 deg: b = +3.997 deg, sigma_1 =  1.257 deg
+    theta   80.29 deg: b = +2.068 deg, sigma_1 =  1.265 deg
+    theta  120.43 deg: b = -0.177 deg, sigma_1 =  1.280 deg
+
+Temporal accumulation, RT60 = 0.6 s...
+    theta -120.43 deg: b = +2.806 deg, sigma_1 =  1.951 deg
+    theta  -80.29 deg: b = +0.174 deg, sigma_1 =  1.630 deg
+    theta  -40.14 deg: b = -3.199 deg, sigma_1 =  2.051 deg
+    theta    0.00 deg: b = +0.635 deg, sigma_1 =  1.831 deg
+    theta   40.14 deg: b = +4.347 deg, sigma_1 =  1.920 deg
+    theta   80.29 deg: b = +2.763 deg, sigma_1 =  1.832 deg
+    theta  120.43 deg: b = +0.769 deg, sigma_1 =  2.014 deg
+
+
+==== 1. ABLATION: gate and weighting vs RT60 @ 10 dB SNR ====
+     n = 540 frames per (variant, RT60) cell; variants share every snapshot (paired)
+  Proposed (gate+weight)   RT60 0.05 s: median  0.775 +-0.236  p90   4.784 +- 0.077  RMSE   3.057 +- 0.074  (n=540)
+  Proposed (gate+weight)   RT60 0.15 s: median  1.157 +-0.224  p90   4.718 +- 0.046  RMSE   3.007 +- 0.072  (n=540)
+  Proposed (gate+weight)   RT60 0.30 s: median  2.522 +-0.097  p90   5.849 +- 0.221  RMSE   3.507 +- 0.104  (n=540)
+  Proposed (gate+weight)   RT60 0.45 s: median  2.703 +-0.077  p90   6.785 +- 0.260  RMSE   3.996 +- 0.123  (n=540)
+  Proposed (gate+weight)   RT60 0.60 s: median  2.691 +-0.097  p90   7.249 +- 0.321  RMSE   4.271 +- 0.127  (n=540)
+  Proposed (gate+weight)   RT60 0.80 s: median  3.007 +-0.117  p90   7.634 +- 0.292  RMSE   4.568 +- 0.137  (n=540)
+  Weight only (no gate)    RT60 0.05 s: median  0.775 +-0.126  p90   4.784 +- 0.078  RMSE   3.056 +- 0.074  (n=540)
+  Weight only (no gate)    RT60 0.15 s: median  1.165 +-0.236  p90   4.735 +- 0.062  RMSE   3.015 +- 0.073  (n=540)
+  Weight only (no gate)    RT60 0.30 s: median  2.518 +-0.099  p90   5.942 +- 0.205  RMSE   3.524 +- 0.105  (n=540)
+  Weight only (no gate)    RT60 0.45 s: median  2.695 +-0.080  p90   6.785 +- 0.244  RMSE   4.005 +- 0.122  (n=540)
+  Weight only (no gate)    RT60 0.60 s: median  2.700 +-0.096  p90   7.374 +- 0.318  RMSE   4.284 +- 0.127  (n=540)
+  Weight only (no gate)    RT60 0.80 s: median  3.024 +-0.120  p90   7.718 +- 0.281  RMSE   4.592 +- 0.137  (n=540)
+  Gate only (no weight)    RT60 0.05 s: median  0.785 +-0.182  p90   4.778 +- 0.082  RMSE   3.057 +- 0.074  (n=540)
+  Gate only (no weight)    RT60 0.15 s: median  1.148 +-0.229  p90   4.727 +- 0.058  RMSE   3.032 +- 0.073  (n=540)
+  Gate only (no weight)    RT60 0.30 s: median  2.610 +-0.132  p90   6.111 +- 0.203  RMSE   3.587 +- 0.104  (n=540)
+  Gate only (no weight)    RT60 0.45 s: median  2.767 +-0.063  p90   6.769 +- 0.278  RMSE   4.059 +- 0.123  (n=540)
+  Gate only (no weight)    RT60 0.60 s: median  2.802 +-0.110  p90   7.448 +- 0.294  RMSE   4.334 +- 0.126  (n=540)
+  Gate only (no weight)    RT60 0.80 s: median  3.209 +-0.137  p90   7.669 +- 0.267  RMSE   4.612 +- 0.135  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.05 s: median  0.785 +-0.181  p90   4.778 +- 0.082  RMSE   3.057 +- 0.074  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.15 s: median  1.148 +-0.227  p90   4.783 +- 0.085  RMSE   3.047 +- 0.073  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.30 s: median  2.590 +-0.139  p90   6.188 +- 0.183  RMSE   3.619 +- 0.106  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.45 s: median  2.793 +-0.067  p90   6.769 +- 0.287  RMSE   4.072 +- 0.123  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.60 s: median  2.811 +-0.119  p90   7.525 +- 0.291  RMSE   4.352 +- 0.126  (n=540)
+  Neither (= GCC-PHAT)     RT60 0.80 s: median  3.222 +-0.131  p90   7.718 +- 0.273  RMSE   4.631 +- 0.135  (n=540)
+
+  -- PAIRED difference vs 'Neither (= GCC-PHAT)', mean d|error| in deg --
+     a difference is real only if |mean| exceeds ~2 standard errors
+  Proposed (gate+weight)   RT60 0.05 s: -0.0001 +-0.0006 deg (-0.11 sigma, n=540)
+  Proposed (gate+weight)   RT60 0.15 s: -0.0245 +-0.0037 deg (-6.69 sigma, n=540)   <-- significant
+  Proposed (gate+weight)   RT60 0.30 s: -0.0878 +-0.0135 deg (-6.49 sigma, n=540)   <-- significant
+  Proposed (gate+weight)   RT60 0.45 s: -0.0721 +-0.0145 deg (-4.97 sigma, n=540)   <-- significant
+  Proposed (gate+weight)   RT60 0.60 s: -0.0862 +-0.0167 deg (-5.16 sigma, n=540)   <-- significant
+  Proposed (gate+weight)   RT60 0.80 s: -0.0672 +-0.0183 deg (-3.67 sigma, n=540)   <-- significant
+  Weight only (no gate)    RT60 0.05 s: -0.0004 +-0.0005 deg (-0.75 sigma, n=540)
+  Weight only (no gate)    RT60 0.15 s: -0.0180 +-0.0032 deg (-5.61 sigma, n=540)   <-- significant
+  Weight only (no gate)    RT60 0.30 s: -0.0802 +-0.0107 deg (-7.47 sigma, n=540)   <-- significant
+  Weight only (no gate)    RT60 0.45 s: -0.0575 +-0.0137 deg (-4.19 sigma, n=540)   <-- significant
+  Weight only (no gate)    RT60 0.60 s: -0.0710 +-0.0154 deg (-4.60 sigma, n=540)   <-- significant
+  Weight only (no gate)    RT60 0.80 s: -0.0437 +-0.0179 deg (-2.44 sigma, n=540)   <-- significant
+  Gate only (no weight)    RT60 0.05 s: +0.0004 +-0.0004 deg (+1.00 sigma, n=540)
+  Gate only (no weight)    RT60 0.15 s: -0.0093 +-0.0024 deg (-3.86 sigma, n=540)   <-- significant
+  Gate only (no weight)    RT60 0.30 s: -0.0150 +-0.0093 deg (-1.62 sigma, n=540)
+  Gate only (no weight)    RT60 0.45 s: -0.0167 +-0.0062 deg (-2.70 sigma, n=540)   <-- significant
+  Gate only (no weight)    RT60 0.60 s: -0.0203 +-0.0088 deg (-2.30 sigma, n=540)   <-- significant
+  Gate only (no weight)    RT60 0.80 s: -0.0179 +-0.0071 deg (-2.51 sigma, n=540)   <-- significant
+
+
+==== 1b. ISOTROPY of the azimuth error (M39) ====
+     robust s.d. of the signed azimuth error, per azimuth, 400 trials each
+     azimuth (deg):   -180   -165   -150   -135   -120   -105    -90    -75    -60    -45    -30    -15      0     15     30     45     60     75     90    105    120    135    150    165
+     dotted 'predicted' rows are (M36): sqrt(e_th^T (A^T A)^-1 e_th),
+     normalised to its own mean, i.e. the SHAPE the theory demands.
+  uniform weights (3 pairs)   0.310  0.305  0.313  0.321  0.290  0.339  0.331  0.332  0.293  0.317  0.302  0.323  0.263  0.324  0.344  0.329  0.312  0.307  0.341  0.279  0.302  0.341  0.303  0.321
+    (standard error)          0.018  0.018  0.018  0.019  0.017  0.020  0.019  0.019  0.017  0.018  0.018  0.019  0.015  0.019  0.020  0.019  0.018  0.018  0.020  0.016  0.018  0.020  0.018  0.019
+    normalised measured       0.986  0.970  0.997  1.020  0.924  1.080  1.052  1.057  0.933  1.007  0.961  1.028  0.836  1.030  1.095  1.046  0.993  0.978  1.085  0.889  0.961  1.084  0.964  1.021
+    normalised predicted      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+    -> mean s.d.              0.314 deg (measured 1.000x the 3-pair uniform case; (M36) with Cov = sigma_tau^2 I predicts 1.000x)
+    -> CV over azimuth        6.46 %   chi2/dof against FLAT   1.37   chi2/dof against (M36)   1.31
+  PSR weights (3 pairs)       0.309  0.304  0.313  0.319  0.294  0.336  0.331  0.332  0.290  0.316  0.302  0.328  0.260  0.326  0.348  0.332  0.318  0.308  0.343  0.280  0.306  0.344  0.304  0.314
+    (standard error)          0.018  0.018  0.018  0.019  0.017  0.020  0.019  0.019  0.017  0.018  0.018  0.019  0.015  0.019  0.020  0.019  0.019  0.018  0.020  0.016  0.018  0.020  0.018  0.018
+    normalised measured       0.981  0.966  0.994  1.014  0.935  1.067  1.050  1.056  0.920  1.002  0.959  1.042  0.827  1.034  1.105  1.055  1.009  0.977  1.089  0.890  0.973  1.091  0.965  0.999
+    normalised predicted      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+    -> mean s.d.              0.315 deg (measured 1.002x the 3-pair uniform case; (M36) with Cov = sigma_tau^2 I predicts 1.000x)
+    -> CV over azimuth        6.65 %   chi2/dof against FLAT   1.47   chi2/dof against (M36)   1.41
+  drop pair 1-2 (2 pairs)     0.370  0.367  0.342  0.335  0.290  0.349  0.387  0.371  0.339  0.338  0.410  0.406  0.314  0.364  0.368  0.341  0.312  0.320  0.387  0.347  0.323  0.391  0.372  0.394
+    (standard error)          0.022  0.021  0.020  0.020  0.017  0.020  0.023  0.022  0.020  0.020  0.024  0.024  0.018  0.021  0.021  0.020  0.018  0.019  0.023  0.020  0.019  0.023  0.022  0.023
+    normalised measured       1.039  1.033  0.962  0.941  0.816  0.982  1.088  1.042  0.953  0.950  1.152  1.141  0.883  1.022  1.035  0.958  0.878  0.901  1.089  0.976  0.907  1.099  1.046  1.107
+    normalised predicted      1.137  1.017  0.881  0.766  0.719  0.766  0.881  1.017  1.137  1.217  1.245  1.217  1.137  1.017  0.881  0.766  0.719  0.766  0.881  1.017  1.137  1.217  1.245  1.217
+    -> mean s.d.              0.356 deg (measured 1.131x the 3-pair uniform case; (M36) with Cov = sigma_tau^2 I predicts 1.391x)
+    -> CV over azimuth        8.88 %   chi2/dof against FLAT   2.49   chi2/dof against (M36)   7.83
+  drop pair 1-3 (2 pairs)     0.374  0.353  0.363  0.388  0.318  0.411  0.387  0.340  0.297  0.329  0.336  0.409  0.320  0.384  0.407  0.379  0.355  0.327  0.387  0.308  0.302  0.358  0.342  0.375
+    (standard error)          0.022  0.021  0.021  0.023  0.019  0.024  0.023  0.020  0.017  0.019  0.020  0.024  0.019  0.022  0.024  0.022  0.021  0.019  0.023  0.018  0.018  0.021  0.020  0.022
+    normalised measured       1.050  0.991  1.019  1.091  0.892  1.155  1.086  0.955  0.832  0.924  0.945  1.148  0.898  1.077  1.144  1.064  0.996  0.918  1.087  0.864  0.848  1.004  0.961  1.053
+    normalised predicted      1.137  1.217  1.245  1.217  1.137  1.017  0.881  0.766  0.719  0.766  0.881  1.017  1.137  1.217  1.245  1.217  1.137  1.017  0.881  0.766  0.719  0.766  0.881  1.017
+    -> mean s.d.              0.356 deg (measured 1.133x the 3-pair uniform case; (M36) with Cov = sigma_tau^2 I predicts 1.391x)
+    -> CV over azimuth        9.70 %   chi2/dof against FLAT   2.96   chi2/dof against (M36)   7.80
+
+
+==== 2a. APERTURE SCALING (free field, 10 dB SNR, 660 frames per point) ====
+  R =   2.0 cm: median  0.459 +-0.017  p90   1.323 +- 0.033  RMSE   0.785 +- 0.022  (n=660)
+  R =   3.0 cm: median  0.338 +-0.017  p90   0.872 +- 0.037  RMSE   0.516 +- 0.014  (n=660)
+  R =   5.0 cm: median  0.203 +-0.010  p90   0.516 +- 0.017  RMSE   0.317 +- 0.009  (n=660)
+  R =   8.0 cm: median  0.126 +-0.007  p90   0.311 +- 0.011  RMSE   0.190 +- 0.005  (n=660)
+  R =  12.0 cm: median  0.087 +-0.004  p90   0.208 +- 0.006  RMSE   0.128 +- 0.004  (n=660)
+  log-log slope of median vs R : -0.946 +-0.032  (M40 predicts -1)
+  R x median (cm deg): 0.92  1.01  1.01  1.01  1.04
+
+==== 2b. SNAPSHOT SCALING (free field, 10 dB SNR, 660 frames per point) ====
+  N =   256 (  5.3 ms): median  0.554 +-0.026  p90   1.363 +- 0.060  RMSE   0.818 +- 0.024  (n=660)
+  N =   512 ( 10.7 ms): median  0.390 +-0.014  p90   0.932 +- 0.037  RMSE   0.577 +- 0.017  (n=660)
+  N =  1024 ( 21.3 ms): median  0.273 +-0.011  p90   0.681 +- 0.028  RMSE   0.403 +- 0.011  (n=660)
+  N =  2048 ( 42.7 ms): median  0.219 +-0.010  p90   0.514 +- 0.019  RMSE   0.317 +- 0.009  (n=660)
+  N =  4096 ( 85.3 ms): median  0.149 +-0.006  p90   0.358 +- 0.009  RMSE   0.220 +- 0.006  (n=660)
+  log-log slope of median vs N : -0.461 +-0.020  (CRB predicts -0.5; pre-re-baseline log gave -0.208)
+
+
+==== 3. TEMPORAL ACCUMULATION ====
+     free field: 11 azimuths x 30 records x 128 frames
+     reverberant: 7 azimuths x 30 records x 128 frames
+     blocks at T are disjoint sub-sequences of each record, so n falls as 1/T
+
+  free field
+     T:              1        2        4        8       16       32       64      128
+     weighted RMSE:    0.308    0.218    0.153    0.109    0.076    0.054    0.038    0.027
+       +- s.e.  :    0.001    0.001    0.001    0.001    0.001    0.001    0.001    0.001
+     plain    RMSE:    0.308    0.218    0.153    0.108    0.076    0.054    0.038    0.027
+       +- s.e.  :    0.001    0.001    0.001    0.001    0.001    0.001    0.001    0.001
+     n blocks :    42240    21120    10560     5280     2640     1320      660      330
+     weighted - plain, paired mean |error| difference (deg):
+       T=   1:  +0.0000 +- 0.0000 deg ( +3.91 sigma, n=42240) <-- significant
+       T=   2:  +0.0004 +- 0.0001 deg ( +4.62 sigma, n=21120) <-- significant
+       T=   4:  +0.0002 +- 0.0001 deg ( +1.62 sigma, n=10560)
+       T=   8:  +0.0001 +- 0.0001 deg ( +0.65 sigma, n=5280)
+       T=  16:  +0.0003 +- 0.0001 deg ( +2.06 sigma, n=2640) <-- significant
+       T=  32:  +0.0001 +- 0.0001 deg ( +0.68 sigma, n=1320)
+       T=  64:  +0.0001 +- 0.0001 deg ( +0.68 sigma, n=660)
+       T= 128:  -0.0001 +- 0.0001 deg ( -0.46 sigma, n=330)
+
+  RT60 0.15 s
+     T:              1        2        4        8       16       32       64      128
+     weighted RMSE:    1.572    1.527    1.503    1.492    1.486    1.483    1.482    1.481
+       +- s.e.  :    0.010    0.014    0.020    0.029    0.040    0.057    0.081    0.115
+     plain    RMSE:    1.572    1.527    1.504    1.492    1.487    1.484    1.482    1.482
+       +- s.e.  :    0.010    0.014    0.020    0.029    0.041    0.057    0.081    0.115
+     n blocks :    26880    13440     6720     3360     1680      840      420      210
+     weighted - plain, paired mean |error| difference (deg):
+       T=   1:  +0.0000 +- 0.0000 deg ( +0.58 sigma, n=26880)
+       T=   2:  +0.0014 +- 0.0003 deg ( +4.60 sigma, n=13440) <-- significant
+       T=   4:  +0.0016 +- 0.0004 deg ( +4.22 sigma, n=6720) <-- significant
+       T=   8:  +0.0019 +- 0.0004 deg ( +4.68 sigma, n=3360) <-- significant
+       T=  16:  +0.0021 +- 0.0004 deg ( +5.00 sigma, n=1680) <-- significant
+       T=  32:  +0.0018 +- 0.0004 deg ( +3.91 sigma, n=840) <-- significant
+       T=  64:  +0.0017 +- 0.0005 deg ( +3.46 sigma, n=420) <-- significant
+       T= 128:  +0.0020 +- 0.0006 deg ( +3.65 sigma, n=210) <-- significant
+
+  RT60 0.30 s
+     T:              1        2        4        8       16       32       64      128
+     weighted RMSE:    2.351    2.173    2.076    2.028    2.002    1.988    1.981    1.978
+       +- s.e.  :    0.010    0.013    0.017    0.024    0.033    0.046    0.065    0.092
+     plain    RMSE:    2.351    2.171    2.076    2.028    2.002    1.988    1.982    1.979
+       +- s.e.  :    0.010    0.013    0.017    0.024    0.033    0.046    0.065    0.092
+     n blocks :    26880    13440     6720     3360     1680      840      420      210
+     weighted - plain, paired mean |error| difference (deg):
+       T=   1:  +0.0000 +- 0.0000 deg ( +0.05 sigma, n=26880)
+       T=   2:  +0.0018 +- 0.0008 deg ( +2.29 sigma, n=13440) <-- significant
+       T=   4:  +0.0002 +- 0.0010 deg ( +0.20 sigma, n=6720)
+       T=   8:  +0.0000 +- 0.0010 deg ( +0.04 sigma, n=3360)
+       T=  16:  +0.0007 +- 0.0011 deg ( +0.69 sigma, n=1680)
+       T=  32:  -0.0008 +- 0.0011 deg ( -0.69 sigma, n=840)
+       T=  64:  -0.0003 +- 0.0012 deg ( -0.30 sigma, n=420)
+       T= 128:  -0.0005 +- 0.0013 deg ( -0.36 sigma, n=210)
+
+  RT60 0.60 s
+     T:              1        2        4        8       16       32       64      128
+     weighted RMSE:    3.180    2.883    2.725    2.638    2.597    2.574    2.564    2.557
+       +- s.e.  :    0.012    0.015    0.018    0.024    0.032    0.044    0.062    0.087
+     plain    RMSE:    3.180    2.883    2.725    2.639    2.598    2.577    2.566    2.560
+       +- s.e.  :    0.012    0.015    0.018    0.024    0.032    0.044    0.062    0.087
+     n blocks :    26880    13440     6720     3360     1680      840      420      210
+     weighted - plain, paired mean |error| difference (deg):
+       T=   1:  -0.0000 +- 0.0000 deg ( -0.10 sigma, n=26880)
+       T=   2:  +0.0012 +- 0.0011 deg ( +1.05 sigma, n=13440)
+       T=   4:  -0.0006 +- 0.0014 deg ( -0.47 sigma, n=6720)
+       T=   8:  -0.0016 +- 0.0015 deg ( -1.07 sigma, n=3360)
+       T=  16:  -0.0037 +- 0.0015 deg ( -2.43 sigma, n=1680) <-- significant
+       T=  32:  -0.0049 +- 0.0016 deg ( -3.06 sigma, n=840) <-- significant
+       T=  64:  -0.0059 +- 0.0016 deg ( -3.77 sigma, n=420) <-- significant
+       T= 128:  -0.0059 +- 0.0016 deg ( -3.60 sigma, n=210) <-- significant
+
+  -- fitted MSE(T) = b^2 + sigma_1^2 / T  (M62), weighted variant --
+  free field     b =  0.000 +-0.007 deg,  sigma_1 =  0.308 +-0.001 deg,  RMSE-residual 0.0003 deg
+  RT60 0.15 s    b =  1.480 +-0.016 deg,  sigma_1 =  0.529 +-0.058 deg,  RMSE-residual 0.0002 deg
+  RT60 0.30 s    b =  1.977 +-0.014 deg,  sigma_1 =  1.272 +-0.031 deg,  RMSE-residual 0.0015 deg
+  RT60 0.60 s    b =  2.553 +-0.014 deg,  sigma_1 =  1.896 +-0.032 deg,  RMSE-residual 0.0008 deg
+
+  -- DIRECTLY MEASURED per-azimuth bias b(theta) and dispersion sigma_1 --
+     free field (3840 frames per azimuth)
+     azimuth (deg): -150.45 -120.36  -90.27  -60.18  -30.09    0.00   30.09   60.18   90.27  120.36  150.45
+     b(theta)     :  -0.004   0.003   0.007  -0.000   0.005   0.003   0.003   0.005  -0.000  -0.002  -0.003
+     sigma_1      :   0.308   0.305   0.314   0.310   0.300   0.318   0.302   0.305   0.315   0.304   0.304
+     b_rms = 0.004 deg   (s.e. of each b(theta) ~ 0.005 deg), mean sigma_1 = 0.308 deg
+     RT60 0.15 s (3840 frames per azimuth)
+     azimuth (deg): -120.43  -80.29  -40.14    0.00   40.14   80.29  120.43
+     b(theta)     :   0.678   0.157   0.121  -0.050   3.774   0.465  -0.629
+     sigma_1      :   0.565   0.473   0.560   0.514   0.501   0.540   0.523
+     b_rms = 1.481 deg   (s.e. of each b(theta) ~ 0.008 deg), mean sigma_1 = 0.525 deg
+     RT60 0.30 s (3840 frames per azimuth)
+     azimuth (deg): -120.43  -80.29  -40.14    0.00   40.14   80.29  120.43
+     b(theta)     :   2.052   0.167  -1.623   0.405   3.997   2.068  -0.177
+     sigma_1      :   1.333   1.144   1.401   1.222   1.257   1.265   1.280
+     b_rms = 1.976 deg   (s.e. of each b(theta) ~ 0.021 deg), mean sigma_1 = 1.272 deg
+     RT60 0.60 s (3840 frames per azimuth)
+     azimuth (deg): -120.43  -80.29  -40.14    0.00   40.14   80.29  120.43
+     b(theta)     :   2.806   0.174  -3.199   0.635   4.347   2.763   0.769
+     sigma_1      :   1.951   1.630   2.051   1.831   1.920   1.832   2.014
+     b_rms = 2.554 deg   (s.e. of each b(theta) ~ 0.030 deg), mean sigma_1 = 1.890 deg
+
+  -- futility knee T_futile = sigma_1^2 / (alpha b^2), alpha = 0.1 (M67) --
+  free field     T_futile = infinite (no measurable bias floor)
+  RT60 0.15 s    T_futile =      1.3 frames =    0.05 s
+  RT60 0.30 s    T_futile =      4.1 frames =    0.18 s
+  RT60 0.60 s    T_futile =      5.5 frames =    0.24 s
+
+Figures written to: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs

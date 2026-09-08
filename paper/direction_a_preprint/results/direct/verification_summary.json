@@ -1,0 +1,58 @@
+{
+  "stage": "G1",
+  "analytic_conditions": 34560,
+  "waveform_conditions": 288,
+  "plane_max_abs_error_deg": 5.684341886080802e-14,
+  "independent_reference_max_difference_deg": 7.247535904753022e-12,
+  "audit_reproduction_max_difference_deg": 2.842170943040401e-14,
+  "kernel_refinement": [
+    {
+      "half_width": 16,
+      "cases": 96,
+      "max_relative_waveform_l2": 4.695905635307182e-06,
+      "max_abs_angular_difference_deg": 5.1513619212073536e-05
+    },
+    {
+      "half_width": 32,
+      "cases": 96,
+      "max_relative_waveform_l2": 3.7663341914612635e-06,
+      "max_abs_angular_difference_deg": 3.6408084042705013e-05
+    },
+    {
+      "half_width": 64,
+      "cases": 96,
+      "max_relative_waveform_l2": 3.402065027757253e-06,
+      "max_abs_angular_difference_deg": 1.632815096286322e-05
+    }
+  ],
+  "interp8_vs_64_max_difference_deg": 0.000494577778454186,
+  "tolerance_deg": 0.05,
+  "selected_half_width": 32,
+  "config": {
+    "fs": 48000,
+    "samples": 2048,
+    "band": [
+      300.0,
+      3400.0
+    ],
+    "interp": 8,
+    "relative_floor": 0.001,
+    "absolute_floor": 1e-12,
+    "window": "symmetric_hann",
+    "mean_remove": true,
+    "parabolic": true,
+    "sound_speed": 343.0
+  },
+  "source_hashes": {
+    "__init__.py": "89b85f9384f241e599e0d87cd76819bd05088f5d75e7ab17269bc4aa4fd40801",
+    "common.py": "be4316a050f643bf23a280aaaf72a73a95fad25e95fe5be7557b261ebae4ea7a",
+    "estimator.py": "d266426ed1cdfa3811ea9da6dd8042e6d68c0b6836573504034e54f0b7ed1633",
+    "reference.py": "920b0baffa7f0e14a043acfc6d4ef032c86816b564567f7f2c602eb1ef54abae",
+    "signals.py": "b9683dfdee0a82151b7ea9cb81afc37252fba545a5a15f2db1551196dcfcea4d",
+    "test_direct.py": "37c770c287b3648dcc56d5dce11866ccbaa90a101e82aec73c4d7230fd02bace",
+    "verify_direct.py": "1fdd6f0334bfad7528a6ea1979a85d8c975638fdb4bb7380fc979a74751d7b47",
+    "workflow.py": "f7a160b98128b558396c806fe5ba32cc527c2b3a10fde713f899c2211cc04095"
+  },
+  "elapsed_seconds": 31.211069224000312,
+  "passed": true
+}

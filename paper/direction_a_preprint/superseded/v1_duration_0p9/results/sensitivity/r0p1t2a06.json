@@ -1,0 +1,404 @@
+{
+  "scene_id": "r0p1t2a06",
+  "configs": {
+    "base": {
+      "room": {
+        "dimensions": [
+          6.0,
+          5.0,
+          3.0
+        ],
+        "array_fraction": [
+          0.6,
+          0.45,
+          0.5
+        ],
+        "nominal_rt60": 0.6,
+        "theta_deg": 187.37,
+        "distance_m": 1.5,
+        "radius_m": 0.05,
+        "rotation_deg": 0.0,
+        "fs": 48000,
+        "image_extent": 48,
+        "path_duration_s": 0.9,
+        "oversample": 16,
+        "half_width": 32,
+        "arrival_mode": "fractional",
+        "reflections": true,
+        "absorption_multipliers": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "non_equilateral": false
+      },
+      "source_band_hz": [
+        300.0,
+        3400.0
+      ]
+    },
+    "rotation17": {
+      "room": {
+        "dimensions": [
+          6.0,
+          5.0,
+          3.0
+        ],
+        "array_fraction": [
+          0.6,
+          0.45,
+          0.5
+        ],
+        "nominal_rt60": 0.6,
+        "theta_deg": 187.37,
+        "distance_m": 1.5,
+        "radius_m": 0.05,
+        "rotation_deg": 17.0,
+        "fs": 48000,
+        "image_extent": 48,
+        "path_duration_s": 0.9,
+        "oversample": 16,
+        "half_width": 32,
+        "arrival_mode": "fractional",
+        "reflections": true,
+        "absorption_multipliers": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "non_equilateral": false
+      },
+      "source_band_hz": [
+        300.0,
+        3400.0
+      ]
+    },
+    "non_equilateral": {
+      "room": {
+        "dimensions": [
+          6.0,
+          5.0,
+          3.0
+        ],
+        "array_fraction": [
+          0.6,
+          0.45,
+          0.5
+        ],
+        "nominal_rt60": 0.6,
+        "theta_deg": 187.37,
+        "distance_m": 1.5,
+        "radius_m": 0.05,
+        "rotation_deg": 0.0,
+        "fs": 48000,
+        "image_extent": 48,
+        "path_duration_s": 0.9,
+        "oversample": 16,
+        "half_width": 32,
+        "arrival_mode": "fractional",
+        "reflections": true,
+        "absorption_multipliers": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "non_equilateral": true
+      },
+      "source_band_hz": [
+        300.0,
+        3400.0
+      ]
+    },
+    "unequal_walls": {
+      "room": {
+        "dimensions": [
+          6.0,
+          5.0,
+          3.0
+        ],
+        "array_fraction": [
+          0.6,
+          0.45,
+          0.5
+        ],
+        "nominal_rt60": 0.6,
+        "theta_deg": 187.37,
+        "distance_m": 1.5,
+        "radius_m": 0.05,
+        "rotation_deg": 0.0,
+        "fs": 48000,
+        "image_extent": 48,
+        "path_duration_s": 0.9,
+        "oversample": 16,
+        "half_width": 32,
+        "arrival_mode": "fractional",
+        "reflections": true,
+        "absorption_multipliers": [
+          0.5,
+          1.5,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "non_equilateral": false
+      },
+      "source_band_hz": [
+        300.0,
+        3400.0
+      ]
+    },
+    "lower_band": {
+      "room": {
+        "dimensions": [
+          6.0,
+          5.0,
+          3.0
+        ],
+        "array_fraction": [
+          0.6,
+          0.45,
+          0.5
+        ],
+        "nominal_rt60": 0.6,
+        "theta_deg": 187.37,
+        "distance_m": 1.5,
+        "radius_m": 0.05,
+        "rotation_deg": 0.0,
+        "fs": 48000,
+        "image_extent": 48,
+        "path_duration_s": 0.9,
+        "oversample": 16,
+        "half_width": 32,
+        "arrival_mode": "fractional",
+        "reflections": true,
+        "absorption_multipliers": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "non_equilateral": false
+      },
+      "source_band_hz": [
+        300.0,
+        1700.0
+      ]
+    }
+  },
+  "rows": 1600,
+  "refinements": [
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 0,
+      "refinement": "propagation32",
+      "max_difference_deg": 0.0020760987432595357,
+      "rms_difference_deg": 0.0004896457286013706,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.00020166532014482218
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 0,
+      "refinement": "extent56",
+      "max_difference_deg": 0.00016682488154629027,
+      "rms_difference_deg": 5.7945502561432385e-05,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.0002792362167622803
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 0,
+      "refinement": "correlation16",
+      "max_difference_deg": 0.0028063533472106883,
+      "rms_difference_deg": 0.0009518676856986787,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.0005085049852453392
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 0,
+      "refinement": "srp_grid005",
+      "max_difference_deg": 0.0005617397148682812,
+      "rms_difference_deg": 0.0002118410173105567,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.003995515898722387
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 1,
+      "refinement": "propagation32",
+      "max_difference_deg": 0.002569342772261507,
+      "rms_difference_deg": 0.000715977439077029,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.024737307308576394
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 1,
+      "refinement": "extent56",
+      "max_difference_deg": 0.00013257386467557808,
+      "rms_difference_deg": 4.531064608154663e-05,
+      "above_005_count": 0,
+      "mse_difference_deg2": -8.185357452207553e-06
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 1,
+      "refinement": "correlation16",
+      "max_difference_deg": 0.007492086625859429,
+      "rms_difference_deg": 0.00213081261092913,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.043561813648127154
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 1,
+      "refinement": "srp_grid005",
+      "max_difference_deg": 0.0004967507569517693,
+      "rms_difference_deg": 0.0002136866122970429,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.0024876908953382943
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 2,
+      "refinement": "propagation32",
+      "max_difference_deg": 0.0017553615237488884,
+      "rms_difference_deg": 0.0005570315933713435,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.002933742320387913
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 2,
+      "refinement": "extent56",
+      "max_difference_deg": 0.00023866177662057453,
+      "rms_difference_deg": 7.577711124832254e-05,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.0008643475668296367
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 2,
+      "refinement": "correlation16",
+      "max_difference_deg": 0.008298997420354226,
+      "rms_difference_deg": 0.001933140829088187,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.04617565338462519
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 2,
+      "refinement": "srp_grid005",
+      "max_difference_deg": 0.0005977966828254466,
+      "rms_difference_deg": 0.00017909701129905132,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.0029153781278799208
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 3,
+      "refinement": "propagation32",
+      "max_difference_deg": 0.0036097569379762717,
+      "rms_difference_deg": 0.0010073799140132105,
+      "above_005_count": 0,
+      "mse_difference_deg2": -0.027436008486994512
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 3,
+      "refinement": "extent56",
+      "max_difference_deg": 0.00025624722488259977,
+      "rms_difference_deg": 9.132925920785098e-05,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.0011322164955275059
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 3,
+      "refinement": "correlation16",
+      "max_difference_deg": 0.007140742744383033,
+      "rms_difference_deg": 0.0018857481724068154,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.026558962314084916
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 3,
+      "refinement": "srp_grid005",
+      "max_difference_deg": 0.0007255924834339567,
+      "rms_difference_deg": 0.00021498705399043472,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.0017172928414504417
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 4,
+      "refinement": "propagation32",
+      "max_difference_deg": 0.005643469488006758,
+      "rms_difference_deg": 0.0011199444317971186,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.017362353489489543
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 4,
+      "refinement": "extent56",
+      "max_difference_deg": 0.00041029482753174307,
+      "rms_difference_deg": 0.00010575469528721966,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.00023012847227788652
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 4,
+      "refinement": "correlation16",
+      "max_difference_deg": 0.006268801275183478,
+      "rms_difference_deg": 0.0017491726050471532,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.027992864000236328
+    },
+    {
+      "scene": "r0p1t2a06",
+      "record_id": 4,
+      "refinement": "srp_grid005",
+      "max_difference_deg": 0.0006966639545566977,
+      "rms_difference_deg": 0.000205763541817018,
+      "above_005_count": 0,
+      "mse_difference_deg2": 0.0007977999526358737
+    }
+  ],
+  "source_hashes": {
+    "__init__.py": "89b85f9384f241e599e0d87cd76819bd05088f5d75e7ab17269bc4aa4fd40801",
+    "campaign.py": "c10f20c0dd197b45b756be9ceb15c7b5e05d0c1dd8573372617fcd99f61e30db",
+    "common.py": "be4316a050f643bf23a280aaaf72a73a95fad25e95fe5be7557b261ebae4ea7a",
+    "estimator.py": "d266426ed1cdfa3811ea9da6dd8042e6d68c0b6836573504034e54f0b7ed1633",
+    "pilot.py": "fb9be4a62fa5175082457e677fc0e2dc969ca59d9b012469265fdcdb1b2b0c68",
+    "protocol.py": "07c1040cc7b3a86f398174957a715bc5a1bf0dcea0986f53b0943bd9e0916001",
+    "recording.py": "263f38acd689b30f72700eb60179cbcceed6351bff95f1300214c4b1dc10d51c",
+    "reference.py": "920b0baffa7f0e14a043acfc6d4ef032c86816b564567f7f2c602eb1ef54abae",
+    "reference_room.py": "d6b48f42daa37bc1acfb313386f786eeec105c1e2419503d4c9a5d022b93c62e",
+    "room.py": "cf21ff2ff7b061b1dc1742d6abddbaf90cc6c2bbfcc6d0b1d35871acfd96821f",
+    "sensitivity.py": "7b57dc3b157945824192a8bd538b992495d5549cac067aeb6d153064a5548d6d",
+    "signals.py": "b9683dfdee0a82151b7ea9cb81afc37252fba545a5a15f2db1551196dcfcea4d",
+    "srp.py": "31433031565e13e7f51effd51eabd84729d66c97da7ac14baabe72e40182d00e",
+    "test_direct.py": "37c770c287b3648dcc56d5dce11866ccbaa90a101e82aec73c4d7230fd02bace",
+    "test_room.py": "6c06dbf4ddf8d9d0bdde2a6dcab8936a5b0bf6dc77fc75d5d8fac742e03d6919",
+    "test_srp.py": "5784f2840e222a0e5d1d435d42bbed9659903785077634c140294576287aa1ba",
+    "verify_direct.py": "1fdd6f0334bfad7528a6ea1979a85d8c975638fdb4bb7380fc979a74751d7b47",
+    "verify_room.py": "e202145a8da16172624aded038b14b1429aa0c978d7d3aefab6ecb9b1eb99bcb",
+    "workflow.py": "f7a160b98128b558396c806fe5ba32cc527c2b3a10fde713f899c2211cc04095"
+  }
+}

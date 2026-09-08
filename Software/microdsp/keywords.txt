@@ -1,0 +1,169 @@
+#######################################
+# Syntax colouring map for microdsp
+#
+# Arduino's format is strict: NAME<TAB>TOKENTYPE, with a real tab character.
+# KEYWORD1 = datatypes/classes, KEYWORD2 = functions, LITERAL1 = constants.
+#######################################
+
+#######################################
+# Datatypes and classes (KEYWORD1)
+#######################################
+
+MicroDSP	KEYWORD1
+dspStats	KEYWORD1
+dspFilters	KEYWORD1
+dspTransforms	KEYWORD1
+dspCalculus	KEYWORD1
+dspResources	KEYWORD1
+dspDataIO	KEYWORD1
+dspDataManager	KEYWORD1
+dspExport	KEYWORD1
+dspCompat	KEYWORD1
+dspRealTime	KEYWORD1
+RealTimeStats	KEYWORD1
+RealTimeMovingAverage	KEYWORD1
+RealTimeMedianFilter	KEYWORD1
+RealTimeGaussianFilter	KEYWORD1
+RealTimeFFT	KEYWORD1
+
+#######################################
+# Methods and functions (KEYWORD2)
+#######################################
+
+# statistics
+mean	KEYWORD2
+stdDev	KEYWORD2
+variance	KEYWORD2
+sampleStdDev	KEYWORD2
+sampleVariance	KEYWORD2
+minimum	KEYWORD2
+maximum	KEYWORD2
+rms	KEYWORD2
+median	KEYWORD2
+percentile	KEYWORD2
+medianAbsoluteDeviation	KEYWORD2
+
+# outliers
+isZScoreOutlier	KEYWORD2
+isModifiedZScoreOutlier	KEYWORD2
+isIQROutlier	KEYWORD2
+isMADOutlier	KEYWORD2
+
+# calculus
+derivative	KEYWORD2
+derivativeInto	KEYWORD2
+nthDerivative	KEYWORD2
+integral	KEYWORD2
+integralTrapezoid	KEYWORD2
+cumulativeIntegral	KEYWORD2
+definiteIntegral	KEYWORD2
+tripleIntegral	KEYWORD2
+freeBuffer	KEYWORD2
+
+# filters
+movingAverageFilter	KEYWORD2
+movingAverageFilterCentered	KEYWORD2
+movingAverage	KEYWORD2
+movingAverageCentered	KEYWORD2
+medianFilter	KEYWORD2
+gaussianFilter	KEYWORD2
+applyFIR	KEYWORD2
+designKaiserFIR	KEYWORD2
+kaiserWindow	KEYWORD2
+frequencySamplingFIR	KEYWORD2
+adaptiveFilter	KEYWORD2
+adaptiveFilterFIR	KEYWORD2
+wienerFilter	KEYWORD2
+
+# transforms
+fft	KEYWORD2
+ifft	KEYWORD2
+fftMagnitude	KEYWORD2
+dominantBin	KEYWORD2
+dominantFrequency	KEYWORD2
+hannWindow	KEYWORD2
+hammingWindow	KEYWORD2
+blackmanWindow	KEYWORD2
+applyWindow	KEYWORD2
+laplaceTransform	KEYWORD2
+laplaceIntegrand	KEYWORD2
+
+# streaming
+update	KEYWORD2
+updateDeferred	KEYWORD2
+transform	KEYWORD2
+isReady	KEYWORD2
+getMean	KEYWORD2
+getStdDev	KEYWORD2
+getVariance	KEYWORD2
+getMedian	KEYWORD2
+getMin	KEYWORD2
+getMax	KEYWORD2
+getRMS	KEYWORD2
+getReal	KEYWORD2
+getImag	KEYWORD2
+magnitude	KEYWORD2
+latest	KEYWORD2
+setUseHannWindow	KEYWORD2
+usesHannWindow	KEYWORD2
+
+# resources
+begin	KEYWORD2
+setComputeLimit	KEYWORD2
+getComputeLimit	KEYWORD2
+setAvailableMemory	KEYWORD2
+getAvailableMemory	KEYWORD2
+freeMemory	KEYWORD2
+setFreeMemoryThreshold	KEYWORD2
+getFreeMemoryThreshold	KEYWORD2
+hasSufficientMemory	KEYWORD2
+canProcess	KEYWORD2
+beginWork	KEYWORD2
+endWork	KEYWORD2
+getLoadPercent	KEYWORD2
+shouldProcess	KEYWORD2
+checkLoad	KEYWORD2
+setLoadWindow	KEYWORD2
+
+# buffers
+allocateBuffer	KEYWORD2
+allocateZeroedBuffer	KEYWORD2
+releaseBuffer	KEYWORD2
+clearBuffer	KEYWORD2
+fillBufferWithValue	KEYWORD2
+copyBuffer	KEYWORD2
+canAllocate	KEYWORD2
+isSafeToAllocate	KEYWORD2
+
+# export
+exportToSerial	KEYWORD2
+exportRowToSerial	KEYWORD2
+exportJSONToSerial	KEYWORD2
+exportCSV	KEYWORD2
+exportCSVRow	KEYWORD2
+exportJSON	KEYWORD2
+exportObfuscatedXOR	KEYWORD2
+annotateAndExport	KEYWORD2
+floatArrayToCompactString	KEYWORD2
+sendExportStringToSerial	KEYWORD2
+
+# utility
+ok	KEYWORD2
+reset	KEYWORD2
+count	KEYWORD2
+capacity	KEYWORD2
+full	KEYWORD2
+sortFloat	KEYWORD2
+percentileSorted	KEYWORD2
+medianSorted	KEYWORD2
+isPowerOfTwo	KEYWORD2
+formatFloat	KEYWORD2
+bessi0	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DSP_PI	LITERAL1
+DSP_TWO_PI	LITERAL1
+FREE_MEMORY_BYTES	LITERAL1

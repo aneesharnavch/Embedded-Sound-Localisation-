@@ -1,0 +1,690 @@
+{
+  "scene_id": "r0p1t1a11",
+  "indices": [
+    0,
+    1,
+    1,
+    11
+  ],
+  "config": {
+    "dimensions": [
+      6.0,
+      5.0,
+      3.0
+    ],
+    "array_fraction": [
+      0.6,
+      0.45,
+      0.5
+    ],
+    "nominal_rt60": 0.3,
+    "theta_deg": 337.37,
+    "distance_m": 1.5,
+    "radius_m": 0.05,
+    "rotation_deg": 0.0,
+    "fs": 48000,
+    "image_extent": 48,
+    "path_duration_s": 0.9,
+    "oversample": 16,
+    "half_width": 32,
+    "arrival_mode": "fractional",
+    "reflections": true,
+    "absorption_multipliers": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "non_equilateral": false
+  },
+  "config_hashes": {
+    "F_S_D": "80de7af1ea7893f8a2c8b717ba464cb06be8bf5fa22651cc1d767f3b24e77ece",
+    "F_S_R": "a32be21f9895e5ebdd3a1afcd991a696363986c75b016fb63aa4296dc12836c2",
+    "F_O_D": "931b2f7e2aeb10b8dbdecc4e4d0e021c5b4a3d927a2321d498e6630c09e1388e",
+    "F_O_R": "079f63efaaf0b8196be92dd5eee3a283039a49544a50e050ebb45db80990df30",
+    "Q_S_D": "02ee109f25901094ba7fbfa1c12a5561f5a046ad99a5fdfa7425e9973c9afc0b",
+    "Q_S_R": "3581d3cf408563721dadb0117593551916d5b2246ea5fe98a6131b19366fbb14",
+    "Q_O_D": "6c9049ce2efa0b6e104aea2588bdeff22cf26d90104c3b839a373588c22ce301",
+    "Q_O_R": "cef5bd469b348b8c3a48ca1ce1015f2b37427da5e5a27e8552798c4d5dd0d06f"
+  },
+  "rir_metadata": {
+    "path_counts": [
+      1362505,
+      1362502,
+      1362420
+    ],
+    "reflection_coefficients": [
+      0.7852812659593165,
+      0.7852812659593165,
+      0.7852812659593165,
+      0.7852812659593165,
+      0.7852812659593165,
+      0.7852812659593165
+    ],
+    "samples": 43234,
+    "config": {
+      "dimensions": [
+        6.0,
+        5.0,
+        3.0
+      ],
+      "array_fraction": [
+        0.6,
+        0.45,
+        0.5
+      ],
+      "nominal_rt60": 0.3,
+      "theta_deg": 337.37,
+      "distance_m": 1.5,
+      "radius_m": 0.05,
+      "rotation_deg": 0.0,
+      "fs": 48000,
+      "image_extent": 48,
+      "path_duration_s": 0.9,
+      "oversample": 16,
+      "half_width": 32,
+      "arrival_mode": "fractional",
+      "reflections": true,
+      "absorption_multipliers": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "non_equilateral": false
+    }
+  },
+  "room_descriptors": {
+    "edt_s": 0.24829219202829242,
+    "edt_s_r2": 0.9947686836989,
+    "t20_s": 0.2780433376887069,
+    "t20_s_r2": 0.9985577184672685,
+    "t30_s": 0.28627508357149933,
+    "t30_s_r2": 0.9990895283930855,
+    "band_energy": 0.0037418891118835766,
+    "component_drr_db": -3.706033864088366,
+    "direct_band_energy": 0.0011169121434689243,
+    "reflection_band_energy": 0.002621937887125135,
+    "component_energy_cross_term": 3.039081289520364e-06,
+    "direct_arrival_s": [
+      0.004431311181930888,
+      0.004463159763091924,
+      0.004228650897659203
+    ],
+    "direct_pressure_gain": [
+      0.052355675486623995,
+      0.05198207156731874,
+      0.054864848349115154
+    ],
+    "first_order_reflections": [
+      {
+        "wall": "x_low",
+        "arrival_s": [
+          0.025094439254591358,
+          0.024953473968651857,
+          0.025205438813944724
+        ],
+        "pressure_gain": [
+          0.007260119299128668,
+          0.0073011326183259175,
+          0.0072281472295684145
+        ]
+      },
+      {
+        "wall": "x_high",
+        "arrival_s": [
+          0.010124172330790812,
+          0.010211618889984625,
+          0.009962370014999193
+        ],
+        "pressure_gain": [
+          0.017995409084353247,
+          0.017841306525036703,
+          0.018287678781130426
+        ]
+      },
+      {
+        "wall": "y_low",
+        "arrival_s": [
+          0.012265798928497457,
+          0.012102373667935937,
+          0.012017867603769827
+        ],
+        "pressure_gain": [
+          0.014853384096309218,
+          0.015053957821163777,
+          0.015159812767110271
+        ]
+      },
+      {
+        "wall": "y_high",
+        "arrival_s": [
+          0.01802957295469873,
+          0.01827109508489556,
+          0.018215230137022313
+        ],
+        "pressure_gain": [
+          0.010104988242973895,
+          0.009971412325672991,
+          0.010001994010647925
+        ]
+      },
+      {
+        "wall": "z_low",
+        "arrival_s": [
+          0.009804858824171437,
+          0.009819293907492001,
+          0.009714948594053432
+        ],
+        "pressure_gain": [
+          0.018581463129681182,
+          0.01855414701397858,
+          0.01875343147410881
+        ]
+      },
+      {
+        "wall": "z_high",
+        "arrival_s": [
+          0.009804858824171437,
+          0.009819293907492001,
+          0.009714948594053432
+        ],
+        "pressure_gain": [
+          0.018581463129681182,
+          0.01855414701397858,
+          0.01875343147410881
+        ]
+      }
+    ],
+    "minimum_wall_clearance_m": 1.0154866889848444
+  },
+  "input_records": [
+    {
+      "experiment": "core",
+      "record_id": 0,
+      "snr_db": 0.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        0
+      ],
+      "input_id": "4d27c2356f9d58985bae12417191806dd7b71c16fb666ef9345c5d6696e88ed2",
+      "source_sha256": "8f75c853485f493934b0bf5bdaf2d317bb65bb7356ea1a7e9198f644a2fbf342",
+      "noise_sha256": "51fa12c49916b8a1f0f43958af37948ab6493492b97bea7b46b7ccfdedb6489b",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025715753770446733
+    },
+    {
+      "experiment": "core",
+      "record_id": 1,
+      "snr_db": 0.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        1
+      ],
+      "input_id": "17c6edcd49f4fca78804c3064c559af154aea040ae1abfa131c4e0506e8230c3",
+      "source_sha256": "8d806c16db8771dcce27220df0a660d5b100b717738dc8c174602340ab18d007",
+      "noise_sha256": "7a2abcc7cf0ace4d4ab14ca32b761eb3ec220fe66f1f29410a35566c73fae857",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025929358330986853
+    },
+    {
+      "experiment": "core",
+      "record_id": 2,
+      "snr_db": 0.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        2
+      ],
+      "input_id": "1885d66bb5c793042a5ee7d987f97d8484d15a32a7af4b318e09b2d8d30808da",
+      "source_sha256": "39e96f1b2416c5db80cf5a1b01abc6f23a802af1bc9ef59e4d7cac01a5231a1c",
+      "noise_sha256": "debda84e7d82debbc3b036a2ed30c7d458fe47acd75dc347f215fd88429b1053",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002586750453646283
+    },
+    {
+      "experiment": "core",
+      "record_id": 3,
+      "snr_db": 0.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        3
+      ],
+      "input_id": "30f760a7acc2093682a4bb43c5422bd84cff3e32dcd99d742daa20fea4de0a96",
+      "source_sha256": "4a18e3ec9a4926442f6d5d86c94dd632f4d8bae6f3924a7f6409548e9579a39b",
+      "noise_sha256": "64314f91e6c1f6450bf0cd2c50982c4c03932e492235bc7b2ac43a533889917e",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002592598630586513
+    },
+    {
+      "experiment": "core",
+      "record_id": 4,
+      "snr_db": 0.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        4
+      ],
+      "input_id": "f4219b110f5de446654d15111c330314852b52f85ec034fd14e438b7522f1852",
+      "source_sha256": "6c4127a3c7ad887697e00cd064360ef17d08896607f3073e8bf332fbb3b9a332",
+      "noise_sha256": "314830e93a9abb495f6609257f0ae2a0998c2cbde13e4053888e850f07cb0184",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025899931324096133
+    },
+    {
+      "experiment": "core",
+      "record_id": 0,
+      "snr_db": 10.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        0
+      ],
+      "input_id": "636e5ec22deaaa863254f1c1b809ed56f74b243419d5cb461626b36358c05de0",
+      "source_sha256": "8f75c853485f493934b0bf5bdaf2d317bb65bb7356ea1a7e9198f644a2fbf342",
+      "noise_sha256": "9956195cb7b26a18680f6416caba092108a1d8fdcafff106293084fa38ff3655",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025715753770446733
+    },
+    {
+      "experiment": "core",
+      "record_id": 1,
+      "snr_db": 10.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        1
+      ],
+      "input_id": "8c10894750ab4b6df72960c14a4567024477f80f16e3f7535edabee53a844538",
+      "source_sha256": "8d806c16db8771dcce27220df0a660d5b100b717738dc8c174602340ab18d007",
+      "noise_sha256": "6080ebd853706b3f4ce4d700d2a9c6635f85c522ec98372aedabc99011f063b4",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025929358330986853
+    },
+    {
+      "experiment": "core",
+      "record_id": 2,
+      "snr_db": 10.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        2
+      ],
+      "input_id": "1a6201b57d2d32deb0cdea09cd00ea55299f45b1e32c61b98245119a493aa82c",
+      "source_sha256": "39e96f1b2416c5db80cf5a1b01abc6f23a802af1bc9ef59e4d7cac01a5231a1c",
+      "noise_sha256": "499170c88a8040f3ff2efca8e1beba62febbbf8b65e1dca6f2d9aa150392bcf4",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002586750453646283
+    },
+    {
+      "experiment": "core",
+      "record_id": 3,
+      "snr_db": 10.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        3
+      ],
+      "input_id": "b31c5d92fd5d9b35021c5aa6b30cea444b060c01dd329b0d6c05bb40115557f2",
+      "source_sha256": "4a18e3ec9a4926442f6d5d86c94dd632f4d8bae6f3924a7f6409548e9579a39b",
+      "noise_sha256": "e40b5c2ad01c96b262f17228235d931142b4afa3e5e845bcc5902e2abb712e7c",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002592598630586513
+    },
+    {
+      "experiment": "core",
+      "record_id": 4,
+      "snr_db": 10.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        4
+      ],
+      "input_id": "d799972fcb4a3bcbe75f5dc2f603639415b38f809e4dc03e1de772fc57ca0f2b",
+      "source_sha256": "6c4127a3c7ad887697e00cd064360ef17d08896607f3073e8bf332fbb3b9a332",
+      "noise_sha256": "80952c6d0dcf4691565e32f9f3ecd7001573b2a40dfe7cfb9e87f879ab48d8c6",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025899931324096133
+    },
+    {
+      "experiment": "core",
+      "record_id": 0,
+      "snr_db": 20.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        0
+      ],
+      "input_id": "a9be08754d98753b28e0468721c49fcba3731ab84658446a0cf9d89c6ca78491",
+      "source_sha256": "8f75c853485f493934b0bf5bdaf2d317bb65bb7356ea1a7e9198f644a2fbf342",
+      "noise_sha256": "6a565e32f02974a1b022d8ce387f3c66ef77bd4deeb9ed82a32829ba6c563df3",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025715753770446733
+    },
+    {
+      "experiment": "core",
+      "record_id": 1,
+      "snr_db": 20.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        1
+      ],
+      "input_id": "3fb9c3301bb026f56c2e5757f74b81103907b55b909ed89a0b458c0b5d51dcf9",
+      "source_sha256": "8d806c16db8771dcce27220df0a660d5b100b717738dc8c174602340ab18d007",
+      "noise_sha256": "80afc3682fdc7909b06e073b4821d24fa237e6f1dad4c966b7c55e3a663f00e5",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025929358330986853
+    },
+    {
+      "experiment": "core",
+      "record_id": 2,
+      "snr_db": 20.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        2
+      ],
+      "input_id": "59c38f71c940ade26759958910fc69535ff8facf2e4f93aeb210d474303c6491",
+      "source_sha256": "39e96f1b2416c5db80cf5a1b01abc6f23a802af1bc9ef59e4d7cac01a5231a1c",
+      "noise_sha256": "c7163c184d4f96c4dd027e2c1a87eab91af64ca9f84991b968aec40f3097ccf8",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002586750453646283
+    },
+    {
+      "experiment": "core",
+      "record_id": 3,
+      "snr_db": 20.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        3
+      ],
+      "input_id": "17a74ec41ed9c0c1fcb09d45ab67b529c66dd82063f2b02e7b64449566dc8291",
+      "source_sha256": "4a18e3ec9a4926442f6d5d86c94dd632f4d8bae6f3924a7f6409548e9579a39b",
+      "noise_sha256": "6d33de595bec4baa0d614f6f74e82bb0ab1696671e1240e717957e5952e7dcfb",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.002592598630586513
+    },
+    {
+      "experiment": "core",
+      "record_id": 4,
+      "snr_db": 20.0,
+      "frames": 32,
+      "seed_identity": [
+        "main_v1",
+        [
+          6.0,
+          5.0,
+          3.0
+        ],
+        [
+          0.6,
+          0.45,
+          0.5
+        ],
+        337.37,
+        1.5,
+        0.05,
+        0.0,
+        false,
+        0.3,
+        4
+      ],
+      "input_id": "e44ee6ef30016213b413d077fec4a2d8a4eec09b3a920836c12013011fd0ad56",
+      "source_sha256": "6c4127a3c7ad887697e00cd064360ef17d08896607f3073e8bf332fbb3b9a332",
+      "noise_sha256": "35d627daf79d4b804d12df67891da34828c6505ba6d3fa205de71a2ca839efcf",
+      "prefix_samples": 45282,
+      "reference_direct_band_power": 0.0025899931324096133
+    }
+  ],
+  "rows": 480,
+  "counts": {
+    "core": 480,
+    "attribution": 0,
+    "long_train": 0,
+    "long_holdout": 0
+  },
+  "protocol_hash": "367d41d15d4ac2f95cdce332f67ffea689cb4b2132367d7651a2704754fdb21a",
+  "code_hashes": {
+    "common.py": "be4316a050f643bf23a280aaaf72a73a95fad25e95fe5be7557b261ebae4ea7a",
+    "estimator.py": "d266426ed1cdfa3811ea9da6dd8042e6d68c0b6836573504034e54f0b7ed1633",
+    "room.py": "cf21ff2ff7b061b1dc1742d6abddbaf90cc6c2bbfcc6d0b1d35871acfd96821f",
+    "recording.py": "263f38acd689b30f72700eb60179cbcceed6351bff95f1300214c4b1dc10d51c",
+    "protocol.py": "07c1040cc7b3a86f398174957a715bc5a1bf0dcea0986f53b0943bd9e0916001",
+    "campaign.py": "c10f20c0dd197b45b756be9ceb15c7b5e05d0c1dd8573372617fcd99f61e30db"
+  },
+  "csv_sha256": "226b39a281754feb932cca45e1d184e9b9eb465d04ab7cb46e8ef3e309ff64b2",
+  "elapsed_seconds": 3.6088531109999167
+}

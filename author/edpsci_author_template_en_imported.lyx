@@ -1,0 +1,2702 @@
+#LyX file created by tex2lyx 2.5
+\lyxformat 643
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin C:/Users/anees/OneDrive/Desktop/embedded_sound_local/author/
+\textclass article
+\begin_preamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% edpsci_author_template.tex %%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% option by default two columns
+%\documentclass[a4paper,onecolumn,10pt]{edpsci}%%% add the option "onecolumn" to display text only on one column
+% add "frenchtitle" option in documentclass if your article is in French language.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{epstopdf}
+%\usepackage[authoryear,round]{natbib}% name and year references
+% numbered references
+\usepackage{url}
+\urlstyle{rm}
+
+%%%french
+%\usepackage[french,english]{babel}
+
+%%%chinese
+%\usepackage[chinese,english]{babel}
+
+
+%%%arabic
+\usepackage{utf8}
+\setcode{utf8}
+
+%cyrilic
+%\usepackage[utf8x]{inputenc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Put here some packages required or/and some personnal commands
+%\usepackage[labelsep=period]{caption}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% put here journal name %%%%%%%%%%%%%%%%%%%%%%%%
+\journalname{Journal Title}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% put here article type %%%%%%%%%%%%%%%%%%%%%%%
+\articletype{Research article}
+%\articletype{Review}
+%\articletype{Case report}
+%\articletype{Article de recherche}
+%\articletype{Revue de livres}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end_preamble
+\options ruled
+\use_default_options false
+\begin_modules
+algorithm2e
+\end_modules
+\maintain_unincluded_children no
+\language arabic_arabtex
+\language_package none
+\inputencoding utf8-cjk
+\fontencoding T2A
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref true
+\pdf_bookmarks 0
+\pdf_bookmarksnumbered 0
+\pdf_bookmarksopen 0
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks 0
+\pdf_pdfborder 0
+\pdf_colorlinks 1
+\pdf_backref false
+\pdf_pdfusetitle 0
+\pdf_quoted_options "citecolor=blue,urlcolor=blue,linkcolor=blue"
+\papersize a4
+\use_geometry false
+\use_package amsmath 2
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine natbib
+\cite_engine_type numerical
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\crossref_package prettyref
+\use_minted 0
+\use_lineno false
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style french
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\change_bars false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\docbook_mathml_version 0
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\lang arabic_arabtex
+This is Article Title, this is article title text, this is article title text
+\begin_inset Foot
+status collapsed
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+Footnote link to the article title.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% if title is too large for page header
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+titlerunning
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+This is article title
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+subtitle
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+This is Subtitle of the article
+\begin_inset Flex Foot:InTitle
+status collapsed
+
+\begin_layout Plain Layout
+Footnote link to the article subtitle.
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% collaboration  ---------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+collaboration{Collaboration name}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+
+\lang arabic_arabtex
+A. Author
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+inst
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+correspondingauthor
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+email
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+a.author@emailadress.org
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $^{,\ast\ast}$
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ B. Author
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+inst
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $^{,}$
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+These authors contributed equally to this work
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ C. Author
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+inst
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% sample of native name (chinese, arabic, cyrilic) ---------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+author{A. Author (
+\backslash
+nativenamechinese[gbsn]{王存是})%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+inst{1}
+\backslash
+correspondingauthor{
+\backslash
+email{a.author@emailadress.org}}$^{,
+\backslash
+ast
+\backslash
+ast}$ 
+\backslash
+and
+\end_layout
+
+\begin_layout Plain Layout
+%B. Author (
+\backslash
+RL{محمد عزيز درغوث})%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+inst{2}$^{,}$
+\backslash
+thanks{These authors contributed equally to this work}
+\backslash
+and
+\end_layout
+
+\begin_layout Plain Layout
+%C. Author (КП-06-ДВ/5)
+\backslash
+inst{3}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% if author is too large for page header
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+authorrunning
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+A. Author et al.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% onbehalfof  ---------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+onbehalfof{On behalf of a great Team}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+institute
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+First Authors' institution and address
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ Second Authors' institution and address
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+and
+\end_layout
+
+\end_inset
+
+ Third Authors' institution and address
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+abstract
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+This is the Asbtract text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+keywords
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+This is keywords one, keywords two, keywords three
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% french ---------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+abstracttrans{
+\backslash
+textbf{Translated title in french. Titre traduit en français.} Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte. Cela est le texte.}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%% french
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+keywordstrans{Translated keywords in French: mot cl
+\backslash
+'e un, mot cl
+\backslash
+'e deux, mot cl
+\backslash
+'e trois}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%
+\backslash
+date{Received XX December 2023, Accepted XX January 2024}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang arabic_arabtex
+Introduction
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here 
+\begin_inset CommandInset citation
+LatexCommand citet
+after ""
+before ""
+key "Ref1"
+literal "false"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Subsection
+
+\lang arabic_arabtex
+Sub heading two
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here 
+\begin_inset CommandInset citation
+LatexCommand citet
+after ""
+before ""
+key "Ref2"
+literal "false"
+
+\end_inset
+
+ This is text here.
+\end_layout
+
+\begin_layout Subsection
+
+\lang arabic_arabtex
+Sub heading two
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Subsection
+
+\lang arabic_arabtex
+Sub heading two
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig-1"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang arabic_arabtex
+Sub heading three
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang arabic_arabtex
+Bullet List
+\end_layout
+
+\begin_layout Itemize
+
+\lang arabic_arabtex
+List entries start with the 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+verb|
+\backslash
+item|
+\end_layout
+
+\end_inset
+
+ command. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang arabic_arabtex
+Individual entries are indicated with a black dot, a so-called bullet. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang arabic_arabtex
+The text in the entries may be of any length. 
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang arabic_arabtex
+Numbered (ordered) lists
+\end_layout
+
+\begin_layout Enumerate
+
+\lang arabic_arabtex
+Items are numbered automatically. 
+\end_layout
+
+\begin_layout Enumerate
+
+\lang arabic_arabtex
+The numbers start at 1 with each use of the 
+\family typewriter
+enumerate
+\family default
+ environment. 
+\end_layout
+
+\begin_layout Enumerate
+
+\lang arabic_arabtex
+Another entry in the list 
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Graphics 
+	filename fig-1-sample2.jpg
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+This is Sample Figure Caption. This is Figure Caption text here. This is Figure Caption text here. 
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig-1"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang arabic_arabtex
+Description lists
+\end_layout
+
+\begin_layout Description
+
+\lang arabic_arabtex
+This is an entry 
+\shape italic
+without
+\shape default
+ a label. 
+\end_layout
+
+\begin_layout Description
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+Something short
+\end_layout
+
+\end_inset
+
+ A short one-line description. 
+\end_layout
+
+\begin_layout Description
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+Something long
+\end_layout
+
+\end_inset
+
+ A much longer description. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. 
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang arabic_arabtex
+Footnote Sample
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here.
+\begin_inset Foot
+status collapsed
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is footnote here
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\begin_inset Foot
+status collapsed
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is footnote here
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang arabic_arabtex
+Material and Methods
+\end_layout
+
+\begin_layout Subsection
+
+\lang arabic_arabtex
+Sub heading two
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Material and Methods contents here. This is text here. This is text here. This is text here. This is text here. This is text here 
+\begin_inset CommandInset citation
+LatexCommand citet
+after ""
+before ""
+key "Ref3"
+literal "false"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Subsection
+
+\lang arabic_arabtex
+Sub heading two
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here 
+\begin_inset CommandInset citation
+LatexCommand citet
+after ""
+before ""
+key "Ref4"
+literal "false"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Float figure
+wide true
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Graphics 
+	filename fig-2-sample2.jpg
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+This is Figure Caption text here. This is Figure Caption text here. This is Figure Caption text here. This is Figure Caption text here.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig-2"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang arabic_arabtex
+Results
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Results contents here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Float table
+wide true
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+This is Sample Table Caption.
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "tab-1"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Tabular 
+<lyxtabular version="3" rows="5" columns="7">
+<features tabularvalignment="middle" tabularwidth="0pt">
+<column alignment="left" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col1 head 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col2 head 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col3 head
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefootmark
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col4 head 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col5 head 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col6 head2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col7 head
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col1 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col2 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col3 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col4 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col5 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col6 text1 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col7 text1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col1 text2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col2 text2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col3 text2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col4 text2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefootmark
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col5 text2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col6 text2 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col7 text2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col1 text3 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col2 text3 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col3 text3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefootmark
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col4 text3 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col5 text3 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col6 text3 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col7 text3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col1 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col2 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col3 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col4 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col5 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col6 text4 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+col7 text4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefoot
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+This is text of the table footnotes.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefoottext
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+Example for a first table footnote.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+tablefoottext
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+Example for a second table footnote.
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab-1"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab-1"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Section
+
+\lang arabic_arabtex
+Discussion
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Discussion contents here. 
+\begin_inset VSpace fullline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig-2"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here 
+\begin_inset CommandInset citation
+LatexCommand citet
+after ""
+before ""
+key "Ref5"
+literal "false"
+
+\end_inset
+
+. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Paragraph
+
+\lang arabic_arabtex
+This is text here, see Eq. 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq4"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Formula \begin{equation}\label{eq4}
+dB = -dD
+\end{equation}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+
+\lang arabic_arabtex
+This is text here. This is text here
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Formula \begin{equation}\label{eq5}
+d(x_B B) = -x_D  dD
+\end{equation}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+
+\lang arabic_arabtex
+This is text here Eqs.
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq4"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq5"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+ this is text here
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset Formula \begin{equation}\label{eq6}
+dB/B=(d x_B)/(x_D-x_B )
+\end{equation}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Section
+
+\lang arabic_arabtex
+Conclusion
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Conclusion contents here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is text here. This is text here. This is text here. This is text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+acknowtext
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Acknowledgments text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+funding
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Funding text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+conflict
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Conflicts of Interest text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+dataavailability
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Data Availability Statement text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+authorcontrib
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Authors Contributions Statement text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+ethics
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Ethical Approval text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+informedconsent
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Informed Consent text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+glossary{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+This is Glossary text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+supplementary
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+This is Supplementary Material text here.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%%%%%%%%%%%%%%%%%%%%%% numbered reference %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+
+\lang arabic_arabtex
+
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label ""
+key "Ref1"
+literal "false"
+
+\end_inset
+
+ Imam S, Khanduja V (2011) Current concepts in the diagnosis and management of femoroacetabular impingement, Int Orthop, 35, 10, 1427-1435.
+\end_layout
+
+\begin_layout Bibliography
+
+\lang arabic_arabtex
+
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label ""
+key "Ref2"
+literal "false"
+
+\end_inset
+
+ Krishnan H, Krishnan SP, Blunn G, Skinner JA, Hart AJ (2013) Modular neck femoral stems, Bone Joint J, 95B, 8, 1011-1021
+\end_layout
+
+\begin_layout Bibliography
+
+\lang arabic_arabtex
+
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label ""
+key "Ref3"
+literal "false"
+
+\end_inset
+
+ Sievänen H, Kannus P (2007) Physical Activity Reduces the Risk of Fragility Fracture. PLoS Med 4(6): e222. 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+https://doi.org/10.1371/journal.pmed.0040222
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+
+\lang arabic_arabtex
+
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label ""
+key "Ref4"
+literal "false"
+
+\end_inset
+
+ Amendola A,. Bonasia DE (2011) The menisci: Anatomy, healing response, and biomechanics, in The Knee Joint Bonnin M, Amendola NA, Bellemans J, MacDonald SJ, Menetrey J, Editors Paris, Heidelberg, Springer.
+\end_layout
+
+\begin_layout Bibliography
+
+\lang arabic_arabtex
+
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label ""
+key "Ref5"
+literal "false"
+
+\end_inset
+
+ Bonnin M, Amendola NA, Bellemans J, MacDonald SJ, Menetrey J (2011), The Knee Joint. Paris, Heidelberg, Springer.
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%%%%%%%%%%%%%%%%%%%%%% numbered reference %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%%%%%%%%%%%%%%% name and year reference style %%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%
+\backslash
+begin{thebibliography}{9}
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+bibitem[
+\backslash
+protect
+\backslash
+citeauthoryear{Imam and Khanduja}{Imam and Khanduja}{2011}]{Ref1} Imam S, Khanduja V (2011) Current concepts in the diagnosis and management of femoroacetabular impingement, Int Orthop, 35, 10, 1427-1435.
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+bibitem[
+\backslash
+protect
+\backslash
+citeauthoryear{Krishnan et al.}{Krishnan et al.}{2013}]{Ref2} Krishnan H, Krishnan SP, Blunn G, Skinner JA, Hart AJ (2013) Modular neck femoral stems, Bone Joint J, 95B, 8, 1011-1021
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+bibitem[
+\backslash
+protect
+\backslash
+citeauthoryear{Siev
+\backslash
+"{a}nen and Kannus}{Siev
+\backslash
+"{a}nen and Kannus}{2007}]{Ref3} Siev
+\backslash
+"{a}nen H, Kannus P (2007) Physical Activity Reduces the Risk of Fragility Fracture. PLoS Med 4(6): e222. 
+\backslash
+url{https://doi.org/10.1371/journal.pmed.0040222}
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+bibitem[
+\backslash
+protect
+\backslash
+citeauthoryear{Amendola and Bonasia}{Amendola and Bonasia}{2011}]{Ref4} Amendola A,. Bonasia DE (2011) The menisci: Anatomy, healing response, and biomechanics, in The Knee Joint Bonnin M, Amendola NA, Bellemans J, MacDonald SJ, Menetrey J, Editors Paris, Heidelberg, Springer.
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+bibitem[
+\backslash
+protect
+\backslash
+citeauthoryear{Bonnin et al.}{Bonnin et al.}{2011}]{Ref5} Bonnin M, Amendola NA, Bellemans J, MacDonald SJ, Menetrey J (2011), The Knee Joint. Paris, Heidelberg, Springer.
+\end_layout
+
+\begin_layout Plain Layout
+%
+\end_layout
+
+\begin_layout Plain Layout
+%
+\backslash
+end{thebibliography}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%%%%%%%%%%%%%%% name and year reference style %%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\start_of_appendix
+
+\lang arabic_arabtex
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%dummy comment inserted by tex2lyx to ensure that this paragraph is not empty
+\end_layout
+
+\end_inset
+
+This is Appendix text here.
+\end_layout
+
+\end_body
+\end_document

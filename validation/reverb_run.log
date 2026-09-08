@@ -1,0 +1,45 @@
+reverb_robustness.py  --  RE-BASELINED reverberation sweep
+  PHAT weighting band : (300.0, 3400.0) Hz
+  room 6.0 x 5.0 x 3.0 m, source at 1.5 m, image order K=12
+  SNR 15 dB, 9 angles, 60 trials per (RT60, angle), seed 7
+Sweeping reverberation time (image-source room sim)...
+  RT60 0.05s done (540 frames per method)
+  RT60 0.10s done (540 frames per method)
+  RT60 0.20s done (540 frames per method)
+  RT60 0.30s done (540 frames per method)
+  RT60 0.45s done (540 frames per method)
+  RT60 0.60s done (540 frames per method)
+  RT60 0.80s done (540 frames per method)
+
+==== ACCURACY vs RT60 @ 15 dB SNR (abs azimuth error, deg; +- = standard error) ====
+     n = 540 frames per (method, RT60) cell
+  Proposed (gated)     RT60 0.05 s: median  0.446 +-0.124  p90   4.604 +- 0.000  RMSE   3.018 +- 0.072  (n=540)
+  Proposed (gated)     RT60 0.10 s: median  0.460 +-0.354  p90   4.604 +- 0.000  RMSE   3.013 +- 0.072  (n=540)
+  Proposed (gated)     RT60 0.20 s: median  1.897 +-0.195  p90   5.094 +- 0.129  RMSE   3.075 +- 0.078  (n=540)
+  Proposed (gated)     RT60 0.30 s: median  2.565 +-0.090  p90   6.089 +- 0.179  RMSE   3.540 +- 0.099  (n=540)
+  Proposed (gated)     RT60 0.45 s: median  2.775 +-0.111  p90   6.934 +- 0.297  RMSE   3.991 +- 0.116  (n=540)
+  Proposed (gated)     RT60 0.60 s: median  2.757 +-0.088  p90   7.465 +- 0.277  RMSE   4.280 +- 0.132  (n=540)
+  Proposed (gated)     RT60 0.80 s: median  2.876 +-0.111  p90   7.860 +- 0.357  RMSE   4.661 +- 0.149  (n=540)
+  GCC-PHAT (cheap)     RT60 0.05 s: median  0.444 +-0.202  p90   4.604 +- 0.000  RMSE   3.018 +- 0.072  (n=540)
+  GCC-PHAT (cheap)     RT60 0.10 s: median  0.444 +-0.280  p90   4.604 +- 0.000  RMSE   3.013 +- 0.072  (n=540)
+  GCC-PHAT (cheap)     RT60 0.20 s: median  1.882 +-0.220  p90   5.252 +- 0.153  RMSE   3.189 +- 0.081  (n=540)
+  GCC-PHAT (cheap)     RT60 0.30 s: median  2.630 +-0.107  p90   6.188 +- 0.179  RMSE   3.630 +- 0.101  (n=540)
+  GCC-PHAT (cheap)     RT60 0.45 s: median  2.920 +-0.092  p90   6.963 +- 0.245  RMSE   4.044 +- 0.115  (n=540)
+  GCC-PHAT (cheap)     RT60 0.60 s: median  2.948 +-0.102  p90   7.632 +- 0.273  RMSE   4.402 +- 0.132  (n=540)
+  GCC-PHAT (cheap)     RT60 0.80 s: median  3.030 +-0.107  p90   8.164 +- 0.401  RMSE   4.736 +- 0.149  (n=540)
+  SRP-PHAT (strong)    RT60 0.05 s: median  0.444 +-0.324  p90   4.889 +- 0.000  RMSE   3.134 +- 0.076  (n=540)
+  SRP-PHAT (strong)    RT60 0.10 s: median  0.444 +-0.265  p90   4.889 +- 0.000  RMSE   3.156 +- 0.076  (n=540)
+  SRP-PHAT (strong)    RT60 0.20 s: median  1.778 +-0.333  p90   4.889 +- 0.190  RMSE   3.129 +- 0.079  (n=540)
+  SRP-PHAT (strong)    RT60 0.30 s: median  2.667 +-0.051  p90   5.889 +- 0.145  RMSE   3.504 +- 0.099  (n=540)
+  SRP-PHAT (strong)    RT60 0.45 s: median  2.667 +-0.006  p90   6.889 +- 0.307  RMSE   3.976 +- 0.119  (n=540)
+  SRP-PHAT (strong)    RT60 0.60 s: median  2.667 +-0.025  p90   7.444 +- 0.490  RMSE   4.300 +- 0.140  (n=540)
+  SRP-PHAT (strong)    RT60 0.80 s: median  2.667 +-0.043  p90   7.889 +- 0.403  RMSE   4.639 +- 0.160  (n=540)
+  MUSIC (subspace)     RT60 0.05 s: median  0.778 +-0.351  p90   4.889 +- 0.000  RMSE   3.093 +- 0.076  (n=540)
+  MUSIC (subspace)     RT60 0.10 s: median  1.000 +-0.391  p90   4.889 +- 0.000  RMSE   3.091 +- 0.075  (n=540)
+  MUSIC (subspace)     RT60 0.20 s: median  2.667 +-0.081  p90   6.889 +- 0.348  RMSE  14.020 +- 2.989  (n=540)
+  MUSIC (subspace)     RT60 0.30 s: median  3.333 +-0.327  p90  11.889 +- 1.439  RMSE  28.446 +- 2.857  (n=540)
+  MUSIC (subspace)     RT60 0.45 s: median  3.444 +-0.200  p90  16.944 +- 2.833  RMSE  31.420 +- 2.779  (n=540)
+  MUSIC (subspace)     RT60 0.60 s: median  3.667 +-0.162  p90  22.022 +- 5.558  RMSE  36.113 +- 2.949  (n=540)
+  MUSIC (subspace)     RT60 0.80 s: median  3.667 +-0.129  p90  16.922 +- 1.978  RMSE  30.445 +- 2.841  (n=540)
+
+Figure written to: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs/fig_accuracy_vs_rt60.png

@@ -1,0 +1,83 @@
+doa_benchmark.py  --  RE-BASELINED free-field benchmark
+  PHAT weighting band : (300.0, 3400.0) Hz   (None = pre-re-baseline full band)
+  source band         : (300.0, 3400.0) Hz
+  acquisition band    : None  (None = white noise over 0-24000 Hz)
+  seed                : 7
+Array geometry (cm):
+ [[ 0.    5.  ]
+ [-4.33 -2.5 ]
+ [ 4.33 -2.5 ]]
+Measuring per-estimate host compute (reference implementation only)...
+Running Monte-Carlo sweeps (21 angles x 5 SNR x 60 trials)...
+  SNR   0 dB done
+  SNR   5 dB done
+  SNR  10 dB done
+  SNR  20 dB done
+  SNR  40 dB done
+
+==== FREE-FIELD ACCURACY (abs azimuth error, deg; +- = standard error) ====
+     n = 1260 frames per (method, SNR) cell
+  Proposed (gated)     SNR   0 dB: median  0.529 +-0.015  p90   1.221 +- 0.026  RMSE   0.750 +- 0.014  (n=1260)
+  Proposed (gated)     SNR   5 dB: median  0.308 +-0.009  p90   0.760 +- 0.020  RMSE   0.456 +- 0.009  (n=1260)
+  Proposed (gated)     SNR  10 dB: median  0.212 +-0.006  p90   0.493 +- 0.013  RMSE   0.301 +- 0.006  (n=1260)
+  Proposed (gated)     SNR  20 dB: median  0.127 +-0.004  p90   0.293 +- 0.009  RMSE   0.176 +- 0.003  (n=1260)
+  Proposed (gated)     SNR  40 dB: median  0.108 +-0.004  p90   0.244 +- 0.005  RMSE   0.148 +- 0.003  (n=1260)
+  GCC-PHAT (cheap)     SNR   0 dB: median  0.527 +-0.016  p90   1.219 +- 0.029  RMSE   0.749 +- 0.014  (n=1260)
+  GCC-PHAT (cheap)     SNR   5 dB: median  0.308 +-0.009  p90   0.762 +- 0.020  RMSE   0.456 +- 0.009  (n=1260)
+  GCC-PHAT (cheap)     SNR  10 dB: median  0.212 +-0.007  p90   0.493 +- 0.012  RMSE   0.301 +- 0.006  (n=1260)
+  GCC-PHAT (cheap)     SNR  20 dB: median  0.125 +-0.004  p90   0.293 +- 0.008  RMSE   0.176 +- 0.003  (n=1260)
+  GCC-PHAT (cheap)     SNR  40 dB: median  0.108 +-0.004  p90   0.244 +- 0.005  RMSE   0.148 +- 0.003  (n=1260)
+  SRP-PHAT (strong)    SNR   0 dB: median  0.558 +-0.018  p90   1.308 +- 0.028  RMSE   0.792 +- 0.015  (n=1260)
+  SRP-PHAT (strong)    SNR   5 dB: median  0.358 +-0.013  p90   0.858 +- 0.019  RMSE   0.523 +- 0.010  (n=1260)
+  SRP-PHAT (strong)    SNR  10 dB: median  0.275 +-0.010  p90   0.625 +- 0.016  RMSE   0.390 +- 0.007  (n=1260)
+  SRP-PHAT (strong)    SNR  20 dB: median  0.258 +-0.008  p90   0.492 +- 0.009  RMSE   0.309 +- 0.005  (n=1260)
+  SRP-PHAT (strong)    SNR  40 dB: median  0.250 +-0.009  p90   0.458 +- 0.005  RMSE   0.295 +- 0.004  (n=1260)
+  MUSIC (subspace)     SNR   0 dB: median  1.008 +-0.034  p90   3.125 +- 0.144  RMSE   6.470 +- 1.984  (n=1260)
+  MUSIC (subspace)     SNR   5 dB: median  0.592 +-0.023  p90   1.727 +- 0.071  RMSE   5.096 +- 1.847  (n=1260)
+  MUSIC (subspace)     SNR  10 dB: median  0.358 +-0.014  p90   0.942 +- 0.030  RMSE   0.697 +- 0.036  (n=1260)
+  MUSIC (subspace)     SNR  20 dB: median  0.258 +-0.008  p90   0.508 +- 0.009  RMSE   0.346 +- 0.013  (n=1260)
+  MUSIC (subspace)     SNR  40 dB: median  0.250 +-0.009  p90   0.458 +- 0.008  RMSE   0.290 +- 0.004  (n=1260)
+
+==== PER-PAIR TDOA ERROR of the shared GCC-PHAT front end ====
+  (feeds the GDOP law M40: sigma_theta = c sigma_tau / (sqrt(4.5) R))
+  SNR   0 dB: sigma_tau    3.429 us (robust   3.594 us) -> M40 predicts   0.635 deg (robust  0.666 deg); measured GCC RMSE   0.749 +-0.014 deg; CRB 0.5492 deg; ratio to CRB    1.36
+  SNR   5 dB: sigma_tau    2.067 us (robust   2.073 us) -> M40 predicts   0.383 deg (robust  0.384 deg); measured GCC RMSE   0.456 +-0.009 deg; CRB 0.3088 deg; ratio to CRB    1.48
+  SNR  10 dB: sigma_tau    1.438 us (robust   1.413 us) -> M40 predicts   0.266 deg (robust  0.262 deg); measured GCC RMSE   0.301 +-0.006 deg; CRB 0.1737 deg; ratio to CRB    1.73
+  SNR  20 dB: sigma_tau    0.945 us (robust   0.965 us) -> M40 predicts   0.175 deg (robust  0.179 deg); measured GCC RMSE   0.176 +-0.003 deg; CRB 0.0549 deg; ratio to CRB    3.21
+  SNR  40 dB: sigma_tau    0.846 us (robust   0.920 us) -> M40 predicts   0.157 deg (robust  0.170 deg); measured GCC RMSE   0.148 +-0.003 deg; CRB 0.0055 deg; ratio to CRB   26.94
+
+==== ARE THE THREE PER-PAIR TDOA ERRORS INDEPENDENT? ====
+  (M37) and hence the simple GDOP law (M40) assume Cov(dtau) = sigma_tau^2 I.
+  With M = 3 microphones there are only TWO independent delays, and all three
+  pairwise correlations are computed from the same three channels, so the
+  assumption is suspect. Below: the empirical correlation matrix of the
+  per-pair TDOA errors (pairs 1-2, 1-3, 2-3), and the azimuth s.d. predicted
+  by the GENERAL expression (M36) with the measured covariance substituted,
+  against the simple isotropic form (M40).
+  SNR   0 dB  corr(12,13) +0.385  corr(12,23) -0.423  corr(13,23) +0.410
+            (M40) isotropic prediction   0.635 deg | (M36) with measured Cov: mean   0.753 deg, range  0.741- 0.766 deg | measured RMSE   0.749 deg
+  SNR   5 dB  corr(12,13) +0.435  corr(12,23) -0.330  corr(13,23) +0.390
+            (M40) isotropic prediction   0.383 deg | (M36) with measured Cov: mean   0.450 deg, range  0.434- 0.466 deg | measured RMSE   0.456 deg
+  SNR  10 dB  corr(12,13) +0.352  corr(12,23) -0.323  corr(13,23) +0.337
+            (M40) isotropic prediction   0.266 deg | (M36) with measured Cov: mean   0.308 deg, range  0.302- 0.314 deg | measured RMSE   0.301 deg
+  SNR  20 dB  corr(12,13) +0.212  corr(12,23) -0.115  corr(13,23) +0.097
+            (M40) isotropic prediction   0.175 deg | (M36) with measured Cov: mean   0.187 deg, range  0.177- 0.196 deg | measured RMSE   0.176 deg
+  SNR  40 dB  corr(12,13) +0.115  corr(12,23) -0.041  corr(13,23) +0.068
+            (M40) isotropic prediction   0.157 deg | (M36) with measured Cov: mean   0.163 deg, range  0.159- 0.166 deg | measured RMSE   0.148 deg
+
+==== HOST COMPUTE (ms per estimate; minimum over 9 interleaved rounds) ====
+  x86 host, reference NumPy implementation. NOT an algorithmic complexity
+  ratio and NOT transferable to the MCU -- see measure_compute() docstring.
+  'spread' is max-min across rounds, i.e. how much the host interfered.
+  Proposed (gated)            0.971 ms  (spread  0.094 ms)  (  1.16x GCC-PHAT measured)
+  GCC-PHAT (cheap)            0.834 ms  (spread  0.136 ms)  (  1.00x GCC-PHAT measured)
+  SRP-PHAT (strong)           3.119 ms  (spread  0.334 ms)  (  3.74x GCC-PHAT measured)
+  SRP-PHAT (vectorised)       0.851 ms  (spread  0.072 ms)  (  1.02x GCC-PHAT measured)
+  MUSIC (subspace)            2.621 ms  (spread  0.236 ms)  (  3.14x GCC-PHAT measured)
+  analytical FLOP model (math_model.md 7.2-7.3), the algorithmic comparison:
+  Proposed (gated)            4.522 MFLOP ( 1.070x GCC-PHAT predicted)
+  GCC-PHAT (cheap)            4.227 MFLOP ( 1.000x GCC-PHAT predicted)
+  SRP-PHAT (strong)           4.253 MFLOP ( 1.006x GCC-PHAT predicted)
+  MUSIC (subspace)            3.239 MFLOP ( 0.766x GCC-PHAT predicted)
+
+Figures written to: C:\Users\anees\OneDrive\Desktop\embedded_sound_local\validation\figs
