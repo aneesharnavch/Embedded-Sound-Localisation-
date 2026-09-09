@@ -26,314 +26,538 @@
 \author{Aneesh Arnav Chikkala}
 \authorrunning{Aneesh Arnav Chikkala}
 \institute{No institutional affiliation}
-\date{8 September 2026. Preprint for author review; not peer reviewed.}
-\abstract{Sound localization with a small microphone array depends on how accurately the arrival times of sound are represented. Room reflections and the choice of when to begin recording can also change the result. This paper examines these effects using three microphones and a fixed GCC-PHAT direction estimator. Independent calculations check the direct sound paths and the simulated room responses before a study of 276,480 frame estimates. Matched recordings separate arrival rounding, source startup and reflections, while independent recordings test averaging. At 10 dB signal-to-noise ratio, rounding arrivals increases direct-path root mean square error from $0.923^\circ$ to $2.300^\circ$. In the subset with stronger reverberation, first-frame error is $4.16^\circ$ just after startup, compared with $42.51^\circ$ when the source has already been running. Averaging 128 frames reduces error, but the low and high subsets still differ: $0.835^\circ$ and $10.158^\circ$, respectively. The results show why arrival timing and source history need to be checked before interpreting localization accuracy. A timing-error bound provides an additional check for the array geometry. The findings apply to the stated simulation and do not establish hardware performance or a universal reverberation limit.}
+\date{8 September 2026}
+\abstract{Real-time sound-source localization is essential for assistive hearing systems, wearable interfaces, robots, and distributed IoT sensors. However, the computational, memory, and energy requirements of conventional localization methods, such as beamforming, limit their use in low-cost, battery-powered edge devices. These constraints motivate a deliberately minimal architecture comprising three microphones and lightweight GCC-PHAT time-delay estimation. This study investigates whether temporal averaging can improve the direction-of-arrival (DoA) accuracy of this architecture without increasing per-frame processing, while examining how simulation and observation conditions affect the measured performance. Independent numerical calculations were used to verify the direct-path delays and simulated room responses. Matched simulations then examined the effects of arrival-time rounding, source onset, and reverberation. Separate recordings provided the data for assessing temporal averaging. At an SNR of 10~dB relative to the direct sound, rounding arrival times to the nearest sample increased the direct-path root-mean-square error (RMSE) from \(0.92^\circ\) to \(2.30^\circ\). In the more reverberant cases, the first frame after source onset gave an RMSE of \(4.16^\circ\), compared with \(42.51^\circ\) during steady operation. The lower error at source onset occurs because the reflected sound field has not yet fully developed. Averaging 128 frames, corresponding to 5.46~s, reduced the RMSE to \(0.84^\circ\) under lower reverberation and \(10.16^\circ\) under stronger reverberation. These results demonstrate that temporal averaging can substantially improve the accuracy of a computationally minimal DoA system, although the achievable performance remains limited by the acoustic environment. The findings also highlight the importance of controlling arrival-time discretization, source timing, reverberation, and observation duration when evaluating compact localization systems.}
 \keywords{Sound localization, microphone arrays, GCC-PHAT, room simulation, arrival timing, source startup}
 \maketitle
 \raggedbottom
 
 \section{Introduction}
-Accurate sound localization with a small microphone array is difficult because the microphones receive the same sound only a short time apart. The system must measure these small time differences and convert them into a direction. Noise can disturb the measurements, while reflections from the room can produce additional arrivals that compete with the direct sound. For a compact system, the microphone spacing and the processing method therefore need to be considered together.
-
-Simulation provides a useful way to study these effects before testing a device. The microphone positions, sound source and room can be controlled, and the same input can be used in several comparisons. However, the simulated signals also depend on choices made in the software. A sound path may arrive between two sample times. Rounding that arrival to the nearest sample changes the signal. Starting the source immediately before each short recording creates another difference: the reflected sound may still be building up when the direction is estimated.
-
-These choices matter for small arrays. At a sampling rate of 48 kHz, consecutive samples are $20.83\,\mu$s apart. Sound travels about 7.15 mm in that time at 343 m/s. The microphone spacing used here is 86.6 mm, so even one sample is a noticeable part of the travel time across the array. A simulation needs to represent arrivals between samples accurately enough for the angular differences being studied.
-
-Generalized cross-correlation is an established method for estimating time delay \citep{knapp}, and GCC-PHAT has already been used with equilateral three-microphone arrays \citep{catur}. Fractional-delay filtering provides established ways to represent arrivals between samples \citep{laakso}. The image-source method models room reflections by replacing reflected paths with paths from mirrored sources \citep{allen}. These methods form the basis of the present work. The contribution is a controlled study of how their implementation and the recording procedure affect the reported accuracy.
-
-The study asks three practical questions. How much does rounding the arrival times change the estimated direction? How different is a recording made just after source startup from one made while the source is already running? How much does averaging several direction estimates help when it is tested on new recordings? Numerical checks are included before these results are interpreted. This follows the distinction between checking a computational implementation and testing whether its physical assumptions describe a real experiment \citep{ernoult}.
-
-The evaluation uses one stationary synthetic source, three ideal matched microphones and three rectangular rooms. It estimates horizontal direction, or azimuth. The purpose is to understand this defined simulation in enough detail that its results can be inspected and repeated. Microphone calibration, device timing and measured-room performance require separate experiments.
+Sound localization with a small microphone array is difficult because its limited aperture produces short time differences between microphone signals. These delays must be estimated in the presence of noise and reflections, which can obscure the direct sound. The present system uses three microphones and GCC-PHAT delay estimation, requiring the array geometry and processing method to be considered together.
+At a sampling rate of 48 kHz, consecutive samples are $20.83,\mu$s apart, during which sound travels about 7.15 mm at 343 m/s. At this instance the microphone spacing is 86.6 mm, rounding an arrival time to the nearest sample introduces a significant error relative to the propagation time across the array. Arrivals between samples must therefore be represented accurately.
+Simulation allows the effects of delay rounding, source onset, and reverberation to be examined separately. However, beginning the analysis when the source starts can produce misleading results. The direct sound reaches the microphones before the reflected field has fully developed, so the first frame may appear more accurate than measurements made during steady operation.
+Generalized cross-correlation is an established method for estimating time delay \citep{knapp}, and GCC-PHAT has been applied to equilateral three-microphone arrays \citep{catur}. Fractional-delay filtering represents arrivals between samples \citep{laakso}, while the image-source method represents room reflections using mirrored sources \citep{allen}. The effect of these simulation and observation choices on the reported accuracy of small arrays has received less attention.
+This study quantifies the effects of arrival-time rounding, source onset, and reverberation, and assesses temporal averaging using separate recordings. Direct-path delays and room responses are checked using independent numerical calculations, following the distinction between implementation verification and physical validation \citep{ernoult}. The simulations use one stationary synthetic source, three ideal matched microphones and three rectangular rooms, with localization restricted to azimuth. Microphone calibration, device timing and measured-room performance require separate experiments.
 
 \section{Simulation design and implementation}
-\subsection{Microphone array and direction estimate}
-The microphones form an equilateral triangle in a horizontal plane. Each microphone is 5 cm from the array center, giving 8.66 cm between microphones. The source is placed 1.5 m from the center at the same height. Figure~\ref{fig:geometry} shows the geometry and the comparisons used in the study.
 
-Relative to the array center, the microphone coordinates are
-\begin{equation}
-\mathbf m_i=R[\cos\phi_i,\sin\phi_i]^T,\qquad
-\phi_i\in\{90^\circ,210^\circ,330^\circ\},
-\end{equation}
-where $R=0.05$ m. The speed of sound is fixed at $c=343$ m/s. For source position $\mathbf s$, the direct sound reaches microphone $i$ at
-\begin{equation}
-t_i=\frac{\|\mathbf s-\mathbf m_i\|}{c}.
-\end{equation}
-The difference for a microphone pair is $\tau_{ij}=t_i-t_j$, with $i<j$. There are three pairs, but they share microphones. Their timing errors therefore cannot generally be treated as independent.
+\subsection{Microphone array and direction estimation}
 
-The direction estimator uses a plane-wave approximation. For a unit vector $\mathbf u$ pointing toward the source, the ideal pair delays satisfy $A\mathbf u=-c\boldsymbol\tau$, where each row of $A$ is $(\mathbf m_i-\mathbf m_j)^T$. The measured delays are converted to direction through
+The three microphones form an equilateral triangle in the horizontal plane. Each microphone is 5 cm from the array centre, giving an inter-microphone distance of 8.66 cm. The source is located 1.5 m from the centre at the same height. Figure~\ref{fig:geometry} shows the geometry and the matched comparisons used in the study.
+
+With azimuth measured counterclockwise from the positive $x$-axis, the microphone coordinates are
 \begin{equation}
-\widetilde{\mathbf u}=-cA^+\widehat{\boldsymbol\tau},\qquad
-\widehat\theta=\operatorname{atan2}(\widetilde u_y,\widetilde u_x).
-\label{eq:solve}
+	\mathbf{m}_i
+	=
+	R[\cos\phi_i,\sin\phi_i]^T,
+	\qquad
+	\phi_i\in\{90^\circ,210^\circ,330^\circ\},
 \end{equation}
-Here $A^+$ is the pseudoinverse, which gives a least-squares fit with equal weight for all three pairs. The angle is taken directly from the fitted vector; its length is not forced to one. The actual direct paths come from a source at finite distance, so their wavefront is curved. Even exact arrival times can therefore produce a small error when interpreted by this plane-wave model. The direct-path checks measure this effect separately.
+where $R=0.05$ m. The speed of sound is fixed at $c=343$ m/s. For a source at $\mathbf{s}$, the direct-path arrival time at microphone $i$ is
+\begin{equation}
+	t_i=\frac{\lVert\mathbf{s}-\mathbf{m}_i\rVert}{c}.
+\end{equation}
+The time difference for pair $i,j$ is
+\begin{equation}
+	\tau_{ij}=t_i-t_j,\qquad i<j.
+\end{equation}
+The delay vector is ordered as
+$\boldsymbol{\tau}=[\tau_{12},\tau_{13},\tau_{23}]^T$.
+Although three pairs are available, their errors are correlated because the pairs share microphones.
+
+Direction is estimated using a plane-wave model. For a unit vector $\mathbf{u}$ pointing toward the source,
+\begin{equation}
+	A\mathbf{u}=-c\boldsymbol{\tau},
+\end{equation}
+where each row of $A$ is $(\mathbf{m}_i-\mathbf{m}_j)^T$, ordered consistently with $\boldsymbol{\tau}$. The estimated delays give
+\begin{equation}
+	\widetilde{\mathbf{u}}
+	=
+	-cA^+\widehat{\boldsymbol{\tau}},
+	\qquad
+	\widehat{\theta}
+	=
+	\operatorname{atan2}
+	(\widetilde{u}_y,\widetilde{u}_x),
+	\label{eq:solve}
+\end{equation}
+where $A^+$ is the pseudoinverse. This is an equally weighted least-squares estimate; it is used as a fixed estimator rather than as a statistically optimal treatment of the correlated pairwise errors. The vector is not normalized because only its angle is used.
+
+The finite source distance produces curved rather than planar wavefronts. Consequently, even exact direct-path delays can give a non-zero angular error when interpreted using equation~\ref{eq:solve}. This modelling error is quantified separately using the analytical direct-path arrival times.
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig1_geometry_controls.pdf}
-\caption{Microphone arrangement and matched comparisons. The triangle is drawn to scale; the arrow shows source direction only. The source is 1.5 m from the center. Each combination uses the same underlying source and microphone-noise samples for a given recording. ``Onset'' means one source startup at the beginning of the recording.}
-\label{fig:geometry}
+	\centering
+	\includegraphics[width=\textwidth]{figures/fig1_geometry_controls.pdf}
+	\caption{Microphone geometry and matched comparisons. The triangle is drawn to scale, whereas the arrow indicates source direction only. The source is 1.5 m from the array centre. For each recording, matched conditions use the same source and microphone-noise samples. ``Onset'' denotes a single source startup at the beginning of the recording.}
+	\label{fig:geometry}
 \end{figure*}
 
 \subsection{Room model and arrival timing}
-Each room is a three-dimensional rectangular enclosure. Reflections are specular, meaning that the reflection angle equals the incidence angle. The six walls have pressure-reflection coefficients that do not change with frequency. The model includes spreading loss but excludes diffraction, diffuse scattering, air attenuation and microphone directivity.
 
-For a room side of length $L_a$ and source coordinate $s_a$, the image-source coordinate is
+Each room is represented as a three-dimensional rectangular enclosure with specular reflections. The six walls have frequency-independent pressure-reflection coefficients. Geometrical spreading is included, while diffraction, diffuse scattering, air attenuation and microphone directivity are excluded.
+
+For room dimension $L_a$ and source coordinate $s_a$ along axis $a$, an image-source coordinate is
 \begin{equation}
-s_a^{\mathrm{img}}=2n_aL_a+(1-2p_a)s_a,
+	s_a^{\mathrm{img}}
+	=
+	2n_aL_a+(1-2p_a)s_a,
 \end{equation}
-where $n_a\in[-K,K]$ and $p_a\in\{0,1\}$. The numbers of reflections at the low and high walls are $|n_a-p_a|$ and $|n_a|$. A path of length $r$ arrives after $r/c$ seconds and has pressure gain
+where $n_a\in[-K,K]$ and $p_a\in\{0,1\}$. The numbers of reflections at the low and high walls are $\lvert n_a-p_a\rvert$ and $\lvert n_a\rvert$, respectively. A path of length $r$ has an arrival time $r/c$ and pressure gain
 \begin{equation}
-g(r)=\frac{1}{4\pi r}\prod_w\beta_w^{N_w},
+	g(r)
+	=
+	\frac{1}{4\pi r}
+	\prod_w\beta_w^{N_w},
 \end{equation}
-where $\beta_w$ is the pressure-reflection coefficient of wall $w$ and $N_w$ is its reflection count. The final model uses image extent $K=76$ and includes paths up to 1.2 s long. Both limits are checked by extending them further.
+where $\beta_w$ and $N_w$ are the pressure-reflection coefficient and reflection count for wall $w$. The final model uses $K=76$ and retains paths up to 1.2 s. Convergence is assessed by repeating the room-response calculation with larger image extents and longer path limits.
 
-For uniform walls, absorption is set using $\alpha=0.161V/(S T_{\mathrm{nom}})$ and $\beta=\sqrt{1-\alpha}$, where $V$ is room volume and $S$ is surface area. The value $T_{\mathrm{nom}}$ is a nominal reverberation setting used to choose absorption. It is not assumed to equal the decay time of the resulting response. The relationship between wall absorption and room decay needs its own checks \citep{bellows}.
+For uniform walls, absorption is assigned using
+\begin{equation}
+	\alpha=\frac{0.161V}{S T_{\mathrm{nom}}},
+	\qquad
+	\beta=\sqrt{1-\alpha},
+\end{equation}
+where $V$ is the room volume, $S$ is its surface area and $T_{\mathrm{nom}}$ is the nominal reverberation setting. The resulting decay time is measured from the simulated response rather than assumed to equal $T_{\mathrm{nom}}$ \citep{bellows}.
 
-Two versions of arrival timing are compared. The fractional version places each arrival on a time grid 32 times finer than the acquisition grid, using linear deposition. A normalized Kaiser-windowed sinc filter then converts the response to the acquisition rate. Its shape parameter is 8.6 and its half-width is 32 acquisition samples. The rounded version places the path directly at sample $\operatorname{round}(f_s r/c)$. Path gains and reflection coverage remain the same, so the comparison isolates the arrival construction. Reflections can also be switched off while retaining the same direct path and response length.
+Two arrival-time implementations are compared. In the fractional implementation, each path is deposited linearly on a grid 32 times finer than the acquisition grid. A normalized Kaiser-windowed sinc filter then converts the response to the acquisition rate. The Kaiser shape parameter is 8.6, and the filter half-width is 32 acquisition samples. In the rounded implementation, each path is placed at
+\begin{equation}
+	n=\operatorname{round}(f_s r/c).
+\end{equation}
+The path gains, reflection set and subsequent signal processing are unchanged. The comparison therefore measures the effect of replacing fractional arrival construction with direct sample rounding. A direct-only condition removes all reflections while retaining the same direct path and response length.
 
 \subsection{Source signal and recording procedure}
-The source is a Gaussian random sequence restricted to 300--3400 Hz with a Fourier-domain mask and normalized in root mean square amplitude. The sampling rate is 48 kHz. Every continuous record includes 59,682 source samples before the analyzed interval. This earlier signal allows the room response and acquisition filter to settle before analysis begins.
 
-All three microphone signals pass through the same causal Butterworth bandpass filter at 300--3400 Hz. The SciPy prototype order is four, which produces four second-order sections and a total bandpass order of eight. Independent Gaussian microphone-noise sequences pass through the same filter.
+The source is a Gaussian random sequence restricted to 300--3400 Hz using a Fourier-domain mask and normalized by its root mean square amplitude. The sampling rate is 48 kHz. Each continuous recording includes 59,682 source samples before the analysed interval, allowing the room response and causal acquisition filter to reach steady operation.
 
-Noise level is defined relative to the steady direct-only signal after filtering, averaged over the microphones and the analysis interval. The stated signal-to-noise ratio (SNR) is this direct-signal power divided by acquired noise power. The same noise samples and scaling are retained when reflections are added. As a result, the stated SNR is not the ratio of total reverberant signal power to noise power.
+All microphone signals pass through the same causal Butterworth bandpass filter covering 300--3400 Hz. The SciPy prototype order is four, producing four second-order sections and a total bandpass order of eight. Independent Gaussian noise is generated for each microphone and passed through the same filter.
 
-The source-history comparison uses two recordings. In the steady recording, the source has already been running before analysis begins. In the onset recording, the earlier source samples are set to zero once, while the samples inside the analyzed interval remain identical. The microphone noise is also identical. This represents a single startup, including its transient spectrum, followed by continuous operation.
+Noise is scaled relative to the filtered, steady-state, direct-only signal. Let $P_{\mathrm{dir}}$ denote the direct-signal power averaged over the microphones and analysed samples, and let $P_{\mathrm{noise}}$ denote the corresponding acquired noise power. The reported SNR is
+\begin{equation}
+	\mathrm{SNR}
+	=
+	10\log_{10}
+	\left(
+	\frac{P_{\mathrm{dir}}}{P_{\mathrm{noise}}}
+	\right).
+\end{equation}
+The same noise samples and scaling are retained when reflections are added. The stated SNR is therefore referenced to the direct sound and is not the total reverberant-signal-to-noise ratio.
 
-Each short recording is divided into 32 consecutive, nonoverlapping frames of 2048 samples. A frame lasts 42.667 ms and the full short record lasts 1.365 s. A separate exploratory check restarts the source and acquisition history before every frame. That procedure is reported separately because it repeatedly observes startup instead of a continuous recording.
+Source history is examined using matched steady and onset recordings. In the steady condition, the source is active during the pre-analysis interval. In the onset condition, the earlier source samples are set to zero once, while the source samples within the analysed interval and all microphone-noise samples remain unchanged. This comparison includes the effects of room-response buildup and causal-filter startup and is therefore treated as a comparison of recording conditions rather than as a pure reverberation comparison. Direct-only results are used to identify effects that remain when reflections are absent.
+
+Each short recording contains 32 consecutive, non-overlapping frames of 2048 samples. A frame lasts 42.667 ms, and the complete short recording lasts 1.365 s. The temporal-averaging analysis uses a separate continuous recording containing 128 frames, corresponding to 5.46 s. For $N$ frame estimates, azimuth is averaged circularly:
+\begin{equation}
+	\overline{\theta}_N
+	=
+	\operatorname{atan2}
+	\left(
+	\sum_{n=1}^{N}\sin\widehat{\theta}_n,
+	\sum_{n=1}^{N}\cos\widehat{\theta}_n
+	\right).
+\end{equation}
+This avoids discontinuities at the azimuth wraparound boundary. A separate exploratory condition restarts the source and acquisition history before every frame. Because that procedure repeatedly samples the startup transient rather than continuous operation, its results are reported separately.
 
 \subsection{Delay estimation using GCC-PHAT}
-GCC-PHAT estimates the relative delay between each microphone pair by finding a peak in a normalized cross-correlation. PHAT refers to phase-transform weighting: the normalization reduces the influence of spectral magnitude. The precise processing steps are fixed throughout this study.
 
-The mean is removed from each frame and a symmetric Hann window is applied. A 4096-point Fourier transform is then used. For microphone spectra $X_i[k]$ and $X_j[k]$, define
+GCC-PHAT estimates the relative delay of each microphone pair from the peak of a phase-weighted cross-correlation. The mean is removed from each frame before applying a symmetric Hann window and a 4096-point Fourier transform. For microphone spectra $X_i[k]$ and $X_j[k]$, the cross spectrum is
 \begin{equation}
-G_{ij}[k]=X_i[k]X_j^*[k].
+	G_{ij}[k]=X_i[k]X_j^*[k].
 \end{equation}
-The cross spectrum is normalized using
+A denominator floor is applied before PHAT normalization:
 \begin{align}
-d_{ij}[k]&=\max\bigl(|G_{ij}[k]|,q_{ij}\bigr),\\
-q_{ij}&=10^{-3}\max_l|G_{ij}[l]|+10^{-12},\\
-W_{ij}[k]&=G_{ij}[k]/d_{ij}[k].
+	d_{ij}[k]
+	&=
+	\max\bigl(\lvert G_{ij}[k]\rvert,q_{ij}\bigr),\\
+	q_{ij}
+	&=
+	10^{-3}\max_l\lvert G_{ij}[l]\rvert+10^{-12},\\
+	W_{ij}[k]
+	&=
+	G_{ij}[k]/d_{ij}[k].
 \end{align}
-The maximum used for $q_{ij}$ is calculated over all bins. Values of $W_{ij}$ outside 300--3400 Hz are then set to zero. This small denominator floor prevents division by nearly zero values.
+The maximum in $q_{ij}$ is evaluated over all frequency bins. Values of $W_{ij}$ outside 300--3400 Hz are set to zero. The floor regularizes the PHAT weighting when the cross-spectrum magnitude is close to zero.
 
-The inverse transform is evaluated with eightfold correlation sampling. Only delays physically possible for the pair, within $\|\mathbf m_i-\mathbf m_j\|/c$, are searched. A quadratic fit to the peak and its two neighbors refines the delay. The adjustment is limited to one correlation-grid step and then clipped to the physical delay bound. Equation~\ref{eq:solve} converts the resulting three delays into azimuth.
+The inverse transform is evaluated on a correlation grid sampled eight times more finely than the acquisition grid. This interpolates the discrete correlation function but does not add information to the microphone signals. The peak search is restricted to
+\begin{equation}
+	\lvert\tau_{ij}\rvert
+	\leq
+	\frac{\lVert\mathbf{m}_i-\mathbf{m}_j\rVert}{c}.
+\end{equation}
+A quadratic fit to the peak and its two neighbouring samples provides a final sub-grid estimate. The correction is limited to one correlation-grid interval and clipped to the physical delay bound. The three pairwise estimates are then inserted into equation~\ref{eq:solve}.
 
 \subsection{Measuring the simulated room response}
-Decay is measured from the reverse-integrated squared impulse response, following Schroeder's energy-decay method \citep{schroeder}. Energy is first summed across microphones. The decay slope between $-5$ and $-25$ dB is fitted and extrapolated to 60 dB to obtain T20. Fit quality, early decay time and T30 are also retained.
 
-The direct-to-reverberant ratio (DRR) compares the energies of separately filtered direct and reflected responses. Their interference cross term is saved as well, because direct and reflected energy need not add independently. Each scene also records the arrival times and gains of the direct path and the six first-order reflections. These measurements describe what the simulated room actually produces, beyond its nominal setting.
+Room decay is calculated from the reverse-integrated squared impulse response using Schroeder's method \citep{schroeder}. Energy is summed across the three microphones before integration. A line is fitted to the decay between $-5$ and $-25$ dB and extrapolated to 60 dB to obtain T20. Early decay time, T30 and the goodness of fit are retained to assess whether the fitted range is supported by the truncated response.
+
+The direct-to-reverberant ratio is calculated from separately filtered direct and reflected responses:
+\begin{equation}
+	\mathrm{DRR}
+	=
+	10\log_{10}
+	\left(
+	\frac{E_{\mathrm{dir}}}{E_{\mathrm{refl}}}
+	\right).
+\end{equation}
+The interference term between the filtered responses is also retained because the energy of their sum is
+\begin{equation}
+	E_{\mathrm{tot}}
+	=
+	E_{\mathrm{dir}}
+	+
+	E_{\mathrm{refl}}
+	+
+	2\sum_n h_{\mathrm{dir}}[n]h_{\mathrm{refl}}[n].
+\end{equation}
+For each scene, the arrival times and gains of the direct path and six first-order reflections are recorded. These quantities are used to check the room construction and to interpret differences between nominal and measured decay.
 
 \section{Quality control and evaluation}
+
 \subsection{Independent numerical checks}
-The first checks test the calculation without room reflections. An independent scalar implementation solves the two-by-two normal equations without importing the main direction solver. It checks plane waves, spherical arrivals, cardinal directions and all six microphone-channel permutations. The analytical study covers 720 angles, radii of 0.025, 0.05 and 0.10 m, source distances of 0.5, 1.5, 5 and 20 m, and sampling rates of 16, 48, 96 and 192 kHz: 34,560 conditions in total.
 
-A separate waveform reference evaluates continuous-time harmonic signals directly and compares them with the fractional-delay filter output. Physical bandwidth, recording duration and observation time are matched. This tests signal construction separately from the algebra used to convert delays into direction.
+The direction calculation is first tested without room reflections. An independent scalar implementation solves the two-dimensional normal equations without calling the main direction-estimation routine. It tests plane-wave and spherical-wave arrivals, the cardinal directions, and all six permutations of the microphone channels. The analysis covers 720 source angles, array radii of 0.025, 0.05 and 0.10 m, source distances of 0.5, 1.5, 5 and 20 m, and sampling rates of 16, 48, 96 and 192 kHz. These combinations produce 34,560 geometric and sampling conditions. Both arrival models and all six channel permutations are evaluated within each condition.
 
-The room check uses another image enumeration and evaluates each path through its exact frequency-domain phase. It does not share the main path generator or its interpolation filter. Path counts, spectra and direction estimates are compared, including cases with unequal walls. Image extent is increased until two successive changes are below $0.05^\circ$ in direction, 1\% in T20 and 0.1\% in the probe spectrum. Response duration and interpolation are also refined, followed by a joint increase of duration and image extent.
+A separate waveform calculation evaluates continuous-time harmonic signals and compares their expected phases with the output of the fractional-delay implementation. The signal bandwidth, recording duration and observation interval are kept identical. This separates errors in signal construction from errors in converting the estimated delays into an azimuth.
 
-The $0.05^\circ$ target is a numerical resolution target for interpreting effects of about $0.5^\circ$ or larger. It is not a required accuracy for an acoustic device. Checks on random recordings are needed as well: a small change in the response can cause a peak-based estimator to choose a different peak. The pilot and main study use separate, repeatable random-input identities.
+The room model is checked using an independent image-source enumeration in which every path is evaluated using its exact frequency-domain phase. This reference calculation does not use the main path generator or its interpolation filter. Path counts, spectra and estimated directions are compared for rooms with uniform and unequal wall coefficients. Image extent is increased until two successive calculations differ by less than $0.05^\circ$ in direction, 1\% in T20 and 0.1\% in the probe-spectrum comparison. Response duration and interpolation resolution are then increased separately and jointly to check that truncation and interpolation do not determine the result.
+
+The $0.05^\circ$ criterion is a numerical convergence target used when interpreting effects of approximately $0.5^\circ$ or larger. It is not an accuracy requirement for the acoustic device. Because GCC-PHAT is a peak-based estimator, convergence of the room response does not guarantee that every random signal realization will produce the same selected peak. The pilot and main evaluations therefore use separate, reproducible random-number seeds.
 
 \subsection{Test conditions and matched comparisons}
-The rooms measure $6\times5\times3$, $5\times4\times2.8$ and $8\times6\times3.2$ m. The array is placed at coordinate fractions $(0.5,0.5,0.5)$ and $(0.6,0.45,0.5)$ of each room. Nominal reverberation settings are 0.15, 0.30 and 0.60 s. Twelve source directions are used, at $7.37^\circ+30^\circ j$ for $j=0,\ldots,11$. The minimum source or microphone distance from a wall is 0.312 m.
 
-The main study uses all 216 combinations of room, placement, nominal setting and direction. Each scene is tested at 0, 10 and 20 dB SNR with five independent short recordings. The allocation and analysis rules were fixed before generating the final results (Table~\ref{tab:protocol}).
+The three rooms measure $6\times5\times3$ m, $5\times4\times2.8$ m and $8\times6\times3.2$ m. The array centre is placed at coordinate fractions $(0.5,0.5,0.5)$ and $(0.6,0.45,0.5)$ of each room. Nominal reverberation settings of 0.15, 0.30 and 0.60 s are used. The 12 source directions are
+\begin{equation}
+	\begin{aligned}
+		\theta_j &= 7.37^\circ+30^\circ j,\\
+		j &= 0,\ldots,11.
+	\end{aligned}
+\end{equation}
+The minimum distance between any source or microphone and a wall is 0.312 m.
+
+The main evaluation contains all 216 combinations of room, array placement, nominal reverberation setting and source direction. Each scene is evaluated at SNRs of 0, 10 and 20 dB using five independent 32-frame simulated realizations. The resulting numbers of frame-level estimates are listed in Table~\ref{tab:protocol}. The allocation of conditions and the analysis rules were fixed before the held-out results were examined.
 
 \begin{table}[t]
-\caption{Main evaluation counts. Each frame contains 2048 samples. Pilot, reference and sensitivity checks are additional.}
-\label{tab:protocol}\centering\small
-\begin{tabular}{@{}lrr@{}}\toprule
-Study & Scenes & Estimates\\\midrule
-Main room study & 216 & 103,680\\
-Seven additional matched variants & 72 & 80,640\\
-Long recordings & 72 & 92,160\\\midrule
-Total & & 276,480\\\bottomrule
-\end{tabular}
+	\caption{Evaluation counts. Each frame contains 2048 samples. Pilot, reference and sensitivity calculations are additional.}
+	\label{tab:protocol}
+	\centering
+	\small
+	\begin{tabular}{@{}lrr@{}}
+		\toprule
+		Study & Base scenes & Estimates\\
+		\midrule
+		Main room study & 216 & 103,680\\
+		Seven additional variants & 72 & 80,640\\
+		Long realizations & 72 & 92,160\\
+		\midrule
+		Total & & 276,480\\
+		\bottomrule
+	\end{tabular}
 \end{table}
 
-Matched comparisons use the centered, nominal-0.15-s state and the offset, nominal-0.60-s state in each room. With 12 directions, this gives 72 scenes. These are called the low and high subsets. Both absorption and placement differ between them; a low-to-high comparison therefore does not isolate reverberation time alone.
+Two subsets are used for matched comparisons. The low-reverberation/centred subset combines the centred array placement with the nominal 0.15-s setting. The high-reverberation/offset subset combines the offset placement with the nominal 0.60-s setting. Applying these conditions to all three rooms and 12 source directions gives 72 base scenes. Because both absorption and placement differ, comparisons between the subsets describe combined acoustic conditions and do not isolate reverberation time.
 
-At 10 dB, the same five recordings are used for all eight combinations of fractional or rounded arrivals, steady or onset history, and direct or reflected propagation. The fractional/steady/reflected result is reused from the main study only when its inputs match exactly. Five new 128-frame recordings per scene are then used to describe bias and frame dependence, and five different recordings test averaging. These long recordings are separate from both the pilot and the short-record study.
+At 10 dB SNR, the same five source and noise realizations are used for all eight combinations of fractional or rounded arrivals, steady or onset history, and direct-only or reflected propagation. The fractional/steady/reflected condition is reused from the main evaluation only when all inputs are identical. For each scene, five additional 128-frame realizations are used to estimate bias and temporal dependence. Five separate 128-frame realizations form a held-out set for evaluating temporal averaging. These long realizations are independent of the pilot study and the 32-frame evaluation.
 
 \subsection{Additional geometry and method checks}
-A fixed subset of 24 scenes, four directions in each of the six room states, tests a $17^\circ$ array rotation, an unequal triangle, unequal wall absorption and a narrower 300--1700 Hz source band. The acquisition filter and estimator still use 300--3400 Hz in the narrower-band test. Each variation uses five new 32-frame recordings at 10 dB. These checks show how performance changes beyond the main setup; their differences from the base case are not matched causal estimates because the random records also change.
 
-Steered-response power with PHAT weighting (SRP-PHAT) provides a second localization method \citep{dibiase}. It uses the same base recordings, window, band and normalization. Instead of selecting a separate delay peak for each pair, it combines the pair cross spectra at the continuous plane-wave delays predicted for each candidate angle. The angular grid is $0.25^\circ$, with quadratic refinement, and is checked against a $0.05^\circ$ grid. This is a comparison on the stated subset, rather than a general ranking of methods.
+A fixed subset contains four source directions in each of the six room conditions formed by the three rooms and the two matched acoustic conditions. These 24 scenes are used to examine a $17^\circ$ array rotation, an unequal triangular array, unequal wall absorption and a narrower 300--1700 Hz source band.
+
+The acquisition filter and direction estimator retain their 300--3400 Hz passband in the narrower-source-band condition. Each variation uses five new 32-frame realizations at 10 dB SNR. Because these variations do not reuse the base-condition random inputs, they are treated as sensitivity analyses rather than matched estimates of individual causal effects.
+
+Steered-response power with phase-transform weighting (SRP-PHAT) is included as a second localization method \citep{dibiase}. It uses the same signals, frame window, frequency band and PHAT normalization as GCC-PHAT. For pair $i,j$ and candidate azimuth $\theta$, define
+\begin{equation}
+	C_{ij}(\theta)
+	=
+	\sum_{k\in\mathcal{B}} W_{ij}[k]
+	\exp\!\left[
+	\mathrm{i}2\pi f_k\tau_{ij}(\theta)
+	\right].
+\end{equation}
+The SRP-PHAT objective is then
+\begin{equation}
+	P(\theta)
+	=
+	\sum_{i<j}\operatorname{Re}
+	\bigl\{C_{ij}(\theta)\bigr\}.
+\end{equation}
+Here $\mathcal{B}$ contains the frequency bins between 300 and 3400 Hz, and $\tau_{ij}(\theta)$ is the plane-wave delay predicted for pair $i,j$. The objective is evaluated on a $0.25^\circ$ azimuth grid and refined quadratically around its maximum. Results are checked against a $0.05^\circ$ grid. This comparison is restricted to the stated subset and is not intended as a general ranking of localization methods.
 
 \subsection{Error measures and uncertainty}
-Angular error is wrapped to $[-180^\circ,180^\circ)$ so that a small crossing of the angle boundary is treated correctly. Root mean square error (RMSE) gives greater weight to large errors. Median absolute error, the 90th percentile, circular bias and the proportion of errors above $5^\circ$ are also recorded. The $5^\circ$ threshold was chosen in advance as a descriptive measure; it is not a hearing or device-acceptance standard.
 
-Uncertainty is estimated with 2000 bootstrap draws \citep{efron}. Each draw selects whole recordings with replacement within each scene. The same selected recordings are used across matched variants. Keeping frames from a recording together avoids treating them as independent experiments. These intervals describe variation from source and noise for the selected scenes. They do not describe uncertainty over all possible rooms.
-
-The matched effects are calculated from signed errors and squared errors. Mean squared error is averaged first; RMSE is its square root. Subtracting two RMSE values does not create an independent error component. Interactions are calculated as differences between matched effects under different conditions. For example, a rounding-by-reflection interaction asks whether the effect of rounding changes when reflections are present. Full per-scene results are retained alongside pooled summaries.
-
-\subsection{Testing averaging on new recordings}
-Direction estimates are averaged over blocks of 1, 2, 4, 8, 16, 32, 64 and 128 consecutive frames. Circular averaging is used: directions are averaged as unit vectors before their angle is taken. This avoids errors at the $-180^\circ/180^\circ$ boundary. The longest block lasts 5.461 s.
-
-For small angular errors, the expected mean squared error of an average can be approximated by
+For true azimuth $\theta$ and estimate $\widehat{\theta}$, angular error is defined as
 \begin{equation}
-\operatorname{MSE}(\overline e_n)\simeq b^2+
-\frac{1}{n}\left[\gamma_0+2\sum_{\ell=1}^{n-1}
-\left(1-\frac{\ell}{n}\right)\gamma_\ell\right].
-\label{eq:variance}
+	e=
+	\operatorname{wrap}_{[-180^\circ,180^\circ)}
+	\bigl(\widehat{\theta}-\theta\bigr).
 \end{equation}
-Here $b$ is the persistent mean error, $\gamma_0$ is frame-error variance and $\gamma_\ell$ describes dependence between errors $\ell$ frames apart. The equation separates a mean offset from fluctuations that averaging may reduce.
+This wrapping prevents a small crossing of the angular boundary from being counted as a large error. Performance is summarized using root mean square error,
+\begin{equation}
+	\mathrm{RMSE}
+	=
+	\sqrt{
+		\frac{1}{N}
+		\sum_{n=1}^{N}e_n^2
+	},
+\end{equation}
+together with median absolute error, the 90th percentile of absolute error, circular bias and the proportion of estimates with absolute error above $5^\circ$. The $5^\circ$ threshold was specified as a descriptive measure and is not a hearing or device-acceptance standard.
 
-These quantities are estimated from the five training recordings, with each record centered before estimating covariance. Covariances above lag 32 are omitted; retained nonzero lags receive weights $1-\ell/33$. Negative predicted variances are clipped to zero. A simpler comparison assumes independent frames by setting nonzero-lag covariances to zero.
+Uncertainty is estimated using 2000 bootstrap draws \citep{efron}. Within each scene, complete simulated realizations are sampled with replacement, and all frames from a selected realization remain together. The same bootstrap selections are applied to matched variants. This preserves the pairing between conditions and avoids treating frames from the same realization as independent experiments. The resulting intervals describe variation caused by the simulated source and microphone noise for the selected scenes. They do not describe uncertainty over all possible rooms, and the small number of independent realizations per scene limits the precision of the intervals.
 
-The approximation is interpreted only where the training estimates are sufficiently concentrated: circular resultant at least 0.95 and absolute circular mean error at most $15^\circ$. This rule was fixed in advance and uses no test recordings. All scenes remain in the measured test results, including those that fail the rule. The rule does not guarantee that rare large errors are absent.
+Matched effects are calculated before aggregation. For a loss function $L$, the paired effect for realization $r$ is
+\begin{equation}
+	\Delta_r=L_{r,A}-L_{r,B}.
+\end{equation}
+Here $L$ is either signed angular error or squared angular error. Mean squared error is averaged before its square root is taken to obtain RMSE. A difference between two RMSE values is reported only as a difference in summary performance and is not interpreted as an independent error component.
+
+Interactions are calculated as differences between paired effects. Let R and F denote rounded and fractional arrival construction, respectively. For propagation condition $q\in\{\mathrm{refl},\mathrm{dir}\}$, define the rounding effect as
+\begin{equation}
+	\Delta_{\mathrm{R}}^{(q)}
+	=
+	L_{\mathrm{R},q}-L_{\mathrm{F},q}.
+\end{equation}
+The rounding-by-reflection interaction is then
+\begin{equation}
+	\Delta_{\mathrm{int}}
+	=
+	\Delta_{\mathrm{R}}^{(\mathrm{refl})}
+	-
+	\Delta_{\mathrm{R}}^{(\mathrm{dir})}.
+\end{equation}
+This quantity measures whether the effect of arrival-time rounding changes when reflections are present. Per-scene results are retained alongside pooled summaries.
+
+\subsection{Testing averaging on held-out realizations}
+
+Temporal averaging is evaluated on the five held-out 128-frame realizations for each scene. The averaging lengths are
+\begin{equation}
+	N\in\{1,2,4,8,16,32,64,128\}.
+\end{equation}
+For each value of $N$, the first $N$ consecutive frame estimates from each realization are combined using the circular mean
+\begin{equation}
+	\overline{\theta}_N
+	=
+	\arg\!\left(
+	\sum_{n=1}^{N}
+	\exp\!\left[\mathrm{i}\widehat{\theta}_n\right]
+	\right).
+\end{equation}
+The circular mean avoids discontinuities at the $-180^\circ/180^\circ$ boundary. The longest averaging interval contains 128 frames and lasts 5.461 s.
+
+Let
+\begin{equation}
+	e_n
+	=
+	\operatorname{wrap}_{[-180^\circ,180^\circ)}
+	\bigl(\widehat{\theta}_n-\theta\bigr)
+\end{equation}
+denote the frame error. When the errors are sufficiently concentrated, circular averaging can be approximated by averaging these scalar errors. Define the finite-lag covariance contribution as
+\begin{equation}
+	A_N
+	=
+	\sum_{\ell=1}^{N-1}(N-\ell)\gamma_\ell.
+\end{equation}
+Using this finite-lag covariance term, the variance and mean squared error are
+\begin{equation}
+	\begin{aligned}
+		V_N
+		&=
+		\frac{\gamma_0}{N}
+		+\frac{2A_N}{N^2},\\
+		\operatorname{MSE}(\overline{e}_N)
+		&\simeq b^2+V_N.
+	\end{aligned}
+	\label{eq:variance}
+\end{equation}
+Here $b$ is the persistent mean error, $\gamma_0$ is the frame-error variance and $\gamma_\ell$ is the covariance between errors separated by $\ell$ frames. The term $A_N$ collects the covariance contributions from non-zero lags. The bias term persists, whereas $V_N$ describes fluctuations that may decrease through averaging.
+
+The bias and covariance terms are estimated separately for each scene using the five 128-frame estimation realizations. The persistent bias is obtained from their pooled circular mean error. Each realization is centred before its autocovariance is calculated, preventing between-realization offsets from being included as temporal covariance. Covariances above lag 32 are set to zero. For $1\leq\ell\leq32$, a Bartlett taper
+\begin{equation}
+	w_\ell=1-\frac{\ell}{33}
+\end{equation}
+is applied to reduce sampling variation at longer lags. A comparison model assumes independent frames by setting all non-zero-lag covariances to zero. Any small negative variance caused by finite-sample numerical error is set to zero before taking its square root.
+
+Equation~\ref{eq:variance} is interpreted only for estimation-set results with a circular resultant of at least 0.95 and an absolute circular mean error no greater than $15^\circ$. These criteria were specified before examining the held-out realizations. They limit use of the small-error approximation but do not remove any scene from the measured held-out results. Scenes that fail the criteria remain in the empirical evaluation, and the criteria do not rule out rare large errors.
 
 \section{Results}
-\subsection{Numerical checks and the corrected room model}
-The direct checks agree closely. Plane-wave recovery differs by at most $5.7\times10^{-14}$ degrees, and the independent scalar solver differs by at most $7.3\times10^{-12}$ degrees. The largest difference between the continuous-time waveform reference and the selected fractional-delay filter is $3.7\times10^{-5}$ degrees. Increasing correlation sampling from 8 to 64 changes direct-path estimates by no more than $0.000495^\circ$.
 
-The final independent room check includes about 5.22 million paths per microphone. Its relative spectral difference is $1.13\times10^{-5}$ and its angular difference is $0.000807^\circ$. Earlier checks with coarse image coverage changed one estimate by more than $100^\circ$, and a coarse fractional grid failed the spectral target. These failures were used to improve the numerical settings and are retained in the verification notes.
+\subsection{Numerical verification and correction of the room model}
 
-One further correction was needed after the initial full run. Extending response duration and image extent together changed ten of 960 checked estimates by more than $0.05^\circ$, with a maximum change of $0.16551^\circ$. The original 0.9-s/extent-48 run was preserved and replaced. The final 1.2-s/extent-76 model, with propagation factor 32, passes a joint extension to 1.5 s/extent 96 with a maximum change of $0.01273^\circ$. The complete study was rerun with the same scientific allocation and analysis rules, using new source and noise identities. All results reported below come from that corrected run.
+Against the analytical solution, plane-wave recovery differed by at most $5.7\times10^{-14}$ degrees. The independent scalar solver differed from the main direction solver by at most $7.3\times10^{-12}$ degrees. The largest difference between the continuous-time waveform reference and the selected fractional-delay filter was $3.7\times10^{-5}$ degrees. Increasing the correlation-sampling factor from 8 to 64 changed the direct-path estimates by no more than $0.000495^\circ$.
+
+The final independent room calculation evaluated about 5.22 million paths per microphone. Relative to this calculation, the main room model had a relative spectral difference of $1.13\times10^{-5}$ and an angular difference of $0.000807^\circ$. Earlier calculations with insufficient image coverage changed one direction estimate by more than $100^\circ$, and a coarse fractional-delay grid did not meet the spectral criterion. These failures were used to select the final numerical settings and are documented in the verification record.
+
+A joint convergence check performed after the initial full run identified a further problem. Increasing response duration and image extent together changed ten of 960 checked estimates by more than $0.05^\circ$; the maximum change was $0.16551^\circ$. The original 0.9-s/extent-48 run was retained for audit but excluded from the results. The replacement model used a 1.2-s response, image extent 76 and propagation factor 32. Extending this model jointly to 1.5 s and extent 96 produced a maximum change of $0.01273^\circ$. The study was then rerun with the same allocation of conditions and the same analysis rules but with new source and noise identities. The original and corrected campaigns are therefore not treated as a realization-level matched comparison. All subsequent results are from the corrected run.
 
 \begin{table}[t]
-\caption{Final numerical checks. Values are the largest changes in estimated angle under each check, not localization errors relative to the source.}
-\label{tab:verification}\centering\small
-\begin{tabular}{@{}lr@{}}\toprule
-Check & Change (deg)\\\midrule
-Independent full room reference & 0.000807\\
-Longer response and larger image extent & 0.012726\\
-Propagation grid 32 to 64 & 0.006965\\
-Image extent 76 to 84 & 0.000000\\
-GCC factor 8 to 16 & 0.025930\\
-SRP angular grid refinement & 0.002310\\\bottomrule
-\end{tabular}
+	\caption{Final numerical checks. Values are the largest changes in estimated angle under each check, rather than localization errors relative to the source.}
+	\label{tab:verification}
+	\centering
+	\small
+	\begin{tabular}{@{}lr@{}}
+		\toprule
+		Check & Change ($^\circ$)\\
+		\midrule
+		Independent full room reference & 0.000807\\
+		Longer response and larger image extent & 0.012726\\
+		Propagation grid 32 to 64 & 0.006965\\
+		Image extent 76 to 84 & 0.000000\\
+		GCC factor 8 to 16 & 0.025930\\
+		SRP angular grid refinement & 0.002310\\
+		\bottomrule
+	\end{tabular}
 \end{table}
 
-Table~\ref{tab:verification} and Figure~\ref{fig:numerics} summarize the final checks. On the fixed 24-scene subset, doubling propagation resolution changes estimates by at most $0.006965^\circ$, increasing image extent gives no change, and increasing GCC correlation sampling changes them by at most $0.02593^\circ$. SRP grid refinement changes estimates by at most $0.002311^\circ$. All checked changes are below the $0.05^\circ$ target. This establishes resolution for the tested cases; it is not a worst-case guarantee for every possible input.
+Table~\ref{tab:verification} and Figure~\ref{fig:numerics} summarize the final checks. On the fixed 24-scene subset, doubling the propagation resolution changed the estimates by at most $0.006965^\circ$, increasing the image extent produced no change, and increasing the GCC correlation-sampling factor changed the estimates by at most $0.02593^\circ$. Refining the SRP angular grid changed the estimates by at most $0.002311^\circ$. Every checked change was below the $0.05^\circ$ numerical target. These results demonstrate convergence for the tested cases but do not provide a worst-case bound for every possible input.
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig2_numerical_verification.pdf}
-\caption{Arrival rounding and numerical resolution. (a) Error from analytical arrival times at radius 0.05 m and source distance 1.5 m. Exact spherical arrivals are processed by the same plane-wave direction solver; these curves do not include waveform noise. (b) Largest changes under refinement on the fixed 24-scene subset, with five recordings and 32 frames per scene. The dashed line marks the $0.05^\circ$ numerical target.}
-\label{fig:numerics}
+	\centering
+	\includegraphics[width=\textwidth]{fig2_numerical_verification.pdf}
+	\caption{Arrival-time rounding and numerical resolution. (a) Angular change caused by rounding analytical arrivals for an array radius of 0.05 m and a source distance of 1.5 m. Exact spherical arrivals are processed by the same plane-wave direction solver, and the curves exclude waveform noise. (b) Largest angular changes under numerical refinement on the fixed 24-scene subset, using five recordings and 32 frames per scene. The dashed line marks the $0.05^\circ$ numerical target.}
+	\label{fig:numerics}
 \end{figure*}
 
-The measured T20 ranges are 0.083--0.110 s, 0.259--0.295 s and 0.586--0.683 s for nominal settings of 0.15, 0.30 and 0.60 s. Minimum fit $R^2$ is 0.928 in the lowest setting and 0.994 in the others. Component DRR ranges from about $+9.53$ to $-10.77$ dB. The difference between nominal and measured decay is why the response measurements accompany the room settings.
+The measured $T_{20}$ ranges were 0.083--0.110 s, 0.259--0.295 s and 0.586--0.683 s for nominal settings of 0.15, 0.30 and 0.60 s, respectively. The minimum fit $R^2$ was 0.928 for the lowest setting and 0.994 for the other settings. The component direct-to-reverberant ratio (DRR) ranged from $-10.77$ to $+9.53$ dB. Because the nominal settings specify the absorption configuration rather than the measured decay, both quantities are reported.
 
 \subsection{Localization error across rooms}
-At 10 dB SNR, RMSE is $1.620^\circ$ for the nominal-0.15-s setting, $11.954^\circ$ for 0.30 s and $37.233^\circ$ for 0.60 s. Their 95\% bootstrap intervals are [1.599, 1.641], [11.168, 12.771] and [36.359, 38.111] degrees. The proportions of estimates with error above $5^\circ$ are 0.86\%, 27.38\% and 62.30\%, respectively.
 
-At 20 dB, RMSE falls to 1.362, 11.796 and $37.067^\circ$. Reducing noise helps, but does not remove the large errors in the more reflective conditions. Figure~\ref{fig:core} shows each room separately so that the pooled trend does not hide room differences.
+At 10 dB SNR, the RMSE was $1.620^\circ$ for the nominal-0.15-s setting, $11.954^\circ$ for 0.30 s and $37.233^\circ$ for 0.60 s. The corresponding 95\% bootstrap intervals were $[1.599,1.641]^\circ$, $[11.168,12.771]^\circ$ and $[36.359,38.111]^\circ$. The proportions of estimates with absolute error above $5^\circ$ were 0.86\%, 27.38\% and 62.30\%, respectively.
 
-There is also substantial variation between source directions and array placements. At 10 dB, individual scene RMSE ranges from 0.92 to $3.16^\circ$ in the lowest setting, 2.08 to $49.08^\circ$ in the middle setting and 6.56 to $86.16^\circ$ in the highest. These ranges are much wider than the intervals around the pooled values. A single average therefore cannot describe every scene in the study.
+At 20 dB SNR, the RMSE values were $1.362^\circ$, $11.796^\circ$ and $37.067^\circ$. The reduction in noise improved the lowest-reverberation result but had little effect on the larger errors in the more reflective conditions. Results for the full SNR range, including 0 dB, are shown separately for each room in Figure~\ref{fig:core}.
+
+The observed scene-level RMSE at 10 dB ranged from $0.92^\circ$ to $3.16^\circ$ in the lowest setting, from $2.08^\circ$ to $49.08^\circ$ in the middle setting and from $6.56^\circ$ to $86.16^\circ$ in the highest setting. These ranges describe variation among the tested source directions and array placements. They should not be compared directly with the bootstrap intervals around pooled RMSE, which describe resampling uncertainty for the fixed collection of scenes.
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig3_core_rooms.pdf}
-\caption{Main room results with fractional arrivals and a source already running. Each point combines two array placements, 12 directions and five 32-frame recordings. Shaded bands are 95\% record-bootstrap intervals for those fixed scenes. The horizontal axis gives the nominal setting used to choose wall absorption; actual T20 was measured separately.}
-\label{fig:core}
+	\centering
+	\includegraphics[width=\textwidth]{fig3_core_rooms.pdf}
+	\caption{Main room results obtained with fractional arrivals and a source that was already running. Each point combines two array placements, 12 source directions and five 32-frame recordings. Shaded bands are 95\% record-bootstrap intervals for the fixed scenes. The horizontal axis shows the nominal setting used to select the wall absorption; $T_{20}$ was measured separately.}
+	\label{fig:core}
 \end{figure*}
 
 \subsection{Effect of rounding arrival times}
-Across the 72 matched scenes at 10 dB, steady direct-path RMSE is $0.923^\circ$ [0.912, 0.934] with fractional arrivals and $2.300^\circ$ [2.287, 2.313] with rounded arrivals. The matched increase in mean squared error is 4.438 deg$^2$ [4.380, 4.493]. Thus, the rounding effect remains after waveform generation, filtering and delay estimation; it is not limited to a calculation using exact delays.
 
-With reflections included, steady RMSE is $27.365^\circ$ for fractional arrivals and $28.112^\circ$ after rounding. The matched mean-squared-error increase is 41.448 deg$^2$ [11.974, 70.571]. This does not mean rounding has the same effect in every scene. Reflected paths interfere with one another, and changing their arrival times can change the correlation peak selected by the estimator.
+Across the 72 matched scenes at 10 dB SNR, the steady direct-path RMSE was $0.923^\circ$ $[0.912,0.934]^\circ$ with fractional arrivals and $2.300^\circ$ $[2.287,2.313]^\circ$ with rounded arrivals. The matched increase in mean squared error was $4.438\,\mathrm{deg}^2$ $[4.380,4.493]\,\mathrm{deg}^2$. The difference therefore remained after waveform construction, filtering and delay estimation; it was not confined to calculations based on exact delays.
+
+With reflections included, the steady RMSE was $27.365^\circ$ for fractional arrivals and $28.112^\circ$ for rounded arrivals. The matched increase in mean squared error was $41.448\,\mathrm{deg}^2$ $[11.974,70.571]\,\mathrm{deg}^2$. This pooled result does not imply a uniform effect across scenes. Altering reflected-path arrival times can change which cross-correlation peak is selected, so both the magnitude and direction of the scene-level change can vary.
 
 \subsection{Effect of source startup}
-The largest difference appears in the first frame after startup. In the high subset, RMSE is $4.157^\circ$ for the newly started source, compared with $42.508^\circ$ when the source has already been running. By the last frame of the 1.365-s recording, both matched conditions reach $41.526^\circ$. Figure~\ref{fig:paired} shows how the early advantage disappears as reflected sound builds up.
 
-This is a change in the observed sound field. The localization algorithm has not improved between the two conditions. A procedure that restarts the source before every short frame can repeatedly measure this easier startup period and report accuracy that does not describe continuous operation. The exploratory frame-reset check shows this behavior as well, but uses pilot directions and is kept separate from the main time trajectory.
+The strongest startup effect occurred in the first analyzed frame of the high-reverberation/offset subset. The RMSE was $4.157^\circ$ when the source began immediately before acquisition and $42.508^\circ$ when it was already running. By the final frame of the 1.365-s recording, both matched conditions had an RMSE of $41.526^\circ$. At that point, the earlier source history no longer contributed through the finite simulated response. Figure~\ref{fig:paired} shows the convergence of the two conditions as the reflected field develops.
 
-For fractional reflected signals across all 72 scenes and 32 frames, startup reduces mean squared error by 42.798 deg$^2$ [22.983, 62.404]. Table~\ref{tab:effects} reports this as onset minus steady, giving a negative difference. The onset-by-reflection interaction is $-49.046$ deg$^2$ [$-65.574$, $-32.891$], while rounding-by-reflection is 30.762 deg$^2$ [4.770, 57.791]. These interactions show that the effects cannot be combined as separate, independent error allowances.
+The algorithm was unchanged between the onset and steady conditions; the difference arose from the sound field presented to it. Restarting the source before every short observation repeatedly samples the initial period before the reflected field has developed and therefore does not represent continuous operation. The exploratory frame-reset check produced the same qualitative behavior, but it used the pilot directions and is not included in the main time trajectory.
+
+For fractional reflected signals across all 72 scenes and 32 frames, startup reduced mean squared error by $42.798\,\mathrm{deg}^2$, with a reduction interval of $[22.983,62.404]\,\mathrm{deg}^2$. Table~\ref{tab:effects} reports the same comparison as the signed onset-minus-steady contrast, for which negative values indicate less error at onset.
+
+The interaction contrasts were calculated from the complete factorial dataset, not from the steady-only summaries above. The onset-by-reflection interaction was $-49.046\,\mathrm{deg}^2$ $[-65.574,-32.891]\,\mathrm{deg}^2$. The rounding-by-reflection interaction was $30.762\,\mathrm{deg}^2$ $[4.770,57.791]\,\mathrm{deg}^2$. Under the tested conditions, these non-zero interactions show that the effects of arrival construction, source history and reflected propagation are not additive.
 
 \begin{table}[t]
-\caption{Matched changes in mean squared error (deg$^2$) across 72 scenes at 10 dB. Positive values mean more error. Intervals resample whole recordings within each scene.}
-\label{tab:effects}\centering\small
-\begin{tabular}{@{}lrr@{}}\toprule
-Comparison & Change & 95\% interval\\\midrule
-Rounding, direct & 4.44 & [4.38, 4.49]\\
-Rounding, reflected & 41.45 & [11.97, 70.57]\\
-Onset, reflected & -42.80 & [-62.40, -22.98]\\
-Reflections, fractional & 747.97 & [699.52, 799.81]\\\bottomrule
-\end{tabular}
+	\caption{Matched changes in mean squared error ($\mathrm{deg}^2$) across 72 scenes at 10 dB. Positive values indicate more error. Intervals were obtained by resampling complete recordings within each scene.}
+	\label{tab:effects}
+	\centering
+	\small
+	\begin{tabular}{@{}lrr@{}}
+		\toprule
+		Comparison & Change & 95\% interval\\
+		\midrule
+		Rounding, direct & 4.44 & [4.38, 4.49]\\
+		Rounding, reflected & 41.45 & [11.97, 70.57]\\
+		Onset, reflected & -42.80 & [-62.40, -22.98]\\
+		Reflections, fractional & 747.97 & [699.52, 799.81]\\
+		\bottomrule
+	\end{tabular}
 \end{table}
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig4_paired_attribution.pdf}
-\caption{Arrival timing and source startup at 10 dB. (a) All eight combinations: F/Q means fractional/rounded, S/O means steady/onset and D/R means direct/reflected. Low and high subsets contain 36 scenes each and differ in placement and absorption. Error bars resample recordings. (b) Matched fractional reflected recordings in the high subset. The source has already been running in the steady condition. Markers show frame midpoints after analysis begins.}
-\label{fig:paired}
+	\centering
+	\includegraphics[width=\textwidth]{fig4_paired_attribution.pdf}
+	\caption{Arrival construction and source startup at 10 dB. (a) All eight combinations. F and Q denote fractional and rounded arrivals, S and O denote steady and onset histories, and D and R denote direct and reflected propagation. The low and high subsets contain 36 scenes each and differ in both array placement and wall absorption. Error bars were obtained by resampling complete recordings. (b) Matched fractional-arrival recordings with reflections in the high subset. In the steady condition, the source was already running when acquisition began. Markers indicate frame midpoints after the start of analysis.}
+	\label{fig:paired}
 \end{figure*}
 
-\subsection{Improvement from averaging}
-Averaging reduces error on the independent test recordings (Figure~\ref{fig:averaging}). In the low subset, RMSE falls from $1.597^\circ$ [1.584, 1.610] for one frame to $0.835^\circ$ [0.815, 0.854] for 128 frames. In the high subset, it falls from $39.044^\circ$ [38.439, 39.607] to $10.158^\circ$ [9.404, 10.995]. Even at 128 frames, 46.11\% of high-subset block estimates have error above $5^\circ$.
+\subsection{Improvement from temporal averaging}
 
-Forty-nine of the 72 scenes pass the training rule for interpreting the small-error model. Their 128-frame test RMSE is $2.013^\circ$ [1.932, 2.090]. The prediction including frame covariance is $2.075^\circ$, and the independent-frame prediction is $2.106^\circ$. The longer-duration result is close to both predictions on this selected set, while differences at shorter durations remain visible. The small difference between the two predictions does not show a useful advantage from covariance correction here.
+Temporal averaging reduced block-level RMSE on the independent test recordings (Figure~\ref{fig:averaging}). In the low-reverberation/centred subset, RMSE fell from $1.597^\circ$ $[1.584,1.610]^\circ$ for one frame to $0.835^\circ$ $[0.815,0.854]^\circ$ for 128 frames. In the high-reverberation/offset subset, it fell from $39.044^\circ$ $[38.439,39.607]^\circ$ to $10.158^\circ$ $[9.404,10.995]^\circ$. These values come from the held-out averaging recordings and therefore need not equal the frame-specific values in the startup comparison. After 128 frames, 46.11\% of the high-subset block estimates still had an absolute error above $5^\circ$.
 
-All 72 scenes remain in the measured averaging curves. The selected 49-scene analysis is used only to assess the approximation. The remaining errors after 5.46 s depend on the chosen scene and estimator; this finite recording length cannot establish a universal or infinite-time reverberation limit.
+Forty-nine of the 72 scenes met the estimation-set criteria for interpreting the small-error approximation. Their measured 128-frame test RMSE was $2.013^\circ$ $[1.932,2.090]^\circ$. The prediction that included frame covariance was $2.075^\circ$, whereas the independent-frame prediction was $2.106^\circ$. These comparisons are descriptive because uncertainty intervals were not calculated for the model predictions. The full duration-dependent results are shown in Figure~\ref{fig:averaging}.
+
+All 72 scenes remain in the empirical averaging curves. The restricted 49-scene analysis evaluates the approximation only on scenes that met its estimation-set criteria and should not be interpreted as performance for the complete test set. The errors remaining after 5.46 s varied among scenes and estimators; the finite observation period does not determine a universal or infinite-time reverberation limit.
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig5_heldout_averaging.pdf}
-\caption{Averaging tested on new recordings. (a) Circular block averages for all 72 scenes, separated into low and high subsets. (b) The 49 scenes that satisfy the rule set using training recordings. Model curves are predictions, while shaded bands are bootstrap intervals from complete test recordings. Training and test inputs are separate.}
-\label{fig:averaging}
+	\centering
+	\includegraphics[width=\textwidth]{fig5_heldout_averaging.pdf}
+	\caption{Temporal averaging evaluated on new recordings. (a) Circular block averages for all 72 scenes, separated into the low-reverberation/centred and high-reverberation/offset subsets. (b) Results for the 49 scenes that met the criteria applied to the estimation recordings. Model curves are predictions, whereas shaded bands are bootstrap intervals obtained from complete test recordings. Estimation and test recordings are independent.}
+	\label{fig:averaging}
 \end{figure*}
 
-\subsection{A timing-precision check for the array}
-An additional calculation connects microphone-arrival error to direction error. Let $B$ form pair differences from the three microphone arrivals, and let $M$ contain the microphone coordinates, so $A=BM$. If the arrival errors are $\boldsymbol\epsilon$, the change in the fitted direction vector is exactly
+\subsection{Timing-precision bound for the array}
+
+An additional calculation relates errors in microphone arrival time to errors in the fitted direction. Let $B$ form the pairwise differences between the three microphone arrivals, and let $M$ contain the microphone coordinates, with $A=BM$. If the microphone arrival errors are collected in $\boldsymbol\epsilon$, the corresponding change in the fitted direction vector is
 \begin{equation}
-\delta\widetilde{\mathbf u}=J\boldsymbol\epsilon,\qquad J=-cA^+B.
+	\delta\widetilde{\mathbf u}
+	=
+	J\boldsymbol\epsilon,
+	\qquad
+	J=-cA^+B,
 \end{equation}
-This keeps the dependence caused by microphones appearing in more than one pair.
+where $A^+$ is the Moore--Penrose pseudoinverse. This expression retains the dependence introduced when the same microphone appears in more than one pair.
 
-Suppose each arrival error is bounded by $h$. Evaluating the eight combinations $\epsilon_i=\pm h$ gives $\rho=\max\|J\boldsymbol\epsilon\|$. If $\rho<\|\widetilde{\mathbf u}\|$, the largest angular change occurs at a corner of the transformed error box. A simpler conservative bound is
+Suppose that each arrival error satisfies $|\epsilon_i|\leq h$. Because the norm of a linear mapping is convex over this error box, its maximum can be found from the eight corner combinations $\epsilon_i=\pm h$:
 \begin{equation}
-|\delta\theta|\leq\arcsin\frac{\rho}{\|\widetilde{\mathbf u}\|}.
-\label{eq:bound}
+	\rho
+	=
+	\max_{\epsilon_i\in\{-h,h\}}
+	\left\|J\boldsymbol\epsilon\right\|.
 \end{equation}
-For the centered equilateral array and a plane wave, $\rho=4ch/(3R)$ and $\|\widetilde{\mathbf u}\|=1$. To keep this change below $\eta$, it is sufficient that
+If $\rho<\|\widetilde{\mathbf u}\|$, every admissible perturbation satisfies the conservative angular bound
 \begin{equation}
-h\leq\frac{3R}{4c}\sin\eta.
+	|\delta\theta|
+	\leq
+	\arcsin\!\left(
+	\frac{\rho}{\|\widetilde{\mathbf u}\|}
+	\right).
+	\label{eq:bound}
 \end{equation}
-At $R=0.05$ m and $\eta=0.5^\circ$, the permitted absolute error per arrival is at most $0.954\,\mu$s. This is a check on ideal arrival times interpreted by the direction solver. It is not a necessary sampling-rate requirement or a guarantee for noisy GCC-PHAT estimates.
+For the centred equilateral array and a plane wave, $\rho=4ch/(3R)$ and $\|\widetilde{\mathbf u}\|=1$. A sufficient condition for keeping the angular change below $\eta$ is therefore
+\begin{equation}
+	h
+	\leq
+	\frac{3R}{4c}\sin\eta.
+\end{equation}
+At $R=0.05$ m and $\eta=0.5^\circ$, this sufficient condition permits an absolute error of at most $0.954\,\mu$s in each arrival time. The result applies to ideal arrival times interpreted by the direction solver; it is neither a necessary sampling-rate requirement nor a guarantee for noisy GCC-PHAT estimates.
 
-All 34,560 rounded-arrival cases satisfy the exact corner bound. Another 12,000 random perturbations, including unequal triangles and an independent scalar solve, give no violations. Figure~\ref{fig:precision}(a) measures change from the exact spherical-arrival estimate. Error between that estimate and the true source direction remains a separate finite-distance effect.
+The numerical verification compared each observed angular change with its calculated bound. None of the 34,560 rounded-arrival cases exceeded the bound. A further 12,000 random perturbations, including unequal triangles and an independent scalar solution, also produced no violations. Figure~\ref{fig:precision}(a) measures each change relative to the estimate obtained from exact spherical arrivals. The difference between that reference estimate and the true source direction is a separate finite-distance effect.
 
-\subsection{Other geometries and the SRP-PHAT comparison}
-On the 24-scene subset, GCC-PHAT RMSE is $22.413^\circ$ in the base case. It is $23.729^\circ$ after rotation, $19.644^\circ$ for the unequal triangle, $23.643^\circ$ with unequal walls and $42.054^\circ$ for the narrower-band source (Figure~\ref{fig:precision}(b)). These are limited checks with new random records. They do not establish an optimized geometry. In the narrower-band case, part of the fixed estimator band contains noise without useful source energy.
+\subsection{Additional geometries and comparison with SRP-PHAT}
 
-On the same base recordings, SRP-PHAT gives $30.262^\circ$ RMSE compared with $22.413^\circ$ for GCC-PHAT. However, its proportion of errors above $5^\circ$ is lower: 28.62\% versus 30.57\%. The matched SRP-minus-GCC mean-squared-error difference is 413.473 deg$^2$ [268.788, 561.435]. The disagreement between the two measures shows why the error distribution matters: fewer threshold crossings can coexist with a larger penalty from large errors. Neither measure supports a general method ranking from this subset alone.
+On the fixed 24-scene subset, the GCC-PHAT RMSE was $22.413^\circ$ in the base condition. The independently simulated sensitivity conditions produced RMSE values of $23.729^\circ$ for the rotated array, $19.644^\circ$ for the unequal triangle, $23.643^\circ$ for unequal walls and $42.054^\circ$ for the narrower-band source (Figure~\ref{fig:precision}(b)). Because these conditions used new random recordings, their differences from the base value are not paired estimates of causal effects and do not identify an optimized geometry. In the narrower-band condition, part of the fixed estimator passband contained noise but no source energy; its result therefore reflects both the narrower source spectrum and this estimator-band mismatch.
+
+The SRP-PHAT comparison used the same base recordings as GCC-PHAT. SRP-PHAT produced an RMSE of $30.262^\circ$, compared with $22.413^\circ$ for GCC-PHAT, but its proportion of errors above $5^\circ$ was lower: 28.62\% compared with 30.57\%. The matched SRP-minus-GCC difference in mean squared error was $413.473\,\mathrm{deg}^2$ $[268.788,561.435]\,\mathrm{deg}^2$. The two summaries describe different parts of the error distribution: fewer threshold exceedances can occur alongside a larger contribution from extreme errors. This restricted comparison does not establish a general ranking of the two methods.
 
 \begin{figure*}[t]
-\centering\includegraphics[width=\textwidth]{fig6_precision_sensitivity.pdf}
-\caption{Timing precision and additional checks. (a) Analytical rounding changes and their bounds at 48 kHz, radius 0.05 m and source distance 1.5 m. Change is measured from the exact spherical-arrival estimate. (b) RMSE and record-bootstrap intervals for five conditions on the fixed 24-scene subset. The narrower source band retains the 300--3400 Hz acquisition and estimator bands.}
-\label{fig:precision}
+	\centering
+	\includegraphics[width=\textwidth]{fig6_precision_sensitivity.pdf}
+	\caption{Timing precision and sensitivity conditions. (a) Analytical changes caused by arrival-time rounding and their bounds at 48 kHz, with an array radius of 0.05 m and a source distance of 1.5 m. Changes are measured relative to the estimates obtained from exact spherical arrivals. (b) RMSE and record-bootstrap intervals for five conditions on the fixed 24-scene subset. In the narrower-source-band condition, the acquisition and estimator bands remain 300--3400 Hz.}
+	\label{fig:precision}
 \end{figure*}
 
-\section{Discussion and practical use}
-The main lesson is that the way a simulated recording is generated can change the condition being tested. Rounding the arrivals produces a measurable direct-path penalty. Beginning with no earlier source signal can produce a much larger apparent improvement in the first reflected-sound frame. Both effects need to be checked before the reported error is attributed to the array or localization method.
+\section{Discussion and practical implications}
 
-For continuous operation, the simulated source needs enough earlier history for the selected room response and acquisition filter. If startup is the intended application, it should be studied explicitly as startup. Using the same analyzed source samples and noise across conditions makes that distinction testable. Resetting every frame answers a different question from estimating direction continuously in an already active room.
+Subsample arrival construction materially affected the direction estimates. Fractional-delay methods are intended to represent arrivals that lie between discrete sample times \citep{laakso}; replacing those arrivals with nearest-sample values increased error even after waveform generation and GCC-PHAT processing \citep{knapp}. The effect was small relative to the largest reverberation errors but large enough to affect evaluations of compact arrays.
 
-The correction during numerical review also matters. A long response cutoff alone does not ensure that all influential paths are included if the image extent is too small. Conversely, agreement in a spectral norm does not by itself guarantee agreement between the peaks chosen by a direction estimator. Checking both the response and the resulting angles, including a joint extension of duration and image extent, exposed the initial limitation and led to the complete rerun.
+Source history had a larger influence on the first reflected-sound frame. In an image-source simulation \citep{allen}, setting the signal to zero before acquisition removes contributions that would otherwise arrive from earlier emissions. The resulting onset frame therefore represents a different acoustic condition from steady operation. A continuous-operation simulation requires sufficient prehistory to cover both the retained room response and the acquisition-filter transient. Conversely, an application concerned specifically with source onset should retain the onset condition and label it accordingly.
 
-Averaging is useful, but its benefit needs to be measured on recordings that were not used to estimate the prediction model. It reduces fluctuations without changing the room geometry, wavefront curvature or a stable preference for an incorrect correlation peak. The present results show different remaining errors in different scenes. They do not establish an error floor determined by reverberation time alone.
+The numerical correction shows why response duration and image extent must be checked together. A long response window cannot include paths that were never generated because the image extent was too small. Agreement between response spectra is also insufficient when a peak-based estimator can select a different correlation maximum. The joint response and direction checks identified the limitation in the original room calculation and motivated the corrected campaign.
 
-Several limits apply when using these findings in a device study. The microphones are ideal and matched, so the simulation excludes gain mismatch, clock drift and calibration error. The source is band-limited Gaussian noise, rather than speech or a machine. The walls are frequency independent and reflect specularly. Real surfaces, scattering and directional microphones can change the sound field. The main study also uses one array size and source distance, although the analytical timing checks cover a wider range.
+Temporal averaging reduced the measured error without increasing the processing applied to each frame. Its effect depended strongly on the scene. Averaging can suppress frame-to-frame fluctuations, but it cannot remove wavefront-model error, array-geometry limitations or persistent selection of an incorrect correlation peak. The covariance model was assessed only on scenes that met the small-error criteria, while the empirical curves retained the complete set. This distinction prevents the approximation from being presented as a model of the difficult scenes that it excludes.
 
-The bootstrap intervals use five independent short recordings per scene and describe only the selected scenes. Their coverage has not been separately calibrated, and individual-scene intervals have limited resampling support. Three room geometries do not represent all rooms. Complete scene results, difficult estimates and input identities are therefore supplied with the pooled values. A measured-room study would provide the next test of physical transfer; the present work provides numerical verification and a repeatable simulation comparison.
+The matched SRP-PHAT comparison \citep{dibiase} also illustrates the importance of reporting more than RMSE. SRP-PHAT produced fewer errors above the selected threshold but a larger RMSE, indicating greater influence from large errors. Because the comparison used one restricted subset and fixed implementations of both estimators, it does not support a general claim that either method is superior.
+
+Several limitations restrict physical interpretation. The microphones are ideal and matched, so the simulations omit gain mismatch, clock drift, calibration error and device-specific frequency response. The source is stationary band-limited Gaussian noise rather than speech or machinery. The room model uses frequency-independent, specular wall reflections and does not include measured scattering or directional microphone responses. The main study also uses one array size and one source distance, although the analytical timing checks cover a wider range. Only horizontal direction is estimated, and neither the source nor the array moves during a recording.
+
+The bootstrap intervals are based on five independent short recordings per scene. They describe resampling variation for the fixed simulated scenes and should not be interpreted as calibrated population intervals for arbitrary rooms. Their coverage was not assessed independently, and scene-level intervals have limited resampling support. The three room geometries likewise do not represent the range of real rooms. A measured-room experiment is therefore required to assess transfer to physical microphones and real acoustic environments.
 
 \section{Conclusion}
-This study separates arrival rounding, source startup and room reflections in a three-microphone localization simulation. Rounding increases direct-path error after waveform processing. Starting a source immediately before analysis can make the first frame appear much more accurate than a recording made during steady operation. Averaging new recordings reduces error, but leaves different remaining errors across the tested scenes.
 
-Independent calculations and refinement checks establish numerical resolution for the reported comparisons. A geometry-based timing bound provides a further check for ideal arrivals while retaining shared-microphone dependence. Together, the results give a practical basis for checking simulated localization accuracy and reporting the recording conditions that produced it. They do not establish hardware accuracy, universal estimator superiority or a general reverberation-error law.
+The simulations separate the effects of arrival-time rounding, source startup and reflected propagation on three-microphone direction estimation. Nearest-sample rounding increased direct-path error after waveform processing, while beginning acquisition at source onset produced a temporarily easier reflected-sound condition than steady operation. Temporal averaging reduced error on independent recordings, but the remaining error depended on the scene.
 
-\funding
-This work was self-funded by Aneesh Arnav Chikkala. The author has no institutional affiliation.
+Independent calculations and refinement tests establish the numerical resolution of the reported comparisons for the tested cases. The geometry-based timing bound provides a separate check on ideal arrival perturbations while retaining the dependence between microphone pairs. The results define which simulation and observation conditions must be reported when evaluating a compact localization system. They do not establish hardware accuracy, universal estimator superiority or a general relation between reverberation and localization error.
 
-\conflict
-Author confirmation of the conflict-of-interest declaration is pending for this review version.
-
-\authorcontrib
-Aneesh Arnav Chikkala selected the research direction and funded the work. Final scientific review and release approval remain pending. OpenAI Codex assisted with planning, mathematical derivations, implementation, numerical checks, literature synthesis, analysis, figures and manuscript drafting. The figures were generated by deterministic plotting code from retained results. This assistance included substantive research and writing work. The internal computational checks are not external peer review.
-
-\dataavailability
-The accompanying source and data package contains per-frame results, configurations, code, figures, environment records and reproduction instructions. A fresh environment reproduced 8,640 representative estimates exactly and all six main PNG figures byte for byte. This was a representative rerun, not another complete revised campaign. No public archive identifier has been assigned. Licenses and public release await the author's decision.
-
-\supplementary
-The accompanying supplement gives the extended model, derivations, numerical correction, statistical details and reproduction record. The original run is retained separately for audit; the paper uses only the corrected results.
 
 \bibliographystyle{unsrtnat}
 \balance
