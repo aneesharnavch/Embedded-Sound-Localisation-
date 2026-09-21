@@ -1,0 +1,117 @@
+{
+  "status": "post-campaign internal numerical review",
+  "settings": "K48/T0.9 -> K76/T1.2 with paired inputs and enough history for both",
+  "scenes": [
+    {
+      "scene_id": "r0p1t2a00",
+      "relative_spectrum_change": 0.0003001549388621406,
+      "relative_t20_change": 4.9701511705135815e-06,
+      "max_angle_change_deg": 0.02858794515441332,
+      "frames_above_005": 0,
+      "mse_change_deg2": 0.010720817167605003,
+      "refined_path_counts": [
+        3245449,
+        3245549,
+        3245509
+      ],
+      "frames": 160
+    },
+    {
+      "scene_id": "r0p1t2a06",
+      "relative_spectrum_change": 0.00031162685968359977,
+      "relative_t20_change": 5.223943373988682e-06,
+      "max_angle_change_deg": 0.1655144713359391,
+      "frames_above_005": 7,
+      "mse_change_deg2": -0.04921384057131954,
+      "refined_path_counts": [
+        3245379,
+        3245396,
+        3245428
+      ],
+      "frames": 160
+    },
+    {
+      "scene_id": "r1p1t2a00",
+      "relative_spectrum_change": 0.00026413692448850885,
+      "relative_t20_change": 3.7986353125241124e-06,
+      "max_angle_change_deg": 0.11908215305732028,
+      "frames_above_005": 1,
+      "mse_change_deg2": -0.005675690991097369,
+      "refined_path_counts": [
+        5215621,
+        5215553,
+        5215518
+      ],
+      "frames": 160
+    },
+    {
+      "scene_id": "r1p1t2a06",
+      "relative_spectrum_change": 0.00024691064804320274,
+      "relative_t20_change": 3.4215939340720425e-06,
+      "max_angle_change_deg": 0.10255637170314458,
+      "frames_above_005": 2,
+      "mse_change_deg2": -0.15962211615104122,
+      "refined_path_counts": [
+        5216009,
+        5216023,
+        5215977
+      ],
+      "frames": 160
+    },
+    {
+      "scene_id": "r2p1t2a00",
+      "relative_spectrum_change": 0.00041893891615116626,
+      "relative_t20_change": 1.1477237947810082e-05,
+      "max_angle_change_deg": 0.029779264498927205,
+      "frames_above_005": 0,
+      "mse_change_deg2": 0.01553169056936945,
+      "refined_path_counts": [
+        1901639,
+        1901614,
+        1901613
+      ],
+      "frames": 160
+    },
+    {
+      "scene_id": "r2p1t2a06",
+      "relative_spectrum_change": 0.000435627003832569,
+      "relative_t20_change": 1.2898693542706674e-05,
+      "max_angle_change_deg": 0.04389924579277249,
+      "frames_above_005": 0,
+      "mse_change_deg2": -0.031254075915409775,
+      "refined_path_counts": [
+        1901804,
+        1901819,
+        1901778
+      ],
+      "frames": 160
+    }
+  ],
+  "elapsed_seconds": 32.99590162000004,
+  "passed": false,
+  "source_hashes": {
+    "__init__.py": "89b85f9384f241e599e0d87cd76819bd05088f5d75e7ab17269bc4aa4fd40801",
+    "analysis.py": "51428b46c05966648f5bf23c2ff2a937a96bbfb3c0f5e4e8a3665dbd25c18334",
+    "campaign.py": "c10f20c0dd197b45b756be9ceb15c7b5e05d0c1dd8573372617fcd99f61e30db",
+    "common.py": "be4316a050f643bf23a280aaaf72a73a95fad25e95fe5be7557b261ebae4ea7a",
+    "estimator.py": "d266426ed1cdfa3811ea9da6dd8042e6d68c0b6836573504034e54f0b7ed1633",
+    "figures.py": "346abf55758cde7638a1b27579ebc5f48f569a1936961c42884d244eadfed6d8",
+    "joint_refinement.py": "3f63de709fa9d88cb6fc29b974611d67e162e82730ceea41fb35b963e19a258b",
+    "pilot.py": "fb9be4a62fa5175082457e677fc0e2dc969ca59d9b012469265fdcdb1b2b0c68",
+    "precision.py": "385e912614380d98ff9706375ab00cb51d05c846ee44ab93577d0e1391686a57",
+    "protocol.py": "07c1040cc7b3a86f398174957a715bc5a1bf0dcea0986f53b0943bd9e0916001",
+    "recording.py": "263f38acd689b30f72700eb60179cbcceed6351bff95f1300214c4b1dc10d51c",
+    "reference.py": "920b0baffa7f0e14a043acfc6d4ef032c86816b564567f7f2c602eb1ef54abae",
+    "reference_room.py": "d6b48f42daa37bc1acfb313386f786eeec105c1e2419503d4c9a5d022b93c62e",
+    "room.py": "cf21ff2ff7b061b1dc1742d6abddbaf90cc6c2bbfcc6d0b1d35871acfd96821f",
+    "sensitivity.py": "7b57dc3b157945824192a8bd538b992495d5549cac067aeb6d153064a5548d6d",
+    "signals.py": "b9683dfdee0a82151b7ea9cb81afc37252fba545a5a15f2db1551196dcfcea4d",
+    "srp.py": "31433031565e13e7f51effd51eabd84729d66c97da7ac14baabe72e40182d00e",
+    "test_direct.py": "37c770c287b3648dcc56d5dce11866ccbaa90a101e82aec73c4d7230fd02bace",
+    "test_room.py": "6c06dbf4ddf8d9d0bdde2a6dcab8936a5b0bf6dc77fc75d5d8fac742e03d6919",
+    "test_srp.py": "5784f2840e222a0e5d1d435d42bbed9659903785077634c140294576287aa1ba",
+    "verify_direct.py": "1fdd6f0334bfad7528a6ea1979a85d8c975638fdb4bb7380fc979a74751d7b47",
+    "verify_room.py": "e202145a8da16172624aded038b14b1429aa0c978d7d3aefab6ecb9b1eb99bcb",
+    "workflow.py": "f7a160b98128b558396c806fe5ba32cc527c2b3a10fde713f899c2211cc04095"
+  }
+}

@@ -11,6 +11,7 @@ The main folder contains the current manuscript and only the files required to c
 - `figures/` contains the six figures used by the manuscript.
 - `PREVIEW_QA.json` records the latest build and visual checks.
 - `ACTA_README.md` contains manuscript-specific notes.
+- `supplementary/` contains one concise standalone supplementary PDF.
 
 Build the paper from this folder with:
 
