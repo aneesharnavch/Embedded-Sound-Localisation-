@@ -1,0 +1,232 @@
+{
+  "primary_counts": {
+    "core": 103680,
+    "attribution": 80640,
+    "long_train": 46080,
+    "long_holdout": 46080
+  },
+  "physical_scenes": 216,
+  "analysis_files_match": {
+    "attribution_variants.csv": true,
+    "averaging_global_summary.csv": true,
+    "averaging_scene_summary.csv": true,
+    "baseline_paired_contrast.csv": true,
+    "completeness_audit.json": true,
+    "core_global_summary.csv": true,
+    "core_group_summary.csv": true,
+    "core_scene_summary.csv": true,
+    "factorial_contrasts.csv": true,
+    "onset_trajectory.csv": true,
+    "prediction_eligibility.csv": true,
+    "sensitivity_summary.csv": true,
+    "simple_paired_contrasts.csv": true,
+    "summary.json": true
+  },
+  "independent_angular_error_check_max_difference_deg": 0.0,
+  "source_train_holdout_overlap": 0,
+  "noise_train_holdout_overlap": 0,
+  "core_points_independent": [
+    {
+      "rt_index": 0,
+      "snr_db": 0.0,
+      "rmse_deg": 4.739861999288419,
+      "gt5_fraction": 0.13350694444444444
+    },
+    {
+      "rt_index": 0,
+      "snr_db": 10.0,
+      "rmse_deg": 1.620482631574545,
+      "gt5_fraction": 0.00859375
+    },
+    {
+      "rt_index": 0,
+      "snr_db": 20.0,
+      "rmse_deg": 1.3621632840019384,
+      "gt5_fraction": 0.003993055555555555
+    },
+    {
+      "rt_index": 1,
+      "snr_db": 0.0,
+      "rmse_deg": 18.297652863764736,
+      "gt5_fraction": 0.39618055555555554
+    },
+    {
+      "rt_index": 1,
+      "snr_db": 10.0,
+      "rmse_deg": 11.954366273470514,
+      "gt5_fraction": 0.2737847222222222
+    },
+    {
+      "rt_index": 1,
+      "snr_db": 20.0,
+      "rmse_deg": 11.796094192664862,
+      "gt5_fraction": 0.2542534722222222
+    },
+    {
+      "rt_index": 2,
+      "snr_db": 0.0,
+      "rmse_deg": 43.10045615971265,
+      "gt5_fraction": 0.66953125
+    },
+    {
+      "rt_index": 2,
+      "snr_db": 10.0,
+      "rmse_deg": 37.23336213667729,
+      "gt5_fraction": 0.6230034722222222
+    },
+    {
+      "rt_index": 2,
+      "snr_db": 20.0,
+      "rmse_deg": 37.06730195477343,
+      "gt5_fraction": 0.6099826388888889
+    }
+  ],
+  "variant_rmse_independent": {
+    "F_S_D": 0.9229059890419824,
+    "Q_S_D": 2.2998960007395315,
+    "F_S_R": 27.364601310898873,
+    "Q_S_R": 28.11173805232309,
+    "F_O_R": 26.571101073460504
+  },
+  "rounding_direct_MSE_change": 4.43776614960813,
+  "rounding_reflected_MSE_change": 41.44841141798171,
+  "startup_high_first_frame_RMSE": {
+    "onset": 4.156600674950779,
+    "steady": 42.50808317531604
+  },
+  "startup_high_last_frame_RMSE": {
+    "onset": 41.52612940221823,
+    "steady": 41.526129402218345
+  },
+  "eligible_scenes": 49,
+  "first_N_versus_all_blocks": [
+    {
+      "group": "low",
+      "frames_averaged": 1,
+      "first_N_rmse_deg": 1.735659791461738,
+      "all_blocks_rmse_deg": 1.5972629070703603,
+      "first_N_estimates": 180,
+      "all_block_estimates": 23040
+    },
+    {
+      "group": "low",
+      "frames_averaged": 2,
+      "first_N_rmse_deg": 1.319947940312759,
+      "all_blocks_rmse_deg": 1.272075047364617,
+      "first_N_estimates": 180,
+      "all_block_estimates": 11520
+    },
+    {
+      "group": "low",
+      "frames_averaged": 4,
+      "first_N_rmse_deg": 1.0362327492142176,
+      "all_blocks_rmse_deg": 1.0696141602265297,
+      "first_N_estimates": 180,
+      "all_block_estimates": 5760
+    },
+    {
+      "group": "low",
+      "frames_averaged": 8,
+      "first_N_rmse_deg": 0.9387469887058031,
+      "all_blocks_rmse_deg": 0.9574354683089262,
+      "first_N_estimates": 180,
+      "all_block_estimates": 2880
+    },
+    {
+      "group": "low",
+      "frames_averaged": 16,
+      "first_N_rmse_deg": 0.9238426733960163,
+      "all_blocks_rmse_deg": 0.8972994939400805,
+      "first_N_estimates": 180,
+      "all_block_estimates": 1440
+    },
+    {
+      "group": "low",
+      "frames_averaged": 32,
+      "first_N_rmse_deg": 0.8833180214168004,
+      "all_blocks_rmse_deg": 0.8647471693951644,
+      "first_N_estimates": 180,
+      "all_block_estimates": 720
+    },
+    {
+      "group": "low",
+      "frames_averaged": 64,
+      "first_N_rmse_deg": 0.8381116715419208,
+      "all_blocks_rmse_deg": 0.8438152705583009,
+      "first_N_estimates": 180,
+      "all_block_estimates": 360
+    },
+    {
+      "group": "low",
+      "frames_averaged": 128,
+      "first_N_rmse_deg": 0.8351997273908767,
+      "all_blocks_rmse_deg": 0.8351997273908767,
+      "first_N_estimates": 180,
+      "all_block_estimates": 180
+    },
+    {
+      "group": "high",
+      "frames_averaged": 1,
+      "first_N_rmse_deg": 35.33887308864418,
+      "all_blocks_rmse_deg": 39.04379753200034,
+      "first_N_estimates": 180,
+      "all_block_estimates": 23040
+    },
+    {
+      "group": "high",
+      "frames_averaged": 2,
+      "first_N_rmse_deg": 32.05636889587527,
+      "all_blocks_rmse_deg": 31.741029615999317,
+      "first_N_estimates": 180,
+      "all_block_estimates": 11520
+    },
+    {
+      "group": "high",
+      "frames_averaged": 4,
+      "first_N_rmse_deg": 22.695319444056555,
+      "all_blocks_rmse_deg": 24.00722050608812,
+      "first_N_estimates": 180,
+      "all_block_estimates": 5760
+    },
+    {
+      "group": "high",
+      "frames_averaged": 8,
+      "first_N_rmse_deg": 14.18365775148605,
+      "all_blocks_rmse_deg": 18.380135965245774,
+      "first_N_estimates": 180,
+      "all_block_estimates": 2880
+    },
+    {
+      "group": "high",
+      "frames_averaged": 16,
+      "first_N_rmse_deg": 13.345829159491084,
+      "all_blocks_rmse_deg": 13.657100004398412,
+      "first_N_estimates": 180,
+      "all_block_estimates": 1440
+    },
+    {
+      "group": "high",
+      "frames_averaged": 32,
+      "first_N_rmse_deg": 10.816052174660188,
+      "all_blocks_rmse_deg": 11.374137451023707,
+      "first_N_estimates": 180,
+      "all_block_estimates": 720
+    },
+    {
+      "group": "high",
+      "frames_averaged": 64,
+      "first_N_rmse_deg": 10.059870750923254,
+      "all_blocks_rmse_deg": 10.621274957910678,
+      "first_N_estimates": 180,
+      "all_block_estimates": 360
+    },
+    {
+      "group": "high",
+      "frames_averaged": 128,
+      "first_N_rmse_deg": 10.158318621503364,
+      "all_blocks_rmse_deg": 10.158318621503364,
+      "first_N_estimates": 180,
+      "all_block_estimates": 180
+    }
+  ]
+}

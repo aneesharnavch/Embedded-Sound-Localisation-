@@ -1,0 +1,63 @@
+# Local Python environments and caches
+.venv/
+.venv-*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Temporary files and operating-system metadata
+/tmp/
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+
+# Regenerable simulation caches, reproduction workspaces, and release copies
+/paper/direction_a_preprint/**/cache/
+/paper/direction_a_preprint/reproduction_workspace/
+/paper/direction_a_preprint/release/Direction_A_Source_and_Data/
+/paper/direction_a_preprint/release/Direction_A_Source_and_Data.zip
+/paper/direction_a_preprint/baseline/*.tar.gz
+*.partial.csv.gz
+
+# Downloaded document toolchain
+/paper/direction_a_preprint/environment/tectonic
+/paper/direction_a_preprint/environment/tectonic-*.tar.gz
+/paper/direction_a_preprint/environment/toolchain_smoke.pdf
+/paper/direction_a_preprint/environment/toolchain_smoke.png
+
+# LaTeX build intermediates and full-page review renders
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+/author/*.log
+/paper/direction_a_preprint/**/manuscript/*.out
+/paper/direction_a_preprint/**/manuscript/*.log
+/paper/direction_a_preprint/**/manuscript/*.png
+/paper/direction_a_preprint/acta_preview/*.log
+
+# Downloaded literature; retain metadata, reading notes, and screening receipts
+/paper/publication_speedrun/research/publisher_pdfs/
+/paper/publication_speedrun/research/publisher_pdf_text/
+/paper/direction_a_preprint/literature/publisher_pages/
+/paper/publication_speedrun/research/crossref_2021-09-07_2026-09-07.json
+/paper/publication_speedrun/research/window_items.json
+/paper/publication_speedrun/research/ranked_candidates.json
+
+# Redundant import copies; the original datasets and author template are retained
+/callibration data/
+/macro_latex_edpsci_EN/
+/macro_latex_edpsci_EN*.zip
+
+# Recordings (.csv, .xlsx, .mp3), scientific results, figures, and final PDFs
+# are intentionally included. Scientific run logs are also retained.
