@@ -245,6 +245,14 @@ This work separates three effects that are easily mixed together in a sound-loca
 
 Independent calculations and refinement tests establish the numerical resolution of these comparisons for the cases tested. The geometry-based timing bound provides another check on ideal arrival perturbations while retaining the dependence between microphone pairs. More practically, the results show why a compact-array evaluation must report how arrivals are discretised and whether the simulated source is at onset or in steady operation. The study does not establish hardware accuracy, universal estimator superiority or a general relation between reverberation and localization error.
 
+## Declaration of generative AI and AI-assisted technologies
+
+During the preparation of this manuscript, the author used OpenAI Codex, powered by the GPT-5 model and developed by OpenAI, for language editing, including grammar, clarity and consistency, and for assistance with LaTeX typesetting and formatting. The author reviewed and edited the resulting material and takes full responsibility for the content of the manuscript.
+
+## Data and code availability
+
+The simulation code, frozen configurations, processed frame-level results, numerical verification outputs and reproduction instructions supporting this study are available on Zenodo at https://doi.org/10.5281/zenodo.22884261. Additional methodological details and numerical checks are provided in the Supplementary Material.
+
 ## References
 
 1. C. Knapp and G. Carter. The generalized correlation method for estimation of time delay. IEEE Transactions on Acoustics, Speech, and Signal Processing, 24 (4): 320–327, 1976. 10.1109/TASSP.1976.1162830.
